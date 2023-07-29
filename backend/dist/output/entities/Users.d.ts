@@ -1,0 +1,33 @@
+import { BusinessEntity } from './BusinessEntity';
+import { UsersAddress } from './UsersAddress';
+import { UsersEducation } from './UsersEducation';
+import { UsersEmail } from './UsersEmail';
+import { UsersExperiences } from './UsersExperiences';
+import { UsersLicense } from './UsersLicense';
+import { UsersMedia } from './UsersMedia';
+import { UsersPhones } from './UsersPhones';
+import { UsersRoles } from './UsersRoles';
+import { UsersSkill } from './UsersSkill';
+export declare class Users {
+    userEntityId: number;
+    userName: string | null;
+    userPassword: string | null;
+    userFirstName: string | null;
+    userLastName: string | null;
+    userBirthDate: Date | null;
+    userEmailPromotion: number | null;
+    userDemographic: string | null;
+    userModifiedDate: Date | null;
+    userPhoto: string | null;
+    userCurrentRole: number | null;
+    userEntity: BusinessEntity;
+    usersAddresses: UsersAddress[];
+    usersEducations: UsersEducation[];
+    usersEmails: UsersEmail[];
+    usersExperiences: UsersExperiences[];
+    usersLicenses: UsersLicense[];
+    usersMedias: UsersMedia[];
+    usersPhones: UsersPhones[];
+    usersRoles: UsersRoles[];
+    usersSkills: UsersSkill[];
+}

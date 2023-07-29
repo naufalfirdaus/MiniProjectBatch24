@@ -13,7 +13,7 @@ import { UsersAccountController } from './users-account/users-account.controller
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'aldi12345',
+      password: 'alam',
       database: 'revampdb',
       entities: ['dist/output/entitites/*.js'],
       autoLoadEntities: true,
@@ -23,4 +23,4 @@ import { UsersAccountController } from './users-account/users-account.controller
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }
