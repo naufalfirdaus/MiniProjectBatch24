@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "backend-bootcamp",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "db": "typeorm-model-generator -h localhost -d revampdb -s users,sales,bootcamp,curriculum,hr,jobhire,master,payment -p 5432 -u postgres -x password -e postgres",
+    "db": "typeorm-model-generator -h localhost -d revampdb -s hr,master,users,sales,payment,jobhire,curriculum,bootcamp -p 5432 -u postgres -x admin -e postgres",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -25,6 +25,7 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "^10.0.0",
+    "nestjs-typeorm-paginate": "^4.0.4",
     "pg": "^8.11.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
