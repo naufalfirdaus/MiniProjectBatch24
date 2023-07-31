@@ -1,59 +1,76 @@
-import { Column, Entity, Index } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { BusinessEntity } from "./BusinessEntity";
+import { Users } from "./Users";
 
-@Index('users_account_usac_account_number_key', ['usacAccountNumber'], {
+@Index("users_account_usac_account_number_key", ["usacAccountNumber"], {
   unique: true,
 })
-@Index('users_account_pkey', ['usacBankEntityId', 'usacUserEntityId'], {
+@Index("users_account_pkey", ["usacBankEntityId", "usacUserEntityId"], {
   unique: true,
 })
-@Entity('users_account', { schema: 'payment' })
+@Entity("users_account", { schema: "payment" })
 export class UsersAccount {
-  @Column('integer', { primary: true, name: 'usac_bank_entity_id' })
+  @Column("integer", { primary: true, name: "usac_bank_entity_id" })
   usacBankEntityId: number;
 
-  @Column('integer', { primary: true, name: 'usac_user_entity_id' })
+  @Column("integer", { primary: true, name: "usac_user_entity_id" })
   usacUserEntityId: number;
 
-  @Column('character varying', {
-    name: 'usac_account_number',
+  @Column("character varying", {
+    name: "usac_account_number",
     nullable: true,
     unique: true,
     length: 25,
   })
   usacAccountNumber: string | null;
 
-  @Column('numeric', { name: 'usac_saldo', nullable: true })
+  @Column("numeric", { name: "usac_saldo", nullable: true })
   usacSaldo: string | null;
 
-  @Column('character varying', {
-    name: 'usac_type',
+  @Column("character varying", {
+    name: "usac_type",
     nullable: true,
     length: 15,
   })
   usacType: string | null;
 
-  @Column('timestamp without time zone', {
-    name: 'usac_start_date',
+  @Column("timestamp without time zone", {
+    name: "usac_start_date",
     nullable: true,
   })
   usacStartDate: Date | null;
 
-  @Column('timestamp without time zone', {
-    name: 'usac_end_date',
+  @Column("timestamp without time zone", {
+    name: "usac_end_date",
     nullable: true,
   })
   usacEndDate: Date | null;
 
-  @Column('timestamp without time zone', {
-    name: 'usac_modified_date',
+  @Column("timestamp without time zone", {
+    name: "usac_modified_date",
     nullable: true,
   })
   usacModifiedDate: Date | null;
 
-  @Column('character varying', {
-    name: 'usac_status',
+  @Column("character varying", {
+    name: "usac_status",
     nullable: true,
     length: 15,
   })
   usacStatus: string | null;
+
+  @ManyToOne(
+    () => BusinessEntity,
+    (businessEntity) => businessEntity.usersAccounts
+  )
+  @JoinColumn([
+    { name: "usac_bank_entity_id", referencedColumnName: "entityId" },
+  ])
+  usacBankEntity: BusinessEntity;
+
+  @ManyToOne(() => Users, (users) => users.usersAccounts)
+  @JoinColumn([
+    { name: "usac_user_entity_id", referencedColumnName: "userEntityId" },
+  ])
+  usacUserEntity: Users;
 }

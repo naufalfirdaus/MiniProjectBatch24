@@ -1,4 +1,4 @@
-import { UsersRoles } from './UsersRoles';
+import { UsersRoles } from "./UsersRoles";
 export declare class Roles {
     roleId: number;
     roleName: string | null;

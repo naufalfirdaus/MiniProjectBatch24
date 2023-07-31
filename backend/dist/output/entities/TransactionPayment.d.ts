@@ -1,3 +1,4 @@
+import { Users } from "./Users";
 export declare class TransactionPayment {
     trpaId: number;
     trpaCodeNumber: string | null;
@@ -9,5 +10,5 @@ export declare class TransactionPayment {
     trpaModifiedDate: Date | null;
     trpaSourceId: string;
     trpaTargetId: string;
-    trpaUserEntityId: number | null;
+    users: Users;
 }

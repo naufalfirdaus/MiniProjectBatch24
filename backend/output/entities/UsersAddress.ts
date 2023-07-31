@@ -1,4 +1,13 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+} from "typeorm";
+import { Address } from "./Address";
+import { AddressType } from "./AddressType";
 import { Users } from "./Users";
 
 @Index("users_address_pkey", ["etadAddrId"], { unique: true })
@@ -13,8 +22,13 @@ export class UsersAddress {
   })
   etadModifiedDate: Date | null;
 
-  @Column("integer", { name: "etad_adty_id", nullable: true })
-  etadAdtyId: number | null;
+  @OneToOne(() => Address, (address) => address.usersAddress)
+  @JoinColumn([{ name: "etad_addr_id", referencedColumnName: "addrId" }])
+  etadAddr: Address;
+
+  @ManyToOne(() => AddressType, (addressType) => addressType.usersAddresses)
+  @JoinColumn([{ name: "etad_adty_id", referencedColumnName: "adtyId" }])
+  etadAdty: AddressType;
 
   @ManyToOne(() => Users, (users) => users.usersAddresses)
   @JoinColumn([

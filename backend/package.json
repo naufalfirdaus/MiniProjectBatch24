@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "db": "typeorm-model-generator -h localhost -d revampdb -p 5432 -s payment -u postgres -x aldi12345 -e postgres",
+    "db": "typeorm-model-generator -h localhost -d revampdb -p 5432 -u postgres -x alam -e postgres -s master,users,curriculum,bootcamp,job_hiring,hr,sales,payment",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

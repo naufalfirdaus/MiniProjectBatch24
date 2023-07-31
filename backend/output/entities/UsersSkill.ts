@@ -5,10 +5,12 @@ import {
   JoinColumn,
   ManyToMany,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { UsersExperiences } from "./UsersExperiences";
 import { Users } from "./Users";
+import { SkillType } from "./SkillType";
 
 @Index("uski_id", ["uskiEntityId", "uskiId"], { unique: true })
 @Index("users_skill_uski_id_key", ["uskiId"], { unique: true })
@@ -46,4 +48,8 @@ export class UsersSkill {
     { name: "uski_entity_id", referencedColumnName: "userEntityId" },
   ])
   uskiEntity: Users;
+
+  @OneToOne(() => SkillType, (skillType) => skillType.usersSkill)
+  @JoinColumn([{ name: "uski_skty_name", referencedColumnName: "sktyName" }])
+  uskiSktyName2: SkillType;
 }

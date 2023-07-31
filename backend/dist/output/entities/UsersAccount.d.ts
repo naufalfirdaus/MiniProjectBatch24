@@ -1,3 +1,5 @@
+import { BusinessEntity } from "./BusinessEntity";
+import { Users } from "./Users";
 export declare class UsersAccount {
     usacBankEntityId: number;
     usacUserEntityId: number;
@@ -8,4 +10,6 @@ export declare class UsersAccount {
     usacEndDate: Date | null;
     usacModifiedDate: Date | null;
     usacStatus: string | null;
+    usacBankEntity: BusinessEntity;
+    usacUserEntity: Users;
 }

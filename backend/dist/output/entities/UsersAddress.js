@@ -11,6 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersAddress = void 0;
 const typeorm_1 = require("typeorm");
+const Address_1 = require("./Address");
+const AddressType_1 = require("./AddressType");
 const Users_1 = require("./Users");
 let UsersAddress = exports.UsersAddress = class UsersAddress {
 };
@@ -26,9 +28,15 @@ __decorate([
     __metadata("design:type", Date)
 ], UsersAddress.prototype, "etadModifiedDate", void 0);
 __decorate([
-    (0, typeorm_1.Column)("integer", { name: "etad_adty_id", nullable: true }),
-    __metadata("design:type", Number)
-], UsersAddress.prototype, "etadAdtyId", void 0);
+    (0, typeorm_1.OneToOne)(() => Address_1.Address, (address) => address.usersAddress),
+    (0, typeorm_1.JoinColumn)([{ name: "etad_addr_id", referencedColumnName: "addrId" }]),
+    __metadata("design:type", Address_1.Address)
+], UsersAddress.prototype, "etadAddr", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => AddressType_1.AddressType, (addressType) => addressType.usersAddresses),
+    (0, typeorm_1.JoinColumn)([{ name: "etad_adty_id", referencedColumnName: "adtyId" }]),
+    __metadata("design:type", AddressType_1.AddressType)
+], UsersAddress.prototype, "etadAdty", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => Users_1.Users, (users) => users.usersAddresses),
     (0, typeorm_1.JoinColumn)([

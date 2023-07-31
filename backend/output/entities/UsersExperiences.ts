@@ -8,6 +8,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { City } from "./City";
 import { Users } from "./Users";
 import { UsersSkill } from "./UsersSkill";
 
@@ -85,8 +86,9 @@ export class UsersExperiences {
   })
   usexExperienceType: string | null;
 
-  @Column("integer", { name: "usex_city_id", nullable: true })
-  usexCityId: number | null;
+  @ManyToOne(() => City, (city) => city.usersExperiences)
+  @JoinColumn([{ name: "usex_city_id", referencedColumnName: "cityId" }])
+  usexCity: City;
 
   @ManyToOne(() => Users, (users) => users.usersExperiences)
   @JoinColumn([

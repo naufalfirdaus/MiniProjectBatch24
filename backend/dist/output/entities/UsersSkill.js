@@ -13,6 +13,7 @@ exports.UsersSkill = void 0;
 const typeorm_1 = require("typeorm");
 const UsersExperiences_1 = require("./UsersExperiences");
 const Users_1 = require("./Users");
+const SkillType_1 = require("./SkillType");
 let UsersSkill = exports.UsersSkill = class UsersSkill {
 };
 __decorate([
@@ -50,6 +51,11 @@ __decorate([
     ]),
     __metadata("design:type", Users_1.Users)
 ], UsersSkill.prototype, "uskiEntity", void 0);
+__decorate([
+    (0, typeorm_1.OneToOne)(() => SkillType_1.SkillType, (skillType) => skillType.usersSkill),
+    (0, typeorm_1.JoinColumn)([{ name: "uski_skty_name", referencedColumnName: "sktyName" }]),
+    __metadata("design:type", SkillType_1.SkillType)
+], UsersSkill.prototype, "uskiSktyName2", void 0);
 exports.UsersSkill = UsersSkill = __decorate([
     (0, typeorm_1.Index)("uski_id", ["uskiEntityId", "uskiId"], { unique: true }),
     (0, typeorm_1.Index)("users_skill_uski_id_key", ["uskiId"], { unique: true }),
