@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Get, ParseIntPipe, Post, Query } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Get, NotFoundException, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 
 @Controller('api/fintech')
@@ -11,6 +11,32 @@ export class TransactionsController {
         @Body() payload: any
     ) {
         return this.service.verifyTransaction(accountNumber, payload);
+    }
+
+    // Topup and transfer
+    @Post('topup')
+    async topUpFintech(@Body() payload: any) {
+        if (!payload.sourceCode || !payload.targetCode || !payload.amount || !payload.userId) {
+            throw new NotFoundException("Required data is blank")
+        }
+        return this.service.topUp(payload);
+    }
+
+    @Post('transfer')
+    async transferBank(@Body() payload: any) {
+        if (!payload.sourceCode || !payload.targetCode || !payload.amount || !payload.userId) {
+            throw new NotFoundException("Required data is blank")
+        }
+        return this.service.topUp(payload);
+    }
+
+    // Payment order
+    @Post('accounts')
+    async paymentTransactions(
+        @Query('accountNumber') accountNumber: string,
+        @Body() fintech: any
+    ) {
+        return this.service.paymentTransactions(accountNumber, fintech);
     }
 
     @Get('transaction/view')
