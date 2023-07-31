@@ -2,6 +2,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 import { ProgramEntity } from "./ProgramEntity";
 import { Status } from "./Status";
 import { Users } from "./Users";
+import { RouteActions } from "./RouteActions";
 
 @Index("program_apply_pk", ["prapProgEntityId", "prapUserEntityId"], {
   unique: true,
@@ -54,4 +55,8 @@ export class ProgramApply {
     { name: "prap_user_entity_id", referencedColumnName: "userEntityId" },
   ])
   prapUserEntity: Users;
+
+  @ManyToOne(() => RouteActions, (routeActions) => routeActions.programApplies)
+  @JoinColumn([{ name: "roac_id", referencedColumnName: "roacId" }])
+  roac: RouteActions;
 }

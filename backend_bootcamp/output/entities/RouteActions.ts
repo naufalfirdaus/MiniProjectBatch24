@@ -4,8 +4,10 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { ProgramApply } from "./ProgramApply";
 import { Modules } from "./Modules";
 
 @Index("route_actions_pkey", ["roacId"], { unique: true })
@@ -26,6 +28,9 @@ export class RouteActions {
 
   @Column("integer", { name: "roac_display", nullable: true })
   roacDisplay: number | null;
+
+  @OneToMany(() => ProgramApply, (programApply) => programApply.roac)
+  programApplies: ProgramApply[];
 
   @ManyToOne(() => Modules, (modules) => modules.routeActions)
   @JoinColumn([
