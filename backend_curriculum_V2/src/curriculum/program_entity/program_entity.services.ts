@@ -47,7 +47,7 @@ export class ProgramEntityService {
     options: PaginationOptions,
   ): Promise<ProgramEntityInterface> {
     const skippedItems = (options.page - 1) * options.limit;
-    const totalCount = await this.serviceProgEntity.count();
+    let totalCount = await this.serviceProgEntity.count();
     if (options.name && options.status) {
       const program_entity = await this.serviceProgEntity.find({
         take: options.limit,
@@ -59,6 +59,7 @@ export class ProgramEntityService {
           },
         ],
       });
+      totalCount = program_entity.length;
       return {
         totalCount,
         page: options.page,
