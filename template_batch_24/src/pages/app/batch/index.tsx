@@ -1,14 +1,50 @@
 import { useRouter } from 'next/router';
 import Page from '../../component/commons/Page';
+import Pagination from '../../component/commons/Pagination';
 import AppLayout from '../../component/layout/AppLayout';
 import { Menu } from '@headlessui/react';
 import Link from 'next/link';
+import { useFormik } from 'formik';
 
 export default function Batch() {
   const navigate = useRouter()
+  const formik = useFormik({
+    initialValues: {
+       keyword: '',
+       status: '',
+    },
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
+
   return (
     <AppLayout>
       <Page title='Batch' titleButton='Create' onClick={() => navigate.push('/app/batch/new')}>
+        <form onSubmit={formik.handleSubmit}>
+          <div className="flex justify-center items-center gap-3 mb-3">
+              <div>
+                <label htmlFor="keyword" className="sr-only">Search</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                  </div>
+                  <input type="text" id="keyword" name='keyword' value={formik.values.keyword} onChange={formik.handleChange} className="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search by batch, technology, trainer"/>
+                </div>
+              </div>
+              <div>
+                <select id="status" name="status" value={formik.values.status} onChange={formik.handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                    <option value='' disabled>Select status</option>
+                    <option value='New'>New</option>
+                    <option value='Running'>Running</option>
+                    <option value='Closed'>Closed</option>
+                </select>
+              </div>
+            <button type='submit' className="bg-blue-500 text-white py-1.5 px-2 rounded-md hover:bg-blue-600">Search</button>
+          </div>
+        </form>
         <div className="relative overflow-x-visible shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -37,7 +73,7 @@ export default function Batch() {
               </tr>
             </thead>
             <tbody>
-              <tr className="bg-white dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+              <tr className="bg-white">
                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   Batch#15
                 </th>
@@ -91,6 +127,7 @@ export default function Batch() {
             </tbody>
           </table>
         </div>
+        <Pagination />
       </Page>
     </AppLayout>
   )

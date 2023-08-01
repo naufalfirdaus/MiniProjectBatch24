@@ -1,3 +1,4 @@
+import Pagination from '@/pages/component/commons/Pagination';
 import { Menu, Dialog, Transition } from '@headlessui/react';
 import Image from 'next/image';
 import { Fragment, useState } from 'react';
@@ -67,40 +68,41 @@ export default function Apply(){
                     </thead>
                     <tbody>
                         <tr className="bg-white hover:bg-gray-50">
-                        <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap">
-                            <Image width={50} height={50} className="w-10 h-10 rounded-full" src="/assets/images/candidate.png" alt="Candidate image"/>
-                            <div className="pl-3">
-                            <div className="text-base font-semibold">Sanita</div>
-                            <div className="font-normal text-gray-500">users1@example.com</div>
-                            </div>  
-                        </th>
-                        <td className="px-6 py-4">
-                            Universitas A
-                        </td>
-                        <td className="px-6 py-4">
-                            0823594872
-                        </td>
-                        <td className="px-6 py-4">
-                            NodeJS
-                        </td>
-                        <td className="px-6 py-4">
-                            Lulus 2021
-                        </td>
-                        <td className="px-6 py-4">
-                            <div className="flex items-center">
-                                <div className="h-2.5 w-2.5 rounded-full bg-green-500 mr-2"></div> Online
-                            </div>
-                        </td>
-                        <td className="px-6 py-4">
-                            <button onClick={()=> setIsOpen(true)}>
-                                <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 4 15"> <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
-                                </svg>
-                            </button>
-                        </td>
+                            <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap">
+                                <Image width={50} height={50} className="w-10 h-10 rounded-full" src="/assets/images/candidate.png" alt="Candidate image"/>
+                                <div className="pl-3">
+                                <div className="text-base font-semibold">Sanita</div>
+                                <div className="font-normal text-gray-500">users1@example.com</div>
+                                </div>  
+                            </th>
+                            <td className="px-6 py-4">
+                                Universitas A
+                            </td>
+                            <td className="px-6 py-4">
+                                0823594872
+                            </td>
+                            <td className="px-6 py-4">
+                                NodeJS
+                            </td>
+                            <td className="px-6 py-4">
+                                Lulus 2021
+                            </td>
+                            <td className="px-6 py-4">
+                                <div className="flex items-center">
+                                    <div className="h-2.5 w-2.5 rounded-full bg-green-500 mr-2"></div> Online
+                                </div>
+                            </td>
+                            <td className="px-6 py-4">
+                                <button onClick={()=> setIsOpen(true)}>
+                                    <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 4 15"> <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
+                                    </svg>
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <Pagination />
             <Transition appear show={isOpen} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={()=>setIsOpen(false)}>
                     <Transition.Child

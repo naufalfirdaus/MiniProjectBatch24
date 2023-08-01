@@ -3,6 +3,7 @@ import AppLayout from "@/pages/component/layout/AppLayout";
 import { Menu } from "@headlessui/react";
 import { useFormik } from "formik";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 const dummy_candidates = [
@@ -39,6 +40,7 @@ const dummy_candidates = [
 ];
 
 export default function CreateBatch() {
+    const router = useRouter();
     const [candidates, setCandidates] = useState(dummy_candidates);
   const formik = useFormik({
     initialValues: {
@@ -172,7 +174,7 @@ export default function CreateBatch() {
                 </div>
                 <div className="flex justify-end gap-2 mt-4">
                     <button type="submit" className="bg-green-500 text-white py-1 px-2 rounded-md hover:bg-green-600">Save</button>
-                    <button className="bg-blue-500 text-white py-1 px-2 rounded-md hover:bg-blue-600">Cancel</button>
+                    <button onClick={() => router.back()} className="bg-blue-500 text-white py-1 px-2 rounded-md hover:bg-blue-600">Cancel</button>
                 </div>
             </form>
         </div>

@@ -3,6 +3,7 @@ import AppLayout from "@/pages/component/layout/AppLayout";
 import { Disclosure } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 const dummy_student_evaluation = [
     {
@@ -43,9 +44,21 @@ const dummy_student_evaluation = [
 
 export default function BatchStudentEvaluation() {
   const router = useRouter();
+  const [studentEv, setStudentEv] = useState(dummy_student_evaluation);
+
+  const handleStudentEvChange = (e: any, indexType: number, indexSkill: number) => {
+    const list = [...studentEv];
+    list[indexType]['skills'][indexSkill]['grade'] = e.target.valueAsNumber;
+    setStudentEv(list);
+  }
+
+  const onSave = () => {
+    console.log(studentEv);
+  }
+
   return (
     <AppLayout>
-      <Page title="Batch#20 Bootcamp" titleButton="Back" titleButton2="Save">
+      <Page title="Batch#20 Bootcamp" titleButton="Back" titleButton2="Save" onClick={() => router.back()} onClick2={onSave}>
         <div className="border border-slate-400 p-3 rounded-lg">
             <div className="grid grid-cols-3 items-center">
                 <div className="flex">
@@ -64,11 +77,11 @@ export default function BatchStudentEvaluation() {
                 <h1 className="justify-self-center text-lg font-medium">Score 90</h1>
             </div>
         </div>
-        {dummy_student_evaluation.map((ev, ti) => 
+        {studentEv.map((ev, ti) => 
             <Disclosure as='div' key={ti} className={`${ti == 0 && 'mt-3'}`}>
             {({ open }) => (
                 <>
-                <Disclosure.Button className={`flex items-center justify-between w-full p-3 font-medium text-left text-gray-600 border border-gray-400 focus:ring-4 focus:ring-gray-200 ${ti == 0 && 'rounded-t-xl border-b-0'}`}>
+                <Disclosure.Button className={`flex items-center justify-between w-full p-3 font-medium text-left text-gray-600 border border-gray-400 focus:ring-4 focus:ring-gray-200 ${ti == 0 && 'rounded-t-xl border-b-0'} ${ti == dummy_student_evaluation.length - 1 && !open && 'rounded-b-xl'}`}>
                     <span>{ev.type} Scale (1-4)</span>
                     <ChevronUpIcon
                     className={`${
@@ -80,7 +93,7 @@ export default function BatchStudentEvaluation() {
                     {ev.skills.map((s, si) => 
                         <div key={si} className="grid grid-cols-3 items-center gap-2">
                             <span>{s.skill}</span>
-                            <input type="number" name={`${s.skill.toLocaleLowerCase()}`} max={4} value={s.grade} className="block p-2 text-lg w-16 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"/>
+                            <input type="number" name={`${s.skill.toLocaleLowerCase()}`} min={1} max={4} value={s.grade} onChange={(e) => handleStudentEvChange(e, ti, si)} className="block p-2 text-lg w-16 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"/>
                         </div>
                     )}
                 </Disclosure.Panel>
@@ -88,62 +101,6 @@ export default function BatchStudentEvaluation() {
             )}
             </Disclosure>
         )}
-        {/* <Disclosure>
-          {({ open }) => (
-            <>
-              <Disclosure.Button className="flex items-center justify-between w-full p-3 font-medium text-left text-gray-600 border border-b-0 border-gray-400 focus:ring-4 focus:ring-gray-200">
-                <span>Soft Skill Scale(1-4)</span>
-                <ChevronUpIcon
-                  className={`${
-                    open ? "rotate-180 transform" : ""
-                  } h-5 w-5 text-gray-500`}
-                />
-              </Disclosure.Button>
-              <Disclosure.Panel className="p-5 border border-b-0 border-gray-400 space-y-3">
-                <div className="grid grid-cols-3 items-center gap-2">
-                    <span>Communication</span>
-                    <input type="number" name="communication" className="block p-2 w-16 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"/>
-                </div>
-                <div className="grid grid-cols-3 items-center gap-2">
-                    <span>Teamwork</span>
-                    <input type="number" name="teamwork" className="block p-2 w-16 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"/>
-                </div>
-                <div className="grid grid-cols-3 items-center gap-2">
-                    <span>Self-Learning</span>
-                    <input type="number" name="selflearning" className="block p-2 w-16 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"/>
-                </div>
-              </Disclosure.Panel>
-            </>
-          )}
-        </Disclosure> */}
-        {/* <Disclosure>
-          {({ open }) => (
-            <>
-              <Disclosure.Button className={`flex items-center justify-between w-full p-3 font-medium text-left text-gray-600 border border-gray-400 focus:ring-4 focus:ring-gray-200 ${!open && 'rounded-b-lg'}`}>
-                <span>Persentation Scale(1-4)</span>
-                <ChevronUpIcon
-                  className={`${
-                    open ? "rotate-180 transform" : ""
-                  } h-5 w-5 text-gray-500`}
-                />
-              </Disclosure.Button>
-              <Disclosure.Panel className={`p-5 border border-t-0 border-gray-400 dark:border-gray-700 dark:bg-gray-900 space-y-3 ${open && 'rounded-b-lg'}`}>
-                <div className="grid grid-cols-3 items-center gap-2">
-                    <span>Communication</span>
-                    <input type="number" name="communication" className="block p-2 w-16 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"/>
-                </div>
-                <div className="grid grid-cols-3 items-center gap-2">
-                    <span>Teamwork</span>
-                    <input type="number" name="teamwork" className="block p-2 w-16 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"/>
-                </div>
-                <div className="grid grid-cols-3 items-center gap-2">
-                    <span>Self-Learning</span>
-                    <input type="number" name="selflearning" className="block p-2 w-16 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"/>
-                </div> 
-              </Disclosure.Panel>
-            </>
-          )}
-        </Disclosure> */}
       </Page>
     </AppLayout>
   );
