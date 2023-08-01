@@ -7,13 +7,16 @@ import {
   Pagination,
   paginate,
 } from 'nestjs-typeorm-paginate';
+import { TransactionPayment } from 'output/entities/TransactionPayment';
+import { TransactionsService } from 'src/payment/transactions/transactions.service';
 
 @Injectable()
 export class UsersAccountService {
   constructor(
     @InjectRepository(UsersAccount)
     private serviceUsersAccount: Repository<UsersAccount>,
-  ) {}
+    private readonly serviceTrpa: TransactionsService,
+  ) { }
 
   public async findAll(
     options: IPaginationOptions,
@@ -35,9 +38,26 @@ export class UsersAccountService {
   }
 
   public async Create(body: any): Promise<UsersAccount> {
+    const queryRunner = this.serviceUsersAccount.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    let users: any;
+
     try {
+      await this.serviceTrpa.createTransactionPayment(
+        queryRunner,
+        '13198989898',
+        body.usac_account_number,
+        0,
+        body.usac_saldo,
+        body.user_id,
+        'SD',
+        'Saldo'
+      );
+
       const time = new Date().toISOString();
-      const users = await this.serviceUsersAccount.save({
+      users = await this.serviceUsersAccount.save({
         usacBankEntityId: body.bank_id,
         usacUserEntityId: body.user_id,
         usacAccountNumber: body.usac_account_number,
@@ -48,10 +68,14 @@ export class UsersAccountService {
         usacModifiedDate: time,
         usacStatus: body.usac_status,
       });
-      return users;
+      await queryRunner.commitTransaction();
     } catch (error) {
+      await queryRunner.rollbackTransaction();
       return error.message;
+    } finally {
+      await queryRunner.release();
     }
+    return users;
   }
 
   public async Edit(accNumber: string, body: any) {

@@ -51,7 +51,7 @@ export class TransactionsService {
                 amount,
                 0,
                 userId,
-                'transfer',
+                'TR',
                 'Transfer'
             );
 
@@ -62,7 +62,7 @@ export class TransactionsService {
                 0,
                 amount,
                 userId,
-                'transfer',
+                'TR',
                 'Received Transfer'
             );
 
@@ -103,7 +103,7 @@ export class TransactionsService {
                 amount,
                 0,
                 userId,
-                'top-up',
+                'TP',
                 'Top-up'
             );
 
@@ -114,7 +114,7 @@ export class TransactionsService {
                 0,
                 amount,
                 userId,
-                'top-up',
+                'TP',
                 'Received Top-up'
             );
 
@@ -134,8 +134,6 @@ export class TransactionsService {
         const amount = fintech.amount;
         const userId = fintech.userId;
 
-        const type = 'order';
-
         let createdOrderPayment: TransactionPayment;
 
         const queryRunner = this.serviceTrpa.manager.connection.createQueryRunner();
@@ -154,7 +152,7 @@ export class TransactionsService {
                 amount,
                 0,
                 userId,
-                type,
+                'OD',
                 'Order'
             );
 
@@ -165,7 +163,7 @@ export class TransactionsService {
                 0,
                 amount,
                 userId,
-                type,
+                'OD',
                 'Received Order'
             );
 
@@ -217,8 +215,8 @@ export class TransactionsService {
         }
     }
 
-    // Private function
-    private async createTransactionPayment(
+
+    public async createTransactionPayment(
         queryRunner: QueryRunner,
         sourceCode: string,
         targetCode: string,
@@ -241,6 +239,7 @@ export class TransactionsService {
         return await queryRunner.manager.save(newTopup);
     }
 
+    // Private function
     private async updateBalances(
         queryRunner: QueryRunner,
         sourceCode: string,
