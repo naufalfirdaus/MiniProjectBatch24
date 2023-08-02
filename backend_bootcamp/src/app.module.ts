@@ -5,6 +5,8 @@ import { GlobalModule } from './global/global.module';
 import { CandidatesController } from './candidates/candidates.controller';
 import { CandidatesService } from './candidates/candidates.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BatchController } from './batch/batch.controller';
+import { BatchService } from './batch/batch.service';
 
 @Module({
   imports: [TypeOrmModule.forRoot({

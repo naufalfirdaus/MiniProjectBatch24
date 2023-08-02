@@ -101,7 +101,7 @@ export class CandidatesService {
         .take(options.limit)
         .skip(skippedItems)
         .where('route_action.roacName LIKE :roac', {roac : `%${status}%`})
-        .orWhere('status.status Like :status', {status : `%${status}%`})
+        .orWhere('status.status LIKE :status', {status : `%${status}%`})
         .getMany()
 
         return {

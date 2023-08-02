@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { Query } from '@nestjs/common';
-import { Get, DefaultValuePipe, ParseIntPipe } from '@nestjs/common';
+import { Get, DefaultValuePipe, ParseIntPipe, Put } from '@nestjs/common';
 import { CandidatesService } from './candidates.service';
 
 @Controller('api/bootcamp/candidate/filterby')
@@ -30,4 +30,6 @@ export class CandidatesController {
             limit: limit
         })
     }
+
+    
 }
