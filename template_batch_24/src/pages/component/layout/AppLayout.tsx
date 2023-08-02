@@ -29,13 +29,15 @@ import {
 } from "@heroicons/react/solid";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import { usePathname } from 'next/navigation';
 
 const navigation = [
   {
     name: "Home",
     href: "/app",
     icon: HomeIcon,
-    current: true,
+    current: false,
     roles: ["Administrator", "Recuirter", "Sales", "Instructor"],
   },
   {
@@ -105,16 +107,17 @@ export default function AppLayout(props: any) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { children } = props;
+  const pathname = usePathname();
 
   const dispatch = useDispatch();
-  const { UserProfile } = useSelector((state : any) => state.usrStated);
-  const [user, setUser] = useState({});
-  useEffect(() => {
-    setUser(UserProfile);
-  }, []);
+  // const { UserProfile } = useSelector((state : any) => state.usrStated);
+  // const [user, setUser] = useState({});
+  // useEffect(() => {
+  //   setUser(UserProfile);
+  // }, []);
   
   const onLogout = () => {
-    dispatch();
+    // dispatch();
     router.push("/");
   };
 
@@ -132,10 +135,10 @@ export default function AppLayout(props: any) {
             as={Fragment}
             enter="transition-opacity ease-linear duration-300"
             enterFrom="opacity-0"
-            enterhref="opacity-100"
+            enterTo="opacity-100"
             leave="transition-opacity ease-linear duration-300"
             leaveFrom="opacity-100"
-            leavehref="opacity-0"
+            leaveTo="opacity-0"
           >
             <Dialog.Overlay className="fixed inset-0 bg-gray-600 bg-opacity-75" />
           </Transition.Child>
@@ -143,20 +146,20 @@ export default function AppLayout(props: any) {
             as={Fragment}
             enter="transition ease-in-out duration-300 transform"
             enterFrom="-translate-x-full"
-            enterhref="translate-x-0"
+            enterTo="translate-x-0"
             leave="transition ease-in-out duration-300 transform"
             leaveFrom="translate-x-0"
-            leavehref="-translate-x-full"
+            leaveTo="-translate-x-full"
           >
             <div className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-white">
               <Transition.Child
                 as={Fragment}
                 enter="ease-in-out duration-300"
                 enterFrom="opacity-0"
-                enterhref="opacity-100"
+                enterTo="opacity-100"
                 leave="ease-in-out duration-300"
                 leaveFrom="opacity-100"
-                leavehref="opacity-0"
+                leaveTo="opacity-0"
               >
                 <div className="absolute top-0 right-0 -mr-12 pt-2">
                   <button
@@ -169,9 +172,9 @@ export default function AppLayout(props: any) {
                 </div>
               </Transition.Child>
               <div className="flex-shrink-0 flex items-center px-4">
-                <img
+                <Image width={50} height={50}
                   className="h-10 w-auto"
-                  src="../assets/images/codeid.png"
+                  src="/assets/images/codeid_logo.png"
                   alt="codeid"
                 />
               </div>
@@ -179,10 +182,14 @@ export default function AppLayout(props: any) {
                 <nav className="px-2">
                   <div className="space-y-1">
                     {navigation
-                      .filter((item) =>
-                        item.roles.includes(user.roles || UserProfile.roles)
-                      )
-                      .map((item) => (
+                      // .filter((item) =>
+                      //   item.roles.includes(user.roles || UserProfile.roles)
+                      // )
+                      .map((item) => { 
+                        const isActive = pathname == item.href;
+                        item.current = isActive;
+
+                        return (
                         <Link
                           key={item.name}
                           href={item.href}
@@ -205,7 +212,8 @@ export default function AppLayout(props: any) {
                           />
                           {item.name}
                         </Link>
-                      ))}
+                      )})
+                    }
                   </div>
                 </nav>
               </div>
@@ -222,9 +230,9 @@ export default function AppLayout(props: any) {
         <div className="flex flex-col w-64 border-r border-gray-200 pt-5 pb-4 bg-gray-100">
           <div className="flex items-center flex-shrink-0 px-6">
             <Link href="/">
-              <img
+              <Image width={50} height={50}
                 className="h-10 w-auto"
-                src="../assets/images/codeid.png"
+                src="/assets/images/codeid_logo.png"
                 alt="codeid"
               />
             </Link>
@@ -242,17 +250,19 @@ export default function AppLayout(props: any) {
                     <Menu.Button className="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-purple-500">
                       <span className="flex w-full justify-between items-center">
                         <span className="flex min-w-0 items-center justify-between space-x-3">
-                          <img
+                          <Image width={50} height={50}
                             className="w-10 h-10 bg-gray-300 object-cover rounded-full flex-shrink-0"
-                            src="../assets/images/yuri.jpg"
+                            src="/assets/images/user.png"
                             alt=""
                           />
                           <span className="flex-1 flex flex-col min-w-0">
                             <span className="text-gray-900 text-sm font-medium truncate">
-                              {user.username || UserProfile.username}
+                              username
+                              {/* {user.username || UserProfile.username} */}
                             </span>
                             <span className="text-gray-500 text-sm truncate">
-                              {user.email || UserProfile.email}
+                              email
+                              {/* {user.email || UserProfile.email} */}
                             </span>
                           </span>
                         </span>
@@ -268,10 +278,10 @@ export default function AppLayout(props: any) {
                     as={Fragment}
                     enter="transition ease-out duration-100"
                     enterFrom="transform opacity-0 scale-95"
-                    enterhref="transform opacity-100 scale-100"
+                    enterTo="transform opacity-100 scale-100"
                     leave="transition ease-in duration-75"
                     leaveFrom="transform opacity-100 scale-100"
-                    leavehref="transform opacity-0 scale-95"
+                    leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items
                       static
@@ -384,10 +394,13 @@ export default function AppLayout(props: any) {
             <nav className="px-3 mt-6">
               <div className="space-y-1">
                 {navigation
-                  .filter((item) =>
-                    item.roles.includes(user.roles || UserProfile.roles)
-                  )
-                  .map((item) => (
+                  // .filter((item) =>
+                  //   item.roles.includes(user.roles || UserProfile.roles)
+                  // )
+                  .map((item) => {
+                    const isActive = pathname == item.href;
+                    item.current = isActive;
+                    return (
                     <Link
                       key={item.name}
                       href={item.href}
@@ -410,12 +423,13 @@ export default function AppLayout(props: any) {
                       />
                       {item.name}
                     </Link>
-                  ))}
+                  )})}
               </div>
             </nav>
           </div>
         </div>
       </div>
+
       {/* Main column */}
       <div className="flex flex-col w-0 flex-1 overflow-hidden">
         {/* Search header */}
@@ -455,9 +469,9 @@ export default function AppLayout(props: any) {
                     <div>
                       <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         <span className="sr-only">Open user menu</span>
-                        <img
+                        <Image width={50} height={50}
                           className="w-10 h-10 bg-gray-300 object-cover rounded-full flex-shrink-0"
-                          src="../assets/images/yuri.jpg"
+                          src="/assets/images/user.png"
                           alt=""
                         />
                       </Menu.Button>
@@ -467,10 +481,10 @@ export default function AppLayout(props: any) {
                       as={Fragment}
                       enter="transition ease-out duration-100"
                       enterFrom="transform opacity-0 scale-95"
-                      enterhref="transform opacity-100 scale-100"
+                      enterTo="transform opacity-100 scale-100"
                       leave="transition ease-in duration-75"
                       leaveFrom="transform opacity-100 scale-100"
-                      leavehref="transform opacity-0 scale-95"
+                      leaveTo="transform opacity-0 scale-95"
                     >
                       <Menu.Items
                         static
