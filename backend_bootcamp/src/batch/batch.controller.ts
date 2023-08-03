@@ -1,4 +1,4 @@
-import { Query, Get, Controller } from '@nestjs/common';
+import { Query, Get, Controller, DefaultValuePipe, ParseIntPipe } from '@nestjs/common';
 import { BatchService } from './batch.service';
 
 @Controller('/api/bootcamp/batch')

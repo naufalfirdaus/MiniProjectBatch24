@@ -11,13 +11,16 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { PaginationDto } from './candidate.dto';
 import { RoomI } from './candidate.interface';
+import { Status } from 'output/entities/Status';
+import { RouteActions } from 'output/entities/RouteActions';
 
 @Injectable()
 export class CandidatesService {
-  constructor(
-    @InjectRepository(ProgramApply)
-    private serviceProgram: Repository<ProgramApply>,
-  ) {}
+    constructor(
+        @InjectRepository(ProgramApply) private serviceProgram: Repository<ProgramApply>,
+        @InjectRepository(Status) private serStas: Repository<Status>,
+        @InjectRepository(RouteActions) private serRoac: Repository<RouteActions>
+    ) {}
 
   public async findByDate(
     month: number,
@@ -130,11 +133,32 @@ export class CandidatesService {
       .orWhere('status.status LIKE :status', { status: `%${status}%` })
       .getMany();
 
-    return {
-      totalCount,
-      page: options.page,
-      limit: options.limit,
-      data: queryBuilder,
-    };
-  }
+        return {
+            totalCount,
+            page : options.page,
+            limit : options.limit,
+            data : queryBuilder
+        }
+
+    }
+
+    public async updateStatus(idusr:number, identity:number, fields:any) {
+        try {
+            // const findid = await this.serviceProgram.findOne({ where : {prapUserEntityId : idusr, prapProgEntityId : identity}})
+            // const findByStats = await this.serStas.findOne({ where : fields.status})
+            // const payload = {
+            //     prapStatus : fields.status
+            // }
+
+            // if(findid && findByStats){
+            //     return await this.serviceProgram.save(payload)
+            // }
+
+            const updateStatus = await this.serviceProgram.update({prapUserEntityId : idusr, prapProgEntityId : identity}, { prapStatus : fields.status})
+
+            return updateStatus;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 }
