@@ -7,7 +7,7 @@ export class JwtGuard extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: 'sendra',
+      secretOrKey: 'miniproject',
     });
   }
   async validate(payload: any) {

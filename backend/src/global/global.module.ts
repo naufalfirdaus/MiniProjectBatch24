@@ -43,7 +43,7 @@ import { UsersExperiences } from 'output/entities/UsersExperiences';
     ]),
     MulterModule.register(UploadMulter.MulterOption()),
     PassportModule,
-    JwtModule.register({ secret: 'sendra' }),
+    JwtModule.register({ secret: 'miniproject' }),
   ],
   providers: [UsersService, LocalGuard, JwtGuard],
   controllers: [UsersController],
