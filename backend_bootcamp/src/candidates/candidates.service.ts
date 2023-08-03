@@ -7,11 +7,15 @@ import { Like, Repository } from 'typeorm';
 import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 import { PaginationDto } from './candidate.dto';
 import { RoomI } from './candidate.interface';
+import { Status } from 'output/entities/Status';
+import { RouteActions } from 'output/entities/RouteActions';
 
 @Injectable()
 export class CandidatesService {
     constructor(
-        @InjectRepository(ProgramApply) private serviceProgram: Repository<ProgramApply>
+        @InjectRepository(ProgramApply) private serviceProgram: Repository<ProgramApply>,
+        @InjectRepository(Status) private serStas: Repository<Status>,
+        @InjectRepository(RouteActions) private serRoac: Repository<RouteActions>
     ) {}
 
     public async findByDate(month: number, year: number, options : PaginationDto): Promise<RoomI> {
@@ -111,5 +115,25 @@ export class CandidatesService {
             data : queryBuilder
         }
 
+    }
+
+    public async updateStatus(idusr:number, identity:number, fields:any) {
+        try {
+            // const findid = await this.serviceProgram.findOne({ where : {prapUserEntityId : idusr, prapProgEntityId : identity}})
+            // const findByStats = await this.serStas.findOne({ where : fields.status})
+            // const payload = {
+            //     prapStatus : fields.status
+            // }
+
+            // if(findid && findByStats){
+            //     return await this.serviceProgram.save(payload)
+            // }
+
+            const updateStatus = await this.serviceProgram.update({prapUserEntityId : idusr, prapProgEntityId : identity}, { prapStatus : fields.status})
+
+            return updateStatus;
+        } catch (error) {
+            throw new Error(error.message);
+        }
     }
 }
