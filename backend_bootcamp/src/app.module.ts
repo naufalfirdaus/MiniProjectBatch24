@@ -1,24 +1,23 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { GlobalModule } from './global/global.module';
-import { CandidatesController } from './candidates/candidates.controller';
-import { CandidatesService } from './candidates/candidates.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BatchController } from './batch/batch.controller';
-import { BatchService } from './batch/batch.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
-    type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'postgres',
-    password: 'admin',
-    database: 'revampdb',
-    entities: ['dist/output/entities/*.js'],
-    autoLoadEntities: true,
-  }), GlobalModule],
+  imports: [
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB,
+      entities: ['dist/output/entities/*.js'],
+      autoLoadEntities: true,
+    }),
+    GlobalModule,
+  ],
   controllers: [],
   providers: [],
 })

@@ -1,4 +1,4 @@
-import { ProgramApply } from "output/entities/ProgramApply";
+import { ProgramApply } from 'output/entities/ProgramApply';
 
 export class RoomI {
   data: ProgramApply[];
