@@ -24,7 +24,7 @@ import {
 } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid';
 import { useSelector, useDispatch } from 'react-redux';
-import { doPushSignoutRequest } from '../../redux-saga/Action/UsrAction'
+// import { doPushSignoutRequest } from '../../redux-saga/Action/UsrAction'
 
 const solutions = [
     {
@@ -58,15 +58,17 @@ export default function LandingPage(props) {
     const { children } = props
     const dispatch = useDispatch();
     const router = useRouter()
-    const [user, setUser] = useState({})
-    const { UserProfile } = useSelector(state => state.usrStated)
+    const [user, setUser] = useState({
+        username: "erica"
+    })
+    // const { UserProfile } = useSelector(state => state.usrStated)
 
     const onSignout = () => {
-        dispatch(doPushSignoutRequest());
-        router.reload()
+        // dispatch(doPushSignoutRequest());
+        // router.reload()
     }
     useEffect(() => {
-        setUser(UserProfile)
+        // setUser(UserProfile)
     },[])
     console.log(user);
     return (

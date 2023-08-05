@@ -1,3 +1,3 @@
 module.exports = {
-    domain: 'domain isi disini',
-}
+  domain: "domain isi disinihttp://localhost:3001/api",
+};
