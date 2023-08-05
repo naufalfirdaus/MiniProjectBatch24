@@ -1,10 +1,51 @@
 import Pagination from '@/pages/component/commons/Pagination';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCandidateFetch } from '@/redux/slices/candidateSlices';
 import { Menu, Dialog, Transition } from '@headlessui/react';
 import Image from 'next/image';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
+import { paginate } from '@/helper/paginate';
+
+interface SUser {
+    userId: number;
+    progId: number;
+    username: string;
+}
 
 export default function Apply(){
+    const dispatch = useDispatch();
+    const candidates = useSelector((state: any) => state.candidates.candidates);
+    const candidateLoad = useSelector((state: any) => state.candidates.status);
+    const error = useSelector((state: any) => state.candidates.error);
     const [isOpen, setIsOpen] = useState(false);
+    const [selectedData, setSelectedData] = useState<{userId: number; progId: number; username: string;}>({userId: 0, username: '', progId:0});
+    const [currentPage, setCurrentPage] = useState(1);
+
+    useEffect(() => {
+        if (candidateLoad === "idle") {
+          dispatch(getCandidateFetch('Apply'));
+        }
+        setCurrentPage(candidates.page);
+    }, [candidateLoad, dispatch]);
+
+
+    if (candidateLoad === "loading") {
+      return (<h1>Loading..</h1>);
+    } else if (candidateLoad === "failed") {
+      return <div>{error}</div>;
+    }
+
+    const handleStatusChange = (userId: number, progId: number, username: string) => {
+        setIsOpen(true);
+        setSelectedData({userId, progId, username});
+    }
+
+    const onPageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    const paginatedPosts = Object.keys(candidates).length != 0 && paginate(candidates.data, currentPage, candidates.limit);
+    
     return (
         <>
             <div className="relative overflow-x-visible border border-t-0">
@@ -43,68 +84,68 @@ export default function Apply(){
                 <table className="w-full text-sm text-left text-gray-500">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
-                        <th scope="col" className="px-6 py-3">
-                            Name
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            University
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Graduate
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Phone
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Bootcamp
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Status
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Action
-                        </th>
+                            <th scope="col" className="px-6 py-3">
+                                Name
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                University
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Graduate
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Phone
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Bootcamp
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Status
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Action
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr className="bg-white hover:bg-gray-50">
-                            <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap">
-                                <Image width={50} height={50} className="w-10 h-10 rounded-full" src="/assets/images/candidate.png" alt="Candidate image"/>
-                                <div className="pl-3">
-                                <div className="text-base font-semibold">Sanita</div>
-                                <div className="font-normal text-gray-500">users1@example.com</div>
-                                </div>  
-                            </th>
-                            <td className="px-6 py-4">
-                                Universitas A
-                            </td>
-                            <td className="px-6 py-4">
-                                0823594872
-                            </td>
-                            <td className="px-6 py-4">
-                                NodeJS
-                            </td>
-                            <td className="px-6 py-4">
-                                Lulus 2021
-                            </td>
-                            <td className="px-6 py-4">
-                                <div className="flex items-center">
-                                    <div className="h-2.5 w-2.5 rounded-full bg-green-500 mr-2"></div> Online
-                                </div>
-                            </td>
-                            <td className="px-6 py-4">
-                                <button onClick={()=> setIsOpen(true)}>
-                                    <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 4 15"> <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
-                                    </svg>
-                                </button>
-                            </td>
-                        </tr>
+                        {Object.keys(paginatedPosts).length != 0 && paginatedPosts.map((candidate: any) => 
+                            <tr key={candidate.prapUserEntityId} className="bg-white hover:bg-gray-50">
+                                <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap">
+                                    <Image width={50} height={50} className="w-10 h-10 rounded-full" src="/assets/images/candidate.png" alt="Candidate image"/>
+                                    <div className="pl-3">
+                                        <div className="text-base font-semibold">{candidate.prapUserEntity.userFirstName}</div>
+                                        <div className="font-normal text-gray-500">{candidate.prapUserEntity.usersEmails[0].pmailAddress}</div>
+                                    </div>  
+                                </th>
+                                <td className="px-6 py-4">
+                                    {candidate.prapUserEntity.usersEducations[0].usduSchool}
+                                </td>
+                                <td className="px-6 py-4">
+                                    Lulus {new Date(candidate.prapUserEntity.usersEducations[0].usduEndDate).getFullYear()}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {candidate.prapUserEntity.usersPhones[0].uspoNumber}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {candidate.prapProgEntity.progTitle}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {candidate.roac.roacName}
+                                </td>
+                                <td className="px-6 py-4">
+                                    <button onClick={() => handleStatusChange(candidate.prapUserEntityId, candidate.prapProgEntityId,candidate.prapUserEntity.userFirstName)}>
+                                        <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 4 15"> <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
-            <Pagination />
+            { Object.keys(candidates).length != 0 && <Pagination items={candidates.data.length} pageSize={candidates.limit} currentPage={currentPage} onPageChange={onPageChange}/> }
             <Transition appear show={isOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={()=>setIsOpen(false)}>
+                <Dialog as="div" className="relative z-10" onClose={() => setIsOpen(false)}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -133,7 +174,7 @@ export default function Apply(){
                                 Switch Status
                             </Dialog.Title>
                             <div className="mt-2">
-                                <p className="text-sm text-gray-500">Sanita</p>
+                                <p className="text-sm text-gray-500">{selectedData.username}</p>
                                 <select name="switch" id="switch" defaultValue='' className='mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5'>
                                     <option value="" disabled>Select Status</option>
                                     <option value="Filtering Test">Ready Test</option>
