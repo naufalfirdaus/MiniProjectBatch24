@@ -27,7 +27,7 @@ export class TransactionsController {
         if (!payload.sourceCode || !payload.targetCode || !payload.amount || !payload.userId) {
             throw new NotFoundException("Required data is blank")
         }
-        return this.service.topUp(payload);
+        return this.service.transfer(payload);
     }
 
     // Payment order
@@ -43,7 +43,7 @@ export class TransactionsController {
     async viewTransactionData(
         @Query('accountId', new DefaultValuePipe(null)) accountId: string,
         @Query('pageno', new DefaultValuePipe(1), ParseIntPipe) pageNo: number,
-        @Query('pagesize', new DefaultValuePipe(3), ParseIntPipe) pageSize: number,
+        @Query('pagesize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
     ) {
         return this.service.getAllTransactions(accountId, {
             page: pageNo,

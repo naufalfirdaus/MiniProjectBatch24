@@ -287,8 +287,12 @@ export class TransactionsService {
     private async verifyAccount(accountNumber: string): Promise<{ accountUser: UsersAccount }> {
         const accountUser = await this.serviceUsac.findOne({ where: { usacAccountNumber: accountNumber } });
 
+        if (!accountUser) {
+            throw new NotFoundException(`Users Account with number ${accountNumber} is not found`)
+        }
+
         if (accountUser.usacStatus !== 'active') {
-            throw new ForbiddenException(`Your users account with number ${accountUser.usacAccountNumber} is invalid`)
+            throw new ForbiddenException(`Your users account with number ${accountNumber} is invalid`)
         }
 
         return { accountUser };
