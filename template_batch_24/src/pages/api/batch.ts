@@ -10,4 +10,13 @@ const getAll = async (payload: any) => {
   }
 };
 
-export default { getAll };
+const getByNameAndStatus = async (payload: any) => {
+  try {
+    const result = await axios.get(`${config.domain}/api/bootcamp/batch/search`, {params: {batch: payload.batch, status: payload.status, page: payload.page, limit:payload.limit}}); 
+    return result.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export default { getAll, getByNameAndStatus };

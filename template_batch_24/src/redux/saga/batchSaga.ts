@@ -13,4 +13,15 @@ function* workGetBatchFetch(action: any): any {
     }
 }
 
-export { workGetBatchFetch };
+function* workGetByNameAndStatus(action: any): any {
+    const { payload } = action;
+    
+    try {
+        const batchs = yield call(batchAPI.getByNameAndStatus, payload);
+        yield put(getBatchSuccess(batchs));
+    } catch (error: any) {
+        yield put(getBatchFail(error));
+    }
+}
+
+export { workGetBatchFetch, workGetByNameAndStatus };

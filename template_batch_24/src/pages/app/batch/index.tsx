@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { getBatchFetch } from '@/redux/slices/batchSlices';
+import { getBatchFetch, getByNameAndStatusFetch } from '@/redux/slices/batchSlices';
 
 export default function Batch() {
   const dispatch = useDispatch();
@@ -29,7 +29,7 @@ export default function Batch() {
        status: '',
     },
     onSubmit: (values) => {
-      console.log(values);
+      dispatch(getByNameAndStatusFetch({batch:values.keyword, status:values.status}))
     },
   });
 
@@ -38,25 +38,25 @@ export default function Batch() {
       <Page title='Batch' titleButton='Create' onClick={() => navigate.push('/app/batch/new')}>
         <form onSubmit={formik.handleSubmit}>
           <div className="flex justify-center items-center gap-3 mb-3">
-              <div>
-                <label htmlFor="keyword" className="sr-only">Search</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                    </svg>
-                  </div>
-                  <input type="text" id="keyword" name='keyword' value={formik.values.keyword} onChange={formik.handleChange} className="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search by batch, technology, trainer"/>
+            <div>
+              <label htmlFor="keyword" className="sr-only">Search</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                  </svg>
                 </div>
+                <input type="text" id="keyword" name='keyword' required value={formik.values.keyword} onChange={formik.handleChange} className="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search by batch, technology, trainer"/>
               </div>
-              <div>
-                <select id="status" name="status" value={formik.values.status} onChange={formik.handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500">
-                    <option value='' disabled>Select status</option>
-                    <option value='New'>New</option>
-                    <option value='Running'>Running</option>
-                    <option value='Closed'>Closed</option>
-                </select>
-              </div>
+            </div>
+            <div>
+              <select id="status" name="status" required value={formik.values.status} onChange={formik.handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                  <option value='' disabled>Select status</option>
+                  <option value='New'>New</option>
+                  <option value='Running'>Running</option>
+                  <option value='Closed'>Closed</option>
+              </select>
+            </div>
             <button type='submit' className="bg-blue-500 text-white py-1.5 px-2 rounded-md hover:bg-blue-600">Search</button>
           </div>
         </form>
@@ -88,8 +88,8 @@ export default function Batch() {
               </tr>
             </thead>
             <tbody>
-              {Object.keys(batchs).length == 0 ? <tr><td colSpan={7} className='text-center py-3 font-bold'>Loading...</td></tr> : batchs.data.map((batch: any) => 
-                <tr className="bg-white">
+              {Object.keys(batchs).length == 0 ? <tr><td colSpan={7} className='text-center py-3 font-bold'>Loading...</td></tr> : batchs.data.length == 0 ? <tr><td colSpan={7} className='text-center py-3 font-bold'>No batchs found</td></tr> : batchs.data.map((batch: any) => 
+                <tr key={batch.batchId} className="bg-white">
                   <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     {batch.batchName}
                   </th>
@@ -99,7 +99,7 @@ export default function Batch() {
                   <td className="px-6 py-4">
                     <div className="flex">
                       {batch.batchTrainees.map((trainees: any) => 
-                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt={trainees.batrTraineeEntity.userPhoto} className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"/>
+                        <img key={trainees.batrId} src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt={trainees.batrTraineeEntity.userPhoto} className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"/>
                       )}
                     </div>
                   </td>

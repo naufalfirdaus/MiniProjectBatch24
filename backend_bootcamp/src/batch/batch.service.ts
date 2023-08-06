@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Batch } from 'output/entities/Batch';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { PaginationDto } from './batc.dto';
 import { RoomI } from './batc.interface';
 import { ProgramEntity } from 'output/entities/ProgramEntity';
@@ -65,16 +65,13 @@ export class BatchService {
       .leftJoinAndSelect('batch.batchEntity', 'program_entity')
       .leftJoinAndSelect('batch.batchStatus', 'status')
       .leftJoinAndSelect('batch_trainee.batrTraineeEntity', 'user')
+      .leftJoinAndSelect('instructor_program.inproEmpEntity', 'employee')
+      .leftJoinAndSelect('employee.empEntity', 'user_employee')
       .take(options.limit)
       .skip(skippedItems)
       .where('batch.batchName Like :batch', { batch: `%${batch}%` })
-      .orWhere('status.status Like :status', { status: `%${status}%` })
+      .andWhere('status.status Like :status', { status: `%${status}%` })
       .getMany();
-
-    // const queryBatch = await this.batchProgram.find({
-    //     relations : {batchTrainees : {batrTraineeEntity : true}, batchPic : true, batchEntity : true, instructorPrograms : { inproEmpEntity : {empEntity : true}}},
-    //     where : { : `%${status}%` }
-    // })
 
     return {
       totalCount,
