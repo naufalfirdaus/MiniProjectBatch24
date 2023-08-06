@@ -16,10 +16,11 @@ import { RouteActions } from 'output/entities/RouteActions';
 
 @Injectable()
 export class CandidatesService {
-    constructor(
-        @InjectRepository(ProgramApply) private serviceProgram: Repository<ProgramApply>,
-        @InjectRepository(RouteActions) private serRoac: Repository<RouteActions>
-    ) {}
+  constructor(
+    @InjectRepository(ProgramApply)
+    private serviceProgram: Repository<ProgramApply>,
+    @InjectRepository(RouteActions) private serRoac: Repository<RouteActions>,
+  ) {}
 
   public async findByDate(
     month: number,
@@ -132,57 +133,65 @@ export class CandidatesService {
       .orWhere('status.status LIKE :status', { status: `%${status}%` })
       .getMany();
 
-        return {
-            totalCount,
-            page : options.page,
-            limit : options.limit,
-            data : queryBuilder
-        }
+    return {
+      totalCount,
+      page: options.page,
+      limit: options.limit,
+      data: queryBuilder,
+    };
+  }
 
+  public async updateStatus(idusr: number, identity: number, fields: any) {
+    try {
+      // const findid = await this.serviceProgram.findOne({ where : {prapUserEntityId : idusr, prapProgEntityId : identity}})
+      // const findByStats = await this.serStas.findOne({ where : fields.status})
+      // const payload = {
+      //     prapStatus : fields.status
+      // }
+
+      // if(findid && findByStats){
+      //     return await this.serviceProgram.save(payload)
+      // }
+
+      const findRoac = await this.serRoac.findOne({
+        where: { roacName: Like(`%${fields.status}%`) },
+      });
+      console.log(findRoac.roacId);
+
+      const findCand = {
+        prapUserEntityId: idusr,
+        prapProgEntityId: identity,
+      };
+
+      if (findRoac) {
+        const payload = findRoac.roacId as number;
+
+        const updateStats = await this.serviceProgram
+          .createQueryBuilder()
+          .update(ProgramApply)
+          .set({ roac: payload } as any)
+          .where('prapUserEntityId = :idusr', {
+            idusr: findCand.prapUserEntityId,
+          })
+          .andWhere('prapProgEntityId = :identity', {
+            identity: findCand.prapProgEntityId,
+          })
+          .execute();
+
+        return updateStats;
+      } else {
+        const updateStatus = await this.serviceProgram.update(findCand, {
+          prapStatus: fields.status,
+        });
+
+        return updateStatus;
+      }
+
+      // const updateStatus = await this.serviceProgram.update(findCand, { prapStatus : fields.status})
+
+      // return updateStatus;
+    } catch (error) {
+      throw new Error(error.message);
     }
-
-    public async updateStatus(idusr:number, identity:number, fields:any) {
-        try {
-            // const findid = await this.serviceProgram.findOne({ where : {prapUserEntityId : idusr, prapProgEntityId : identity}})
-            // const findByStats = await this.serStas.findOne({ where : fields.status})
-            // const payload = {
-            //     prapStatus : fields.status
-            // }
-
-            // if(findid && findByStats){
-            //     return await this.serviceProgram.save(payload)
-            // }
-
-            const findRoac = await this.serRoac.findOne({where : {roacName : Like(`%${fields.status}%`)}})
-            console.log(findRoac.roacId);
-
-            const findCand = {
-              prapUserEntityId : idusr, 
-              prapProgEntityId : identity
-            }
-
-            if(findRoac){
-              const payload = findRoac.roacId as number;
-              
-              const updateStats = await this.serviceProgram.createQueryBuilder()
-              .update(ProgramApply)
-              .set({ roac : payload} as any)
-              .where("prapUserEntityId = :idusr", { idusr : findCand.prapUserEntityId})
-              .andWhere("prapProgEntityId = :identity", { identity : findCand.prapProgEntityId})
-              .execute()
-
-              return updateStats;
-            }else{
-              const updateStatus = await this.serviceProgram.update(findCand, { prapStatus : fields.status})
-
-              return updateStatus;
-            }
-
-            // const updateStatus = await this.serviceProgram.update(findCand, { prapStatus : fields.status})
-
-            // return updateStatus;
-        } catch (error) {
-            throw new Error(error.message);
-        }
-    }
+  }
 }

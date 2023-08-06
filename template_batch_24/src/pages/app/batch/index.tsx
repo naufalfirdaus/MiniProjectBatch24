@@ -127,7 +127,7 @@ export default function Batch() {
             </tbody>
           </table>
         </div>
-        <Pagination />
+        {/* <Pagination /> */}
       </Page>
     </AppLayout>
   )

@@ -15,8 +15,20 @@ import { CandidatesController } from 'src/candidates/candidates.controller';
 import { CandidatesService } from 'src/candidates/candidates.service';
 
 @Module({
-    imports : [TypeOrmModule.forFeature([ProgramApply, Batch, Status, RouteActions, ProgramEntity, Category, InstructorPrograms, Users, Employee])],
-    providers : [CandidatesService, BatchService],
-    controllers : [CandidatesController, BatchController]
+  imports: [
+    TypeOrmModule.forFeature([
+      ProgramApply,
+      Batch,
+      Status,
+      RouteActions,
+      ProgramEntity,
+      Category,
+      InstructorPrograms,
+      Users,
+      Employee,
+    ]),
+  ],
+  providers: [CandidatesService, BatchService],
+  controllers: [CandidatesController, BatchController],
 })
 export class GlobalModule {}

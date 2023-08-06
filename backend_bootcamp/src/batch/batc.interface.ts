@@ -1,4 +1,4 @@
-import { Batch } from "output/entities/Batch";
+import { Batch } from 'output/entities/Batch';
 
 export class RoomI {
   data: Batch[];
