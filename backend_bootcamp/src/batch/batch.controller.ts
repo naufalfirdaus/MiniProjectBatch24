@@ -13,14 +13,25 @@ import { BatchService } from './batch.service';
 export class BatchController {
   constructor(private serBatch: BatchService) {}
 
-  @Get('search')
+  @Get('paging')
   public async getAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
+  ) {
+    return await this.serBatch.findAll({
+      page: page,
+      limit: limit,
+    });
+  }
+
+  @Get('search')
+  public async search(
     @Query('batch') batch: string,
     @Query('status') status: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
   ) {
-    return await this.serBatch.findAll(batch, status, {
+    return await this.serBatch.findByBatchAndStatus(batch, status, {
       page: page,
       limit: limit,
     });

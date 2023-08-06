@@ -23,7 +23,35 @@ export class BatchService {
     @InjectRepository(Employee) private empRepo: Repository<Employee>,
   ) {}
 
-  public async findAll(
+  public async findAll(options: PaginationDto): Promise<RoomI> {
+    const skippedItems = (options.page - 1) * options.limit;
+    const totalCount = await this.batchProgram.count();
+    const queryBatch = await this.batchProgram.find({
+      relations: {
+        batchTrainees: {
+          batrTraineeEntity: true,
+        },
+        instructorPrograms: {
+          inproEmpEntity: {
+            empEntity: true,
+          },
+        },
+        batchEntity: true,
+        batchStatus: true,
+      },
+      skip: skippedItems,
+      take: options.limit,
+    });
+
+    return {
+      totalCount,
+      page: options.page,
+      limit: options.limit,
+      data: queryBatch,
+    };
+  }
+
+  public async findByBatchAndStatus(
     batch: string,
     status: string,
     options: PaginationDto,

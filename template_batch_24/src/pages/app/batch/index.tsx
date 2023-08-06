@@ -5,8 +5,23 @@ import AppLayout from '../../component/layout/AppLayout';
 import { Menu } from '@headlessui/react';
 import Link from 'next/link';
 import { useFormik } from 'formik';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { getBatchFetch } from '@/redux/slices/batchSlices';
 
 export default function Batch() {
+  const dispatch = useDispatch();
+  const batchs = useSelector((state: any) => state.batchs.batchs);
+  const batchLoad = useSelector((state: any) => state.batchs.status);
+
+  useEffect(() => {
+    if(batchLoad == 'idle'){
+      dispatch(getBatchFetch(''));
+    }
+  }, [batchs, batchLoad, dispatch]);
+
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+
   const navigate = useRouter()
   const formik = useFormik({
     initialValues: {
@@ -73,57 +88,58 @@ export default function Batch() {
               </tr>
             </thead>
             <tbody>
-              <tr className="bg-white">
-                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  Batch#15
-                </th>
-                <td className="px-6 py-4">
-                  NodeJS
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex">
-                    <img src="https://demos.creative-tim.com/notus-js/assets/img/team-1-800x800.jpg" alt="..." className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow"/>
-                    <img src="https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg" alt="..." className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"/>
-                    <img src="https://demos.creative-tim.com/notus-js/assets/img/team-3-800x800.jpg" alt="..." className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"/>
-                    <img src="https://demos.creative-tim.com/notus-js/assets/img/team-4-470x470.png" alt="..." className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"/>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  24 May 2023 - 24 Agustus 2023
-                </td>
-                <td className="px-6 py-4">
-                  Mas Naufal
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center">
-                      <div className="h-2.5 w-2.5 rounded-full bg-green-500 mr-2"></div> Running
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                <Menu as='div' className='relative'>
-                  <Menu.Button>
-                      <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 4 15"> <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/></svg>
-                  </Menu.Button>
-                  <Menu.Items className='absolute z-10 text-sm w-32 text-gray-600 right-0 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-                    <Menu.Item>
-                        <Link href={`/app/batch/${12}`} className="block px-4 py-2 hover:bg-gray-100">Edit</Link>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Delete</a>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Closed Batch</a>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <a href="#" className="block px-4 py-2 hover:bg-gray-100">Set To Running</a>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Link href={{ pathname: '/app/batch/evaluation', query: {batchId: 20} }} className="block px-4 py-2 hover:bg-gray-100">Evaluation</Link>
-                    </Menu.Item>
-                  </Menu.Items>
-                </Menu>
-                </td>
-              </tr>
+              {Object.keys(batchs).length == 0 ? <tr><td colSpan={7} className='text-center py-3 font-bold'>Loading...</td></tr> : batchs.data.map((batch: any) => 
+                <tr className="bg-white">
+                  <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {batch.batchName}
+                  </th>
+                  <td className="px-6 py-4">
+                    {batch.batchEntity.progTitle}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex">
+                      {batch.batchTrainees.map((trainees: any) => 
+                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt={trainees.batrTraineeEntity.userPhoto} className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"/>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    {`${new Date(batch.batchStartDate).toLocaleDateString('id-ID', options as any)} - ${new Date(batch.batchEndDate).toLocaleDateString('id-ID', options as any)}`}
+                  </td>
+                  <td className="px-6 py-4">
+                    {batch.instructorPrograms[0].inproEmpEntity.empEntity.userName}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center">
+                        <div className={`h-2.5 w-2.5 rounded-full mr-2 ${batch.batchStatus.status == 'New' ? 'bg-sky-500' : batch.batchStatus.status == 'Running' ? 'bg-green-500' : 'bg-red-500'}`}></div> {batch.batchStatus.status}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                  <Menu as='div' className='relative'>
+                    <Menu.Button>
+                        <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 4 15"> <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/></svg>
+                    </Menu.Button>
+                    <Menu.Items className='absolute z-10 text-sm w-32 text-gray-600 right-0 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+                      <Menu.Item>
+                          <Link href={`/app/batch/${12}`} className="block px-4 py-2 hover:bg-gray-100">Edit</Link>
+                      </Menu.Item>
+                      <Menu.Item>
+                          <a href="#" className="block px-4 py-2 hover:bg-gray-100">Delete</a>
+                      </Menu.Item>
+                      <Menu.Item>
+                          <a href="#" className="block px-4 py-2 hover:bg-gray-100">Closed Batch</a>
+                      </Menu.Item>
+                      <Menu.Item>
+                          <a href="#" className="block px-4 py-2 hover:bg-gray-100">Set To Running</a>
+                      </Menu.Item>
+                      <Menu.Item>
+                          <Link href={{ pathname: '/app/batch/evaluation', query: {batchId: 20} }} className="block px-4 py-2 hover:bg-gray-100">Evaluation</Link>
+                      </Menu.Item>
+                    </Menu.Items>
+                  </Menu>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
