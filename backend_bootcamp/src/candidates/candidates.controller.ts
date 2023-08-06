@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { Query } from '@nestjs/common';
-import { Get, DefaultValuePipe, ParseIntPipe, Put, Param, Body } from '@nestjs/common';
+import { Get, DefaultValuePipe, ParseIntPipe, Put, Param, Body, Post } from '@nestjs/common';
 import { CandidatesService } from './candidates.service';
 
 @Controller('api/bootcamp/candidate')
@@ -30,6 +30,7 @@ export class CandidatesController {
             limit: limit
         })
     }
+
 
     @Put(':idusr/:identity')
     public async updateStatus(

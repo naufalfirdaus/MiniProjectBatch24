@@ -18,7 +18,6 @@ import { RouteActions } from 'output/entities/RouteActions';
 export class CandidatesService {
     constructor(
         @InjectRepository(ProgramApply) private serviceProgram: Repository<ProgramApply>,
-        @InjectRepository(Status) private serStas: Repository<Status>,
         @InjectRepository(RouteActions) private serRoac: Repository<RouteActions>
     ) {}
 
@@ -154,9 +153,34 @@ export class CandidatesService {
             //     return await this.serviceProgram.save(payload)
             // }
 
-            const updateStatus = await this.serviceProgram.update({prapUserEntityId : idusr, prapProgEntityId : identity}, { prapStatus : fields.status})
+            const findRoac = await this.serRoac.findOne({where : {roacName : Like(`%${fields.status}%`)}})
+            console.log(findRoac.roacId);
 
-            return updateStatus;
+            const findCand = {
+              prapUserEntityId : idusr, 
+              prapProgEntityId : identity
+            }
+
+            if(findRoac){
+              const payload = findRoac.roacId as number;
+              
+              const updateStats = await this.serviceProgram.createQueryBuilder()
+              .update(ProgramApply)
+              .set({ roac : payload} as any)
+              .where("prapUserEntityId = :idusr", { idusr : findCand.prapUserEntityId})
+              .andWhere("prapProgEntityId = :identity", { identity : findCand.prapProgEntityId})
+              .execute()
+
+              return updateStats;
+            }else{
+              const updateStatus = await this.serviceProgram.update(findCand, { prapStatus : fields.status})
+
+              return updateStatus;
+            }
+
+            // const updateStatus = await this.serviceProgram.update(findCand, { prapStatus : fields.status})
+
+            // return updateStatus;
         } catch (error) {
             throw new Error(error.message);
         }
