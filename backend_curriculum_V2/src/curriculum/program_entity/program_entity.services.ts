@@ -7,6 +7,12 @@ import { Sections } from 'output/entities/Sections';
 import { SectionDetail } from 'output/entities/SectionDetail';
 import { SectionDetailMaterial } from 'output/entities/SectionDetailMaterial';
 import { ProgramEntityInterface } from './program_entity.interface';
+import { Category } from 'output/entities/Category';
+import { Employee } from 'output/entities/Employee';
+import { Users } from 'output/entities/Users';
+
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class ProgramEntityService {
@@ -21,6 +27,12 @@ export class ProgramEntityService {
     private serviceSecDet: Repository<SectionDetail>,
     @InjectRepository(SectionDetailMaterial)
     private serviceSecDetMat: Repository<SectionDetailMaterial>,
+    @InjectRepository(Category)
+    private serviceCategoryProgram: Repository<Category>,
+    @InjectRepository(Employee)
+    private serviceProgramInstructor: Repository<Employee>,
+    @InjectRepository(Users)
+    private serviceUsers: Repository<Users>,
   ) {}
 
   /* 
@@ -32,8 +44,17 @@ export class ProgramEntityService {
     const skippedItems = (options.page - 1) * options.limit;
     const totalCount = await this.serviceProgEntity.count();
     const program_entity = await this.serviceProgEntity.find({
+      relations: [
+        'programEntityDescription',
+        'sections',
+        'sections.sectionDetails',
+        'sections.sectionDetails.sectionDetailMaterials',
+      ],
       take: options.limit,
       skip: skippedItems,
+      order: {
+        progEntityId: 'DESC', // Sort by progTitle field in ascending order. Use 'DESC' for descending.
+      },
     });
     return {
       totalCount,
@@ -50,6 +71,12 @@ export class ProgramEntityService {
     let totalCount = await this.serviceProgEntity.count();
     if (options.name && options.status) {
       const program_entity = await this.serviceProgEntity.find({
+        relations: [
+          'programEntityDescription',
+          'sections',
+          'sections.sectionDetails',
+          'sections.sectionDetails.sectionDetailMaterials',
+        ],
         take: options.limit,
         skip: skippedItems,
         where: [
@@ -58,8 +85,18 @@ export class ProgramEntityService {
             progLearningType: Like(`%${options.status}%`),
           },
         ],
+        order: {
+          progEntityId: 'DESC', // Sort by progTitle field in ascending order. Use 'DESC' for descending.
+        },
       });
-      totalCount = program_entity.length;
+      totalCount = await this.serviceProgEntity.count({
+        where: [
+          {
+            progTitle: Like(`%${options.name}%`),
+            progLearningType: Like(`%${options.status}%`),
+          },
+        ],
+      });
       return {
         totalCount,
         page: options.page,
@@ -88,6 +125,7 @@ export class ProgramEntityService {
   */
   public async create(file: any, fields: any) {
     try {
+      console.log(`Payload: ${JSON.stringify(fields)}`);
       // Insert ke Table program_entity
       const progEnt = await this.serviceProgEntity.save({
         progHeadline: fields.progHeadline,
@@ -96,6 +134,7 @@ export class ProgramEntityService {
         progLearningType: fields.progLearningType,
         progRating: fields.progRating,
         progTotalTrainee: fields.progTotalTrainee,
+        progModifiedDate: new Date(),
         progImage: file.originalname,
         progBestSeller: fields.progBestSeller,
         progPrice: fields.progPrice,
@@ -105,7 +144,7 @@ export class ProgramEntityService {
         progTagSkill: fields.progTagSkill,
         progCityId: fields.progCityId,
         progCateId: fields.progCateId,
-        progCreatedBy: fields.progCreatedBy, // belum di ada function cek employee instructor apa bukan
+        progCreatedById: fields.progCreatedById, // belum di ada function cek employee instructor apa bukan
         progStatus: fields.progStatus,
       });
 
@@ -139,16 +178,30 @@ export class ProgramEntityService {
     return progEntity;
   }
 
-  public async update(file: any, id: number, fields: any) {
+  public async getImage(imageName: any, res: any) {
+    const imagePath = path.join(process.cwd(), 'uploads', imageName);
     try {
-      await this.serviceProgEntity.update(id, {
+      const image = fs.readFileSync(imagePath);
+      res.setHeader('Content-Type', 'image/jpeg');
+      res.end(image);
+    } catch (error) {
+      res.status(404).end();
+    }
+  }
+
+  public async update(file: any, id: any, fields: any) {
+    try {
+      // console.log(`fields: ${JSON.stringify(fields)}`);
+      // console.log(`id: ${JSON.stringify(id)}`);
+      // console.log(`file: ${JSON.stringify(file)}`);
+
+      const updateData = {
         progHeadline: fields.progHeadline,
         progTitle: fields.progTitle,
         progType: fields.progType,
         progLearningType: fields.progLearningType,
         progRating: fields.progRating,
         progTotalTrainee: fields.progTotalTrainee,
-        progImage: file.originalname,
         progBestSeller: fields.progBestSeller,
         progPrice: fields.progPrice,
         progLanguage: fields.progLanguage,
@@ -157,19 +210,43 @@ export class ProgramEntityService {
         progTagSkill: fields.progTagSkill,
         progCityId: fields.progCityId,
         progCateId: fields.progCateId,
-        progCreatedBy: fields.progCreatedBy, // belum di ada function cek employee instructor apa bukan
+        progCreatedById: fields.progCreatedById, // belum di ada function cek employee instructor apa bukan
         progStatus: fields.progStatus,
+      };
+
+      await this.serviceProgEntity.update(
+        id,
+        file ? { ...updateData, progImage: file.originalname } : updateData,
+      );
+
+      // if (fields.predItemLearning || fields.predDescription) {
+      const desc = await this.serviceProgEntDesc.findOne({
+        where: { predProgEntityId: id },
       });
 
-      await this.serviceProgEntDesc.update(id, {
-        predItemLearning: { items: fields.predItemLearning },
-        predDescription: { items: fields.predDescription },
-      });
+      if (desc !== null) {
+        await this.serviceProgEntDesc.update(id, {
+          predItemLearning: {
+            items: fields.predItemLearning,
+          },
+          predDescription: {
+            items: fields.predDescription,
+          },
+        });
+      } else {
+        await this.serviceProgEntDesc.save({
+          predProgEntityId: id,
+          predItemLearning: { items: fields.predItemLearning },
+          predDescription: { items: fields.predDescription },
+        });
+      }
+      // }
 
       const result = await this.serviceProgEntity.findOne({
         where: { progEntityId: id },
         relations: ['programEntityDescription'],
       });
+
       return result;
     } catch (error) {
       return error.message;
@@ -185,6 +262,10 @@ export class ProgramEntityService {
 
       for (const item of section) {
         for (const itemDetail of item.sectionDetails) {
+          const sectionMaterial = itemDetail.sectionDetailMaterials;
+          for (const itemDetailMaterial of sectionMaterial) {
+            await this.serviceSecDetMat.remove(itemDetailMaterial);
+          }
           await this.serviceSecDet.remove(itemDetail);
         }
         await this.serviceSec.remove(item);
@@ -194,6 +275,34 @@ export class ProgramEntityService {
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
+    }
+  }
+
+  public async getAllCategory() {
+    try {
+      const category = await this.serviceCategoryProgram.find({});
+      const employee = await this.serviceProgramInstructor.find({});
+      const instructor = [];
+      for (const emp of employee) {
+        const user = await this.serviceUsers.find({
+          where: { userEntityId: emp.empEntityId },
+          relations: ['employee'],
+        });
+        instructor.push(...user);
+      }
+
+      return { category, instructor };
+    } catch (error) {
+      throw error.message;
+    }
+  }
+
+  public async getAllInstructor() {
+    try {
+      const result = await this.serviceProgramInstructor.find({});
+      return result;
+    } catch (error) {
+      throw error.message;
     }
   }
 }

@@ -21,12 +21,12 @@ export class SectionController {
     return this.Service.create(sectProgEntityId, fields);
   }
 
-  @Get('get/:sectProgEntityId/:sectId')
+  @Get('get/:sectProgEntityId')
   public async getOne(
-    @Param('sectId') sectId: number,
+    // @Param('sectId') sectId: number,
     @Param('sectProgEntityId') sectProgEntityId: number,
   ) {
-    return this.Service.findOne(sectId, sectProgEntityId);
+    return this.Service.findOne(sectProgEntityId);
   }
 
   @Put('update/:sectProgEntityId/:sectId')

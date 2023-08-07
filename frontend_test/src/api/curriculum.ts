@@ -1,4 +1,3 @@
-import { Result } from './../../node_modules/arg/index.d';
 import axios from "axios";
 import config from "@/config/config";
 
@@ -23,6 +22,15 @@ const searchCurriculum = async (payload: any) => {
     }
 }
 
+const findOneCurriculum = async (payload: any) => {
+    try {
+        const result = await axios.get(`${config.domain}/curriculum/view/proentityid/${payload}`);
+        return result;
+    } catch (error) {
+        return error;
+    }
+}
+
 const deleteCurriculum = async (payload: any) => {
     try {
         await axios.delete(`${config.domain}/curriculum/delete/${payload}`);
@@ -32,8 +40,54 @@ const deleteCurriculum = async (payload: any) => {
     }
 }
 
+const createCurriculum = async (payload: any) => {
+    try {
+        const result = await axios.post(`${config.domain}/curriculum/create`, payload);
+        return result;
+    } catch (error) {
+        return error;
+    }
+}
+
+const updateCurriculum = async (data: any,) => {
+    const id = data.id;
+    const payload = data.data
+    try {
+        console.log(`Payload: ${JSON.stringify(payload)}`);
+        console.log(`id: ${id}`);
+        
+        const result = await axios.put(`${config.domain}/curriculum/update/${id}`, payload);
+        return result;
+    } catch (error) {
+        return error;
+    }
+}
+
+const getCategory = async () => {
+    try {
+        const result = await axios.get(`${config.domain}/curriculum/cat`)
+        return result;
+    } catch (error) {
+        return error;
+    }
+}
+
+const getImageDefault = async (payload: any) => {
+    try {
+        const result = await axios.get(`${config.domain}/curriculum/getImage/${payload}`)
+        return result;
+    } catch (error) {
+        return error;
+    }
+}
+
 export default {
     getCurriculum,
     searchCurriculum,
+    findOneCurriculum,
     deleteCurriculum,
+    createCurriculum,
+    getCategory,
+    updateCurriculum,
+    getImageDefault,
 }

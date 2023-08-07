@@ -10,6 +10,10 @@ const CurriculumReducer = (state = INIT_STATE, action: any) => {
             return { ...state };
         case ActionType.GET_DATA_SUCCESS:
             return GetCurriculum(state, action);
+        case ActionType.GET_ONE_DATA_REQ:
+            return { ...state };
+        case ActionType.GET_ONE_DATA_SUCCESS:
+            return GetOneCurriculum(state, action);
         case ActionType.SEARCH_DATA_REQ:
             return { ...state };
         case ActionType.SEARCH_DATA_SUCCESS:
@@ -18,10 +22,25 @@ const CurriculumReducer = (state = INIT_STATE, action: any) => {
             return { ...state };
         case ActionType.ADD_DATA_SUCCESS:
             return AddCurriculum(state, action);
+        case ActionType.EDIT_DATA_REQ:
+            return { ...state };
+        case ActionType.EDIT_DATA_SUCCESS:
+            return EditCurriculum(state, action);
         case ActionType.DELETE_DATA_REQ:
             return { ...state };
         case ActionType.DELETE_DATA_SUCCESS:
             return DeleteCurriculum(action);
+        default:
+            return { ...state };
+    }
+}
+
+const getOneCurriculumReducer = (state = INIT_STATE, action: any) => {
+    switch (action.type) {
+        case ActionType.GET_ONE_DATA_REQ:
+            return { ...state };
+        case ActionType.GET_ONE_DATA_SUCCESS:
+            return GetOneCurriculum(state, action);
         default:
             return { ...state };
     }
@@ -34,6 +53,13 @@ function GetCurriculum(state: any, action: any) {
     };
 };
 
+function GetOneCurriculum(state: any, action: any) {
+    return {
+        ...state,
+        program: action.payload,
+    };
+};
+
 function SearchCurriculum(state: any, action: any) {
     return {
         ...state,
@@ -43,10 +69,16 @@ function SearchCurriculum(state: any, action: any) {
 
 
 function AddCurriculum(state: any, action: any) {
-    const {payload} = action
     return {
         ...state,
-        curriculum: [...state.curriculum, payload],
+        curriculum: action.payload,
+    };
+}
+
+function EditCurriculum(state: any, action: any) {
+    return {
+        ...state,
+        curriculum: action.payload,
     };
 }
 
@@ -57,5 +89,5 @@ function DeleteCurriculum(action: any) {
     };
 }
 
-export default CurriculumReducer
+export {CurriculumReducer, getOneCurriculumReducer}
 

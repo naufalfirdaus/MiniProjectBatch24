@@ -13,6 +13,9 @@ import { SectionService } from 'src/curriculum/section/section.services';
 import { SectionController } from 'src/curriculum/section/section.controller';
 import { SectionDetailService } from 'src/curriculum/section_detail/sectionDetail.services';
 import { SectionDetailController } from 'src/curriculum/section_detail/sectiondetail.controller';
+import { Category } from 'output/entities/Category';
+import { Employee } from 'output/entities/Employee';
+import { Users } from 'output/entities/Users';
 
 @Module({
   imports: [
@@ -22,6 +25,9 @@ import { SectionDetailController } from 'src/curriculum/section_detail/sectionde
       Sections,
       SectionDetail,
       SectionDetailMaterial,
+      Category,
+      Employee,
+      Users,
     ]),
     MulterModule.register(UploadMulter.MulterOption()),
   ],

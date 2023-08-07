@@ -32,6 +32,22 @@ export const SearchCurriculumFailed = (payload : any) => ({
     payload
 })
 
+// Get One
+export const GetOneCurriculumReq = (payload : any) => ({
+    type: ActionCurriculum.GET_ONE_DATA_REQ,
+    payload
+})
+
+export const GetOneCurriculumSuccess = (payload : any) => ({
+    type: ActionCurriculum.GET_ONE_DATA_SUCCESS,
+    payload
+})
+
+export const GetOneCurriculumFailed = (payload : any) => ({
+    type: ActionCurriculum.GET_ONE_DATA_FAILED,
+    payload
+})
+
 // Add
 export const AddCurriculumReq = (payload : any) => ({
     type: ActionCurriculum.ADD_DATA_REQ,
@@ -48,6 +64,22 @@ export const AddCurriculumFailed = (payload : any) => ({
     payload
 })
 
+// Edit
+export const EditCurriculumReq = (payload : any) => ({
+    type: ActionCurriculum.EDIT_DATA_REQ,
+    payload
+})
+
+export const EditCurriculumSuccess = (payload : any) => ({
+    type: ActionCurriculum.EDIT_DATA_SUCCESS,
+    payload
+})
+
+export const EditCurriculumFailed = (payload : any) => ({
+    type: ActionCurriculum.EDIT_DATA_FAILED,
+    payload
+})
+
 // Delete
 export const DeleteCurriculumReq = (payload : any) => ({
     type: ActionCurriculum.DELETE_DATA_REQ,
@@ -61,5 +93,21 @@ export const DeleteCurriculumSuccess = (payload : any) => ({
 
 export const DeleteCurriculumFailed = (payload : any) => ({
     type: ActionCurriculum.DELETE_DATA_FAILED,
+    payload
+})
+
+// Get Category
+export const GetCatReq = (payload : any) => ({
+    type: ActionCurriculum.GET_CAT_REQ,
+    payload
+})
+
+export const GetCatSuccess = (payload : any) => ({
+    type: ActionCurriculum.GET_CAT_SUCCESS,
+    payload
+})
+
+export const GetCatFailed = (payload : any) => ({
+    type: ActionCurriculum.GET_CAT_FAILED,
     payload
 })

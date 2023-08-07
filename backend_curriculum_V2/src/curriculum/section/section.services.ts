@@ -49,9 +49,9 @@ export class SectionService {
     }
   }
 
-  public async findOne(sectId: number, sectProgEntityId: number) {
-    const section = await this.serviceSec.findOne({
-      where: { sectId: sectId, sectProgEntityId: sectProgEntityId },
+  public async findOne(sectProgEntityId: number) {
+    const section = await this.serviceSec.find({
+      where: { sectProgEntityId: sectProgEntityId },
       relations: ['sectionDetails', 'sectionDetails.sectionDetailMaterials'],
     });
 

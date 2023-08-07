@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Query,
+  Res,
 } from '@nestjs/common';
 import { ProgramEntityService } from './program_entity.services';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -41,12 +42,17 @@ export class ProgramEntityController {
     return this.Service.findOne(id);
   }
 
+  @Get('getImage/:imageName')
+  public async getImage(@Param('imageName') imageName: any, @Res() res: any) {
+    return this.Service.getImage(imageName, res);
+  }
+
   @Put('update/:id')
   @UseInterceptors(FileInterceptor('file'))
   public async Update(
-    @UploadedFile() file: any,
-    @Param('id') id: number,
-    @Body() fields: any,
+    @Param('id') id: any,
+    @Body() fields?: any,
+    @UploadedFile('file') file?: any,
   ) {
     return this.Service.update(file, id, fields);
   }
@@ -54,5 +60,15 @@ export class ProgramEntityController {
   @Delete('delete/:id')
   public async Delete(@Param('id') id: number) {
     return this.Service.Delete(id);
+  }
+
+  @Get('cat')
+  public async getCategory() {
+    return this.Service.getAllCategory();
+  }
+
+  @Get('instructor')
+  public async getInstructor() {
+    return this.Service.getAllInstructor();
   }
 }

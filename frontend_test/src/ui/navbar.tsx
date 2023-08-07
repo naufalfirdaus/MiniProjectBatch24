@@ -3,9 +3,9 @@ import Link from "next/link"
 
 export default function navbar() {
   return (
-    <div className="navbar bg-secondary flex justify-between py-4">
+    <div className="navbar bg-base-100 flex justify-between py-4">
         <div className="my-auto px-5">
-            <Link className="btn normal-case text-xl bg-secondary" href={"/"}>Code Academy</Link>
+            <Link className="btn normal-case text-xl bg-base-100" href={"/"} style={{ border: 'none' }}>Code Academy</Link>
         </div>
         {/* <div className="px-5">
             <div className="dropdown dropdown-end my-auto">

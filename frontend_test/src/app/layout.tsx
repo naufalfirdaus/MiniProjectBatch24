@@ -18,12 +18,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={'bg-slate-950 overflow-y-scroll'}>
+    <html lang="en" data-theme="light">
+      <body>
         <Navbar/>
-          <div className='grid grid-cols-6 gap-4'>
+          <div className='grid xl:grid-cols-6 min-h-screen'>
             <div className='col-span-1'><Sidebar/></div>
-            <div className='col-span-5'><Providers>{children}</Providers></div>
+            <div className='xl:col-span-5'><Providers>{children}</Providers></div>
           </div>
       </body>
     </html>
