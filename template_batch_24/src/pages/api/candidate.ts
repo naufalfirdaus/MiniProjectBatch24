@@ -20,4 +20,13 @@ const UpdateStatus = async (status: any) => {
   }
 };
 
-export default { GetByStatus, UpdateStatus };
+const getPassedCandidate = async (program: number) => {
+  try {
+    const result = await axios.get(`${config.domain}/api/bootcamp/candidate/forbootcamp`, {params: {program: program}})
+    return result.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export default { GetByStatus, UpdateStatus, getPassedCandidate };

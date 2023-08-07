@@ -1,10 +1,13 @@
 import Page from "@/pages/component/commons/Page";
 import AppLayout from "@/pages/component/layout/AppLayout";
+import { createBatchTry, getTechnologyFetch } from "@/redux/slices/batchSlices";
+import { getPassedCandidateBootcampFetch } from "@/redux/slices/candidateSlices";
 import { Menu } from "@headlessui/react";
 import { useFormik } from "formik";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const dummy_candidates = [
     {
@@ -40,33 +43,64 @@ const dummy_candidates = [
 ];
 
 export default function CreateBatch() {
-    const router = useRouter();
-    const [candidates, setCandidates] = useState(dummy_candidates);
+  const dispatch = useDispatch();
+  const router = useRouter();
+  
+  const candidates = useSelector((state: any) => state.candidates.bootcampCandidates);
+  const technologies = useSelector((state: any) => state.batchs.technologies);
+  const [selectedTech, setSelectedTech] = useState<any>('');
+  const [members, setMembers] = useState<object[]>([]);
+
+  useEffect(() => {
+    if(technologies.length == 0){
+        dispatch(getTechnologyFetch());
+    }
+  }, []);
+
   const formik = useFormik({
     initialValues: {
-       batch_name: '',
-       prap_prog_entity_id: '',
-       batch_start_date: '',
-       batch_end_date: '',
-       batch_instructor_id: '',
-       batch_co_instructor:'',
+       batchName: '',
+       batchStartDate: '',
+       batchEndDate: '',
+       batchInstructorId: '',
+       batchCoInstructor: '',
     },
     onSubmit: (values) => {
-      const recommended = candidates.filter(el => el.added == true);
-      console.log({...values, members: recommended});
+        const {  batchStartDate, batchEndDate, ...rest } = values;
+        
+      const batchData = {
+        ...rest,
+        prapProgEntityId: selectedTech,
+        batchStartDate : new Date(values.batchStartDate),
+        batchEndDate : new Date(values.batchEndDate),
+        // members: recommended,
+      }
+      
+      dispatch(createBatchTry(batchData));
     },
   });
 
-
-  const addMemberHandle = (e: any, i: number, status: string) => {
-    e.preventDefault();
-    const listCandidate = [...candidates];
-    if(status == 'remove'){
-        listCandidate[i]['added'] = false;
-    } else {
-        listCandidate[i]['added'] = true;
+  const onSelectTechChange = (e: any) => {
+    setSelectedTech(e.target.value);
+    dispatch(getPassedCandidateBootcampFetch(e.target.value))
+    if(candidates.length > 1) {
+        setMembers([]);
     }
-    setCandidates(listCandidate);
+  }
+  
+  const addMemberHandle = (e: any, id: number, status: string) => {
+    e.preventDefault();
+    const selectedCandidate = candidates.find((candidate: any) => candidate.prapUserEntityId == id);
+    
+    if(status == 'add'){
+        const findMember = members.find((member: any) => member.prapUserEntityId == selectedCandidate.prapUserEntityId);
+        if(!findMember){
+            setMembers([...members, selectedCandidate]);
+        }
+    } else {
+        const removedMember = members.filter((member: any) => member.prapUserEntityId !== selectedCandidate.prapUserEntityId);
+        setMembers(removedMember);
+    }
   }
 
   return (
@@ -76,39 +110,39 @@ export default function CreateBatch() {
             <form onSubmit={formik.handleSubmit}>
                 <div className="grid md:grid-cols-3 gap-4">
                     <div className="mb-6">
-                        <label htmlFor="batch_name" className="block mb-2 text-sm font-medium text-gray-900">Batch Name</label>
-                        <input type="text" id="batch_name" name="batch_name" value={formik.values.batch_name} onChange={formik.handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
+                        <label htmlFor="batchName" className="block mb-2 text-sm font-medium text-gray-900">Batch Name</label>
+                        <input type="text" id="batchName" name="batchName" value={formik.values.batchName} onChange={formik.handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
                     </div>
                     <div className="mb-6">
-                        <label htmlFor="prap_prog_entity_id" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Technology</label>
-                        <select id="prap_prog_entity_id" name="prap_prog_entity_id" defaultValue='' onChange={formik.handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full">
+                        <label htmlFor="prapProgEntityId" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Technology</label>
+                        <select id="prapProgEntityId" name="prapProgEntityId" defaultValue='' onChange={(e) => onSelectTechChange(e)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full">
                             <option value='' disabled>Select technology</option>
-                            <option value={1}>NodeJS</option>
-                            <option value={2}>Java Technology</option>
-                            <option value={3}>Flutter</option>
+                            {technologies.length != 0 && technologies.map((technology: any) => 
+                                <option key={technology.progEntityId} value={technology.progEntityId}>{technology.progTitle}</option>
+                            )}
                         </select>
                     </div>
                     <div className="row-span-3 text-center justify-self-center items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor" className="w-24 h-24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
                         </svg>
-                        <h1 className="text-4xl">3</h1>
+                        <h1 className="text-4xl">{members.length}</h1>
                     </div>
                     <div className="mb-6">
-                        <label htmlFor="batch_start_date" className="block mb-2 text-sm font-medium text-gray-900">Periode (awal)</label>
-                        <input type="date" id="batch_start_date"  name="batch_start_date" value={formik.values.batch_start_date} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required onChange={formik.handleChange}/>
+                        <label htmlFor="batchStartDate" className="block mb-2 text-sm font-medium text-gray-900">Periode (awal)</label>
+                        <input type="date" id="batchStartDate"  name="batchStartDate" value={formik.values.batchStartDate} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required onChange={formik.handleChange}/>
                     </div>
                     <div className="mb-6">
-                        <label htmlFor="batch_end_date" className="block mb-2 text-sm font-medium text-gray-900">Periode (akhir)</label>
-                        <input type="date" id="batch_end_date" name="batch_end_date" value={formik.values.batch_end_date} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required onChange={formik.handleChange}/>
+                        <label htmlFor="batchEndDate" className="block mb-2 text-sm font-medium text-gray-900">Periode (akhir)</label>
+                        <input type="date" id="batchEndDate" name="batchEndDate" value={formik.values.batchEndDate} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required onChange={formik.handleChange}/>
                     </div>
                     <div className="mb-6">
-                        <label htmlFor="batch_instructor_id" className="block mb-2 text-sm font-medium text-gray-900">Trainer</label>
-                        <input type="text" id="batch_instructor_id" name="batch_instructor_id" value={formik.values.batch_instructor_id} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required onChange={formik.handleChange}/>
+                        <label htmlFor="batchInstructorId" className="block mb-2 text-sm font-medium text-gray-900">Trainer</label>
+                        <input type="text" id="batchInstructorId" name="batchInstructorId" value={formik.values.batchInstructorId} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required onChange={formik.handleChange}/>
                     </div>
                     <div className="mb-6">
-                        <label htmlFor="batch_co_instructor" className="block mb-2 text-sm font-medium text-gray-900">Co Trainer</label>
-                        <input type="text" id="batch_co_instructor" name="batch_co_instructor" value={formik.values.batch_co_instructor} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required onChange={formik.handleChange} />
+                        <label htmlFor="batchCoInstructor" className="block mb-2 text-sm font-medium text-gray-900">Co Trainer</label>
+                        <input type="text" id="batchCoInstructor" name="batchCoInstructor" value={formik.values.batchCoInstructor} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required onChange={formik.handleChange} />
                     </div>
                 </div>
 
@@ -148,27 +182,25 @@ export default function CreateBatch() {
                     <button className="bg-blue-500 text-white py-1 px-2 rounded-md hover:bg-blue-600">Search Candidate</button>
                 </div>
                 <div className="grid md:grid-cols-3 mt-7 gap-3">
-                    {candidates.map((candidate, i) =>
-                    <div key={i} className={`inline-flex border gap-2 items-center justify-between border-slate-500 py-2 px-3 rounded-xl ${candidate.added && 'bg-green-300'}`}>
+                    {candidates.length == 0 ? <h1 className="text-center">Tidak ada kandidat</h1> : candidates.map((candidate: any) =>
+                    <div key={candidate.prapUserEntityId} className={`inline-flex border gap-2 items-center justify-between border-slate-500 py-2 px-3 rounded-xl ${members.find((member:any) => member.prapUserEntityId == candidate.prapUserEntityId) && 'bg-green-300 border-none'}`}>
                         <div className="inline-flex gap-3">
                             <Image width={50} height={50} className="w-14 h-14 bg-gray-100 object-cover rounded-full flex-shrink-0" src="/assets/images/user.png" alt=""/>
                             <div>
-                                <h1 className="font-bold">{candidate.name}</h1>
-                                <h1 className="text-gray-400">{candidate.university}</h1>
+                                <h1 className="font-bold">{candidate.prapUserEntity.userFirstName} {candidate.prapUserEntity.userLastName}</h1>
+                                <h1 className="text-gray-400">{candidate.prapUserEntity.usersEducations[0].usduSchool}</h1>
                             </div>
                         </div>
-                        {candidate.added ? 
-                        
-                        <button onClick={(e) => addMemberHandle(e, i, 'remove')}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-
-                        </button> :
-                        <button onClick={(e) => addMemberHandle(e, i, 'add')}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                        </button>
-                    }
+                        {members.find((member:any) => member.prapUserEntityId == candidate.prapUserEntityId) ? 
+                            <button onClick={(e) => addMemberHandle(e, candidate.prapUserEntityId, 'remove')}>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button> :
+                            <button onClick={(e) => addMemberHandle(e, candidate.prapUserEntityId, 'add')}>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                            </button>
+                        }
                     </div>
                     )}
                 </div>

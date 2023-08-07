@@ -19,4 +19,22 @@ const getByNameAndStatus = async (payload: any) => {
   }
 }
 
-export default { getAll, getByNameAndStatus };
+const createBatch = async (payload: any) => {
+  try {
+    const result = await axios.post(`${config.domain}/api/bootcamp/batch/create`, payload)
+    return result;
+  } catch (error) {
+    return error;
+  }
+}
+
+const getTechnology = async () => {
+  try {
+    const result = await axios.get(`${config.domain}/api/bootcamp/batch/technology`)
+    return result.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export default { getAll, getByNameAndStatus, createBatch, getTechnology };

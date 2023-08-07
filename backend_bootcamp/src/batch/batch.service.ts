@@ -96,54 +96,65 @@ export class BatchService {
   }
 
   public async create(fields: any) {
+    console.log(fields);
     // const findTechByCat = await this.catEntity.findOne({where : { cateName : Like(`%${fields.tech}%`) }})
     // console.log(findTechByCat.cateId)
 
     // const findtProgEntity =  await this.progEntity.findOne({where : { progCate : findTechByCat.cateId as any}})
     // console.log({findtProgEntity})
 
-    const findTechByCat = await this.catEntity
-      .createQueryBuilder('category')
-      .where('category.cateName Like :name', { name: `%${fields.tech}%` })
-      .getOne();
+    // const findTechByCat = await this.catEntity
+    //   .createQueryBuilder('category')
+    //   .where('category.cateName Like :name', { name: `%${fields.tech}%` })
+    //   .getOne();
 
-    console.log(findTechByCat.cateId);
+    // console.log(findTechByCat.cateId);
 
-    const findProgEntity = await this.progEntity
-      .createQueryBuilder('program_entity')
-      .where('program_entity.progCate = :id', { id: findTechByCat.cateId })
-      .getOne();
+    // const findProgEntity = await this.progEntity
+    //   .createQueryBuilder('program_entity')
+    //   .where('program_entity.progCate = :id', { id: findTechByCat.cateId })
+    //   .getOne();
 
-    console.log(findProgEntity.progEntityId);
+    // console.log(findProgEntity.progEntityId);
 
-    const batch = await this.batchProgram.save({
-      batchName: fields.name,
-      batchEntityId: findProgEntity.progEntityId,
-      batchStartDate: new Date(fields.datestart),
-      batchEndDate: new Date(fields.dateend),
-      batchModifiedDate: new Date(),
+    // const batch = await this.batchProgram.save({
+    //   batchName: fields.name,
+    //   batchEntityId: findProgEntity.progEntityId,
+    //   batchStartDate: new Date(fields.datestart),
+    //   batchEndDate: new Date(fields.dateend),
+    //   batchModifiedDate: new Date(),
+    // });
+
+    // // const findTrainId = await this.userRepo.findOne({where : { userFirstName : Like(`%${fields.nameins}%`)}})
+    // const findTrainId = await this.userRepo
+    //   .createQueryBuilder('users')
+    //   .where(
+    //     "CONCAT(users.userFirstName, ' ', users.userLastName) Like :fullname",
+    //     { fullname: `%${fields.nameins}%` },
+    //   )
+    //   .getOne();
+    // console.log(findTrainId.userEntityId);
+
+    // const findEmpId = await this.empRepo
+    //   .createQueryBuilder('employee')
+    //   .where('employee.empEntityId = :id', { id: findTrainId.userEntityId })
+    //   .getOne();
+    // console.log(findEmpId.empEntityId);
+
+    // const instructor = await this.instProg.save({
+    //   batchId: batch.batchId,
+    //   inproEntityId: findProgEntity.progEntityId,
+    //   inproEmpEntityId: findEmpId.empEntityId,
+    // });
+  }
+
+  public async getProgramEntity() {
+    const getAllProgramEntity = await this.progEntity.find({
+      select: {
+        progEntityId: true,
+        progTitle: true,
+      },
     });
-
-    // const findTrainId = await this.userRepo.findOne({where : { userFirstName : Like(`%${fields.nameins}%`)}})
-    const findTrainId = await this.userRepo
-      .createQueryBuilder('users')
-      .where(
-        "CONCAT(users.userFirstName, ' ', users.userLastName) Like :fullname",
-        { fullname: `%${fields.nameins}%` },
-      )
-      .getOne();
-    console.log(findTrainId.userEntityId);
-
-    const findEmpId = await this.empRepo
-      .createQueryBuilder('employee')
-      .where('employee.empEntityId = :id', { id: findTrainId.userEntityId })
-      .getOne();
-    console.log(findEmpId.empEntityId);
-
-    const instructor = await this.instProg.save({
-      batchId: batch.batchId,
-      inproEntityId: findProgEntity.progEntityId,
-      inproEmpEntityId: findEmpId.empEntityId,
-    });
+    return getAllProgramEntity;
   }
 }

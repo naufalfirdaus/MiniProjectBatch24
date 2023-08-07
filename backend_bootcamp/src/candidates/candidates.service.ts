@@ -194,4 +194,24 @@ export class CandidatesService {
       throw new Error(error.message);
     }
   }
+
+  public async findPassedCandidateWithoutBootcamp(program: number) {
+    if (program) {
+      const candidates = await this.serviceProgram.find({
+        relations: {
+          prapUserEntity: {
+            usersEducations: true,
+          },
+          prapStatus: true,
+          prapProgEntity: true,
+        },
+        where: {
+          prapProgEntity: { progEntityId: program },
+          prapStatus: [{ status: 'Passed' }, { status: 'Recommended' }],
+        },
+      });
+      return candidates;
+    }
+    return [];
+  }
 }

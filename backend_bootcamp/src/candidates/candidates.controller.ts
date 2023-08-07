@@ -48,4 +48,11 @@ export class CandidatesController {
   ) {
     return await this.Service.updateStatus(idusr, identity, fields);
   }
+
+  @Get('forbootcamp')
+  public async getPassedCandidateWithoutBootcamp(
+    @Query('program') program: number,
+  ) {
+    return await this.Service.findPassedCandidateWithoutBootcamp(program);
+  }
 }

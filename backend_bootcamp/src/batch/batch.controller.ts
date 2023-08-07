@@ -42,7 +42,12 @@ export class BatchController {
     return this.serBatch.findOne(id);
   }
 
-  @Post()
+  @Get('technology')
+  public async getTechnology() {
+    return this.serBatch.getProgramEntity();
+  }
+
+  @Post('create')
   public async createBatch(@Body() fields: any) {
     return this.serBatch.create(fields);
   }
