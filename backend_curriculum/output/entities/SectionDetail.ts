@@ -24,7 +24,7 @@ export class SectionDetail {
   secdTitle: string | null;
 
   @Column('character', { name: 'secd_preview', nullable: true, length: 1 })
-  secdPreview: string | null;
+  secdPreview: number | null;
 
   @Column('integer', { name: 'secd_score', nullable: true })
   secdScore: number | null;
@@ -45,8 +45,8 @@ export class SectionDetail {
   })
   secdModifiedDate: Date | null;
 
-  @Column('integer', { name: 'secd_sect_id', nullable: true })
-  secdSectIdI: number | null;
+  @Column('integer', { name: 'secd_sect_id', nullable: false })
+  secdSectid: number;
 
   @ManyToOne(() => Sections, (sections) => sections.sectionDetails)
   @JoinColumn([{ name: 'secd_sect_id', referencedColumnName: 'sectId' }])

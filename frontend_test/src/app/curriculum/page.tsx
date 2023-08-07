@@ -117,6 +117,11 @@ export default function Page() {
                         {dropdownStatusOpen && (
                           <ul tabIndex={0} className='dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52'>
                             <li>
+                              <button type='button' onClick={() => { setStatus(''); setStatusLabel('Semua'); }}>
+                                Semua
+                              </button>
+                            </li>
+                            <li>
                               <button type='button' onClick={() => { setStatus('online'); setStatusLabel('Online'); }}>
                                 Online
                               </button>

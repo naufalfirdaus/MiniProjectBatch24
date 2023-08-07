@@ -1,5 +1,6 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
-import { BusinessEntity } from "./BusinessEntity";
+import { Bank } from "./Bank";
+import { Fintech } from "./Fintech";
 import { Users } from "./Users";
 
 @Index("users_account_usac_account_number_key", ["usacAccountNumber"], {
@@ -59,14 +60,19 @@ export class UsersAccount {
   })
   usacStatus: string | null;
 
-  @ManyToOne(
-    () => BusinessEntity,
-    (businessEntity) => businessEntity.usersAccounts
-  )
+  @ManyToOne(() => Bank, (bank) => bank.usersAccounts, { onDelete: "CASCADE" })
   @JoinColumn([
-    { name: "usac_bank_entity_id", referencedColumnName: "entityId" },
+    { name: "usac_bank_entity_id", referencedColumnName: "bankEntityId" },
   ])
-  usacBankEntity: BusinessEntity;
+  usacBankEntity: Bank;
+
+  @ManyToOne(() => Fintech, (fintech) => fintech.usersAccounts, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn([
+    { name: "usac_bank_entity_id", referencedColumnName: "fintEntityId" },
+  ])
+  usacBankEntity_2: Fintech;
 
   @ManyToOne(() => Users, (users) => users.usersAccounts)
   @JoinColumn([

@@ -44,8 +44,8 @@ export class SectionDetailMaterial {
   })
   sedmModifiedDate: Date | null;
 
-  @Column('integer', { name: 'sedm_secd_id', nullable: true })
-  sedmSectIdI: number | null;
+  @Column('integer', { name: 'sedm_secd_id', nullable: false })
+  sedmSecdid: number;
 
   @ManyToOne(
     () => SectionDetail,

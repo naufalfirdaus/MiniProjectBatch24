@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MulterModuleOptions } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+
 @Injectable()
 export class UploadMulter {
   static MulterOption(): MulterModuleOptions {
