@@ -177,11 +177,49 @@ export class TransactionsService {
         return createdOrderPayment;
     }
 
-    async getAllTransactions(search: string, options: PaginationDto) {
+    async getAllTransactions(search: string, paymentType: string, options: PaginationDto) {
         const skippedItems = (options.page - 1) * options.limit;
-        const totalCount = await this.serviceTrpa.count();
 
-        if (search) {
+        if (search && paymentType) {
+            const totalCount = await this.serviceTrpa.count({
+                where: [{
+                    trpaSourceId: Like(`%${search}%`),
+                    trpaType: paymentType
+                }, {
+                    trpaTargetId: Like(`%${search}%`),
+                    trpaType: paymentType
+                }],
+            });
+            const transactions = await this.serviceTrpa.find({
+                relations: { users: true },
+                take: options.limit,
+                skip: skippedItems,
+                where: [{
+                    trpaSourceId: Like(`%${search}%`),
+                    trpaType: paymentType
+                }, {
+                    trpaTargetId: Like(`%${search}%`),
+                    trpaType: paymentType
+                }],
+            })
+
+            return {
+                totalCount,
+                page: options.page,
+                limit: options.limit,
+                data: transactions
+            }
+
+        } else if (search) {
+
+            const totalCount = await this.serviceTrpa.count({
+                where: [{
+                    trpaSourceId: Like(`%${search}%`),
+                }, {
+                    trpaTargetId: Like(`%${search}%`),
+                }],
+            });
+
             const transactions = await this.serviceTrpa.find({
                 relations: { users: true },
                 take: options.limit,
@@ -200,7 +238,25 @@ export class TransactionsService {
                 data: transactions
             }
 
+        } else if (paymentType) {
+            const totalCount = await this.serviceTrpa.count({
+                where: { trpaType: paymentType },
+            });
+            const transactions = await this.serviceTrpa.find({
+                relations: { users: true },
+                where: { trpaType: paymentType },
+                take: options.limit,
+                skip: skippedItems,
+            })
+
+            return {
+                totalCount,
+                page: options.page,
+                limit: options.limit,
+                data: transactions
+            }
         } else {
+            const totalCount = await this.serviceTrpa.count();
             const transactions = await this.serviceTrpa.find({
                 relations: { users: true },
                 take: options.limit,

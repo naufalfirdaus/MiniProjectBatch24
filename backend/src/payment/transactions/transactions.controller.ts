@@ -44,8 +44,9 @@ export class TransactionsController {
         @Query('accountId', new DefaultValuePipe(null)) accountId: string,
         @Query('pageno', new DefaultValuePipe(1), ParseIntPipe) pageNo: number,
         @Query('pagesize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
+        @Body('paymentType') paymentType: string
     ) {
-        return this.service.getAllTransactions(accountId, {
+        return this.service.getAllTransactions(accountId, paymentType, {
             page: pageNo,
             limit: pageSize
         })
