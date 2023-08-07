@@ -1,24 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProgramApply } from 'output/entities/ProgramApply';
-import { ProgramApplyProgress } from 'output/entities/ProgramApplyProgress';
-import { Users } from 'output/entities/Users';
+// import { ProgramApplyProgress } from 'output/entities/ProgramApplyProgress';
+// import { Users } from 'output/entities/Users';
 import { Like, Repository } from 'typeorm';
-import {
-  IPaginationOptions,
-  Pagination,
-  paginate,
-} from 'nestjs-typeorm-paginate';
 import { PaginationDto } from './candidate.dto';
 import { RoomI } from './candidate.interface';
-import { Status } from 'output/entities/Status';
+// import { Status } from 'output/entities/Status';
 import { RouteActions } from 'output/entities/RouteActions';
+import { BatchTrainee } from 'output/entities/BatchTrainee';
 
 @Injectable()
 export class CandidatesService {
   constructor(
     @InjectRepository(ProgramApply)
     private serviceProgram: Repository<ProgramApply>,
+    @InjectRepository(BatchTrainee)
+    private batchTrainee: Repository<BatchTrainee>,
     @InjectRepository(RouteActions) private serRoac: Repository<RouteActions>,
   ) {}
 
@@ -115,7 +113,6 @@ export class CandidatesService {
     options: PaginationDto,
   ): Promise<RoomI> {
     const skippedItems = (options.page - 1) * options.limit;
-    const totalCount = await this.serviceProgram.count();
 
     const queryBuilder = await this.serviceProgram
       .createQueryBuilder('program_apply')
@@ -134,7 +131,7 @@ export class CandidatesService {
       .getMany();
 
     return {
-      totalCount,
+      totalCount: queryBuilder.length,
       page: options.page,
       limit: options.limit,
       data: queryBuilder,
@@ -207,10 +204,30 @@ export class CandidatesService {
         },
         where: {
           prapProgEntity: { progEntityId: program },
-          prapStatus: [{ status: 'Passed' }, { status: 'Recommended' }],
+          prapStatus: { status: 'Passed' },
         },
       });
-      return candidates;
+
+      const trainees = await this.batchTrainee.find({
+        select: {
+          batrTraineeEntity: {
+            userEntityId: true,
+          },
+        },
+        relations: {
+          batrTraineeEntity: true,
+        },
+      });
+
+      const traineesId = trainees.map(
+        (trainee) => trainee.batrTraineeEntity.userEntityId,
+      );
+
+      const filteredCandidates = candidates.filter(
+        (candidate) => !traineesId.includes(candidate.prapUserEntityId),
+      );
+
+      return filteredCandidates;
     }
     return [];
   }

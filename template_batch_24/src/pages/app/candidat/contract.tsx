@@ -6,13 +6,7 @@ import Image from 'next/image';
 import { Fragment, useEffect, useState } from 'react';
 import { paginate } from '@/helper/paginate';
 
-interface SUser {
-    userId: number;
-    progId: number;
-    username: string;
-}
-
-export default function Apply(){
+export default function Contract(){
     const dispatch = useDispatch();
     const candidates = useSelector((state: any) => state.candidates.candidates);
     const candidateLoad = useSelector((state: any) => state.candidates.status);
@@ -22,7 +16,7 @@ export default function Apply(){
 
     useEffect(() => {
         if (candidateLoad === "idle") {
-          dispatch(getCandidateFetch('Apply'));
+          dispatch(getCandidateFetch('Contract'));
         }
         setCurrentPage(candidates.page);
     }, [candidateLoad, dispatch]);

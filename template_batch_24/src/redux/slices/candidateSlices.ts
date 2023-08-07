@@ -16,6 +16,9 @@ export const candidateSlices = createSlice({
   name: "candidate",
   initialState: initialState,
   reducers: {
+    changeToIdle: (state, _) =>{
+      state.status = 'idle';
+    },
     getCandidateFetch: (state, payload: PayloadAction<string>) => {
       state.status = "loading";
     },
@@ -38,6 +41,7 @@ export const candidateSlices = createSlice({
 });
 
 export const {
+  changeToIdle,
   getCandidateFetch,
   getCandidateSuccess,
   getCandidateFail,

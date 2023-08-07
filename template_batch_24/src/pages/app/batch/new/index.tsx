@@ -83,7 +83,7 @@ export default function CreateBatch() {
   const onSelectTechChange = (e: any) => {
     setSelectedTech(e.target.value);
     dispatch(getPassedCandidateBootcampFetch(e.target.value))
-    if(candidates.length > 1) {
+    if(candidates.length > 0) {
         setMembers([]);
     }
   }
