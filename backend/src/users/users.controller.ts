@@ -157,4 +157,24 @@ export class UsersController {
   public async Deleteeducation(@Param('id') id: number) {
     return this.authService.deleteeducation(id);
   }
+
+  @Post('users/profile/experience/:id')
+  @UseInterceptors(FileInterceptor('fields'))
+  public async addExperience(@Param('id') id: number, @Body() fields: any) {
+    return this.authService.addexperience(id, fields);
+  }
+
+  @Put('users/profile/experience/:usexid')
+  @UseInterceptors(FileInterceptor('fields'))
+  public async editExperience(
+    @Param('usexid') usexid: number,
+    @Body() fields: any,
+  ) {
+    return this.authService.editexperience(usexid, fields);
+  }
+
+  @Delete('users/profile/experience/:usexid')
+  public async Deleteexperience(@Param('usexid') usexid: number) {
+    return this.authService.deleteexperience(usexid);
+  }
 }

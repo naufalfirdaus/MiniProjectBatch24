@@ -790,95 +790,266 @@ export class UsersService {
     });
   }
 
-  //fungsi adda experience
+  //fungsi add experience
   public async addexperience(id: number, fields: any) {
-    const user = await this.userRepo.findOne({
-      where: {
-        userEntityId: id,
-      },
-    });
+    try {
+      const user = await this.userRepo.findOne({
+        where: {
+          userEntityId: id,
+        },
+      });
 
-    if (!user) {
-      throw new Error(`User with ID ${id} not found.`);
+      if (!user) {
+        throw new Error(`User with ID ${id} not found.`);
+      }
+      let cityname;
+      switch (fields.city) {
+        case 'Bandung':
+        case 'Bogor':
+        case 'Jakarta':
+          cityname = fields.city;
+          break;
+        default:
+          throw new Error('Invalid city.');
+      }
+
+      const city = await this.CityRepository.findOne({
+        where: { cityName: cityname },
+      });
+
+      if (!city) {
+        throw new Error(`City with name ${cityname} not found.`);
+      }
+
+      const cityId = city.cityId;
+
+      let startMonth;
+      if (fields.start === 'Januari') {
+        startMonth = 1;
+      } else if (fields.start === 'Februari') {
+        startMonth = 2;
+      } else if (fields.start === 'Maret') {
+        startMonth = 3;
+      } else {
+        throw new Error('Invalid month not found.');
+      }
+
+      const startYear = fields.startyear;
+
+      if (isNaN(startMonth) || isNaN(startYear)) {
+        throw new Error('Invalid month or year.');
+      }
+
+      const startDate = new Date(startYear, startMonth);
+      const usexStartDate = startDate.toISOString().slice(0, 7);
+
+      let endMonth;
+      if (fields.end === 'Januari') {
+        endMonth = 1;
+      } else if (fields.end === 'Februari') {
+        endMonth = 2;
+      } else if (fields.end === 'Maret') {
+        endMonth = 3;
+      } else {
+        throw new Error('Invalid month not found.');
+      }
+
+      const endYear = fields.endyear;
+
+      if (isNaN(endMonth) || isNaN(endYear)) {
+        throw new Error('Invalid month or year.');
+      }
+
+      const endDate = new Date(endYear, endMonth);
+      const usexEndDate = endDate.toISOString().slice(0, 7);
+
+      let usexcurrent;
+      if (fields.current === 'yes') {
+        usexcurrent = 1;
+      } else if (fields.current === 'no') {
+        startMonth = 0;
+      } else {
+        throw new Error('Invalid user experience.');
+      }
+
+      let employeetype: string;
+      switch (fields.emtype) {
+        case 'fulltime':
+        case 'freelance':
+        case 'contract':
+        case 'remote':
+          employeetype = fields.emtype;
+          break;
+        default:
+          throw new Error('Invalid Employee Type');
+      }
+
+      let experiencetype: string;
+      switch (fields.extype) {
+        case 'company':
+        case 'certified':
+        case 'voluntering':
+        case 'organization':
+        case 'reward':
+          experiencetype = fields.extype;
+          break;
+        default:
+          throw new Error('Invalid Experience Type');
+      }
+
+      const userexperiences = await this.UsersExperiencesRepository.save({
+        usexEntityId: id,
+        usexTitle: fields.tittle,
+        usexProfileHeadline: fields.headline,
+        usexCompanyName: fields.company,
+        usexCityId: cityId,
+        usexStartDate: usexStartDate,
+        usexEndDate: usexEndDate,
+        usexIndustry: fields.industry,
+        usexEmploymentType: employeetype,
+        usexDescription: fields.desc,
+        usexExperienceType: experiencetype,
+        usexIsCurrent: usexcurrent,
+      });
+      return { user, userexperiences };
+    } catch (error) {
+      throw new Error(error.message);
     }
-    let cityname;
-    switch (fields.city) {
-      case 'Bandung':
-      case 'Bogor':
-      case 'Jakarta':
-        cityname = fields.city;
-        break;
-      default:
-        throw new Error('Invalid city.');
-    }
-
-    const city = await this.CityRepository.findOne({
-      where: { cityName: cityname },
-    });
-
-    if (!city) {
-      throw new Error(`City with name ${cityname} not found.`);
-    }
-
-    const cityId = city.cityId;
-
-    let startMonth;
-    if (fields.start === 'Januari') {
-      startMonth = 1;
-    } else if (fields.start === 'Februari') {
-      startMonth = 2;
-    } else if (fields.start === 'Maret') {
-      startMonth = 3;
-    } else {
-      throw new Error('Invalid month not found.');
-    }
-
-    const startYear = fields.startYear;
-
-    if (isNaN(startMonth) || isNaN(startYear)) {
-      throw new Error('Invalid month or year.');
-    }
-
-    const startDate = new Date(startYear, startMonth);
-    const usexStartDate = startDate.toISOString().slice(0, 7);
-
-    let endMonth;
-    if (fields.end === 'Januari') {
-      endMonth = 1;
-    } else if (fields.end === 'Februari') {
-      endMonth = 2;
-    } else if (fields.end === 'Maret') {
-      endMonth = 3;
-    } else {
-      throw new Error('Invalid month not found.');
-    }
-
-    const endYear = fields.endYear;
-
-    if (isNaN(endMonth) || isNaN(endYear)) {
-      throw new Error('Invalid month or year.');
-    }
-
-    const endDate = new Date(endYear, endMonth);
-    const usexEndDate = endDate.toISOString().slice(0, 7);
-
-    const userexperiences = await this.UsersExperiencesRepository.save({
-      usexEntityId: id,
-      usexTitle: fields.tittle,
-      usexProfileHeadline: fields.headline,
-      usduFieldStudy: fields.study,
-      usexCompanyName: fields.company,
-      usexCityId: cityId,
-      usexStartDate: usexStartDate,
-      usexEndDate: usexEndDate,
-      usexIndustry: fields.industry,
-      usexEmploymentType: fields.emtype,
-      usexDescription: fields.desc,
-      usexExperienceType: fields.extype,
-    });
-    return { user, userexperiences };
   }
-  catch(error) {
-    throw new Error(error.message);
+
+  //edit data experience
+  public async editexperience(usexid: number, fields: any) {
+    try {
+      const user = await this.UsersExperiencesRepository.findOne({
+        where: {
+          usexId: usexid,
+        },
+      });
+
+      if (!user) {
+        throw new Error(`User with ID ${usexid} not found.`);
+      }
+      let cityname;
+      switch (fields.city) {
+        case 'Bandung':
+        case 'Bogor':
+        case 'Jakarta':
+          cityname = fields.city;
+          break;
+        default:
+          throw new Error('Invalid city.');
+      }
+
+      const city = await this.CityRepository.findOne({
+        where: { cityName: cityname },
+      });
+
+      if (!city) {
+        throw new Error(`City with name ${cityname} not found.`);
+      }
+
+      const cityId = city.cityId;
+
+      let startMonth;
+      if (fields.start === 'Januari') {
+        startMonth = 1;
+      } else if (fields.start === 'Februari') {
+        startMonth = 2;
+      } else if (fields.start === 'Maret') {
+        startMonth = 3;
+      } else {
+        throw new Error('Invalid month not found.');
+      }
+
+      const startYear = fields.startyear;
+
+      if (isNaN(startMonth) || isNaN(startYear)) {
+        throw new Error('Invalid month or year.');
+      }
+
+      const startDate = new Date(startYear, startMonth);
+      const usexStartDate = startDate.toISOString().slice(0, 7);
+
+      let endMonth;
+      if (fields.end === 'Januari') {
+        endMonth = 1;
+      } else if (fields.end === 'Februari') {
+        endMonth = 2;
+      } else if (fields.end === 'Maret') {
+        endMonth = 3;
+      } else {
+        throw new Error('Invalid month not found.');
+      }
+
+      const endYear = fields.endyear;
+
+      if (isNaN(endMonth) || isNaN(endYear)) {
+        throw new Error('Invalid month or year.');
+      }
+
+      const endDate = new Date(endYear, endMonth);
+      const usexEndDate = endDate.toISOString().slice(0, 7);
+
+      let usexcurrent;
+      if (fields.current === 'yes') {
+        usexcurrent = 1;
+      } else if (fields.current === 'no') {
+        usexcurrent = 0;
+      } else {
+        throw new Error('Invalid user experience.');
+      }
+
+      let employeetype: string;
+      switch (fields.emtype) {
+        case 'fulltime':
+        case 'freelance':
+        case 'contract':
+        case 'remote':
+          employeetype = fields.emtype;
+          break;
+        default:
+          throw new Error('Invalid Employee Type');
+      }
+
+      let experiencetype: string;
+      switch (fields.extype) {
+        case 'company':
+        case 'certified':
+        case 'voluntering':
+        case 'organization':
+        case 'reward':
+          experiencetype = fields.extype;
+          break;
+        default:
+          throw new Error('Invalid Experience Type');
+      }
+
+      const userexperiences = await this.UsersExperiencesRepository.update(
+        { usexId: usexid },
+        {
+          usexTitle: fields.tittle,
+          usexProfileHeadline: fields.headline,
+          usexCompanyName: fields.company,
+          usexCityId: cityId,
+          usexStartDate: usexStartDate,
+          usexEndDate: usexEndDate,
+          usexIndustry: fields.industry,
+          usexEmploymentType: employeetype,
+          usexDescription: fields.desc,
+          usexExperienceType: experiencetype,
+          usexIsCurrent: usexcurrent,
+        },
+      );
+      return { user, userexperiences };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  //delete data experience
+  public async deleteexperience(usexid: number) {
+    await this.UsersExperiencesRepository.delete({
+      usexId: usexid,
+    });
   }
 }
