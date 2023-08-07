@@ -186,10 +186,11 @@ export class TransactionsService {
                 relations: { users: true },
                 take: options.limit,
                 skip: skippedItems,
-                where: {
+                where: [{
                     trpaSourceId: Like(`%${search}%`),
+                }, {
                     trpaTargetId: Like(`%${search}%`),
-                },
+                }],
             })
 
             return {
