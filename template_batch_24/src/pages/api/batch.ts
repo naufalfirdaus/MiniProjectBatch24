@@ -37,4 +37,13 @@ const getTechnology = async () => {
   }
 }
 
-export default { getAll, getByNameAndStatus, createBatch, getTechnology };
+const getInstructors = async () => {
+  try {
+    const result = await axios.get(`${config.domain}/api/bootcamp/batch/instructor`)
+    return result.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export default { getAll, getByNameAndStatus, createBatch, getTechnology, getInstructors };

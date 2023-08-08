@@ -94,8 +94,8 @@ export default function Filtering(){
                         </tr>
                     </thead>
                     <tbody>
-                        {Object.keys(candidates).length == 0 ? <tr><td colSpan={7} className='text-center py-3 font-bold'>Loading...</td></tr> : paginatedPosts.length == 0 ? <tr><td colSpan={7} className='text-center py-3 font-bold'>No candidates found</td></tr> : paginatedPosts.map((candidate: any) => 
-                            <tr key={candidate.prapUserEntityId} className="bg-white hover:bg-gray-50">
+                        {Object.keys(candidates).length == 0 ? <tr><td colSpan={7} className='text-center py-3 font-bold'>Loading...</td></tr> : paginatedPosts.length == 0 ? <tr><td colSpan={7} className='text-center py-3 font-bold'>No candidates found</td></tr> : paginatedPosts.map((candidate: any, i: number) => 
+                            <tr key={candidate.prapUserEntityId} className={`bg-white hover:bg-gray-50 ${paginatedPosts.length - 1 != i && 'border-b'}`}>
                                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap">
                                     <Image width={50} height={50} className="w-10 h-10 rounded-full" src="/assets/images/candidate.png" alt="Candidate image"/>
                                     <div className="pl-3">

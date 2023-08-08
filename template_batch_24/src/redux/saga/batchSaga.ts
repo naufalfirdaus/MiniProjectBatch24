@@ -1,5 +1,5 @@
 import { call, put } from "redux-saga/effects";
-import { createBatchSuccess, createBatchFail, getBatchFail, getBatchSuccess, getTechnologySuccess } from "../slices/batchSlices";
+import { createBatchSuccess, createBatchFail, getBatchFail, getBatchSuccess, getTechnologySuccess, getInstructorSuccess } from "../slices/batchSlices";
 import batchAPI from "../../pages/api/batch";
 
 function* workGetBatchFetch(action: any): any {
@@ -29,15 +29,21 @@ function* workGetTechnologyFetch(): any {
     yield put(getTechnologySuccess(techs));
 }
 
+function* workInstructorFetch(): any {
+    const instructors = yield call(batchAPI.getInstructors);
+    yield put(getInstructorSuccess(instructors));
+}
+
 function* workCreateBatch(action: any): any {
     const { payload } = action;
     
     try {
-        const batchs = yield call(batchAPI.createBatch, payload);
+        yield call(batchAPI.createBatch, payload);
         yield put(createBatchSuccess(''));
     } catch (error: any) {
+        console.log(error);
         yield put(createBatchFail(error));
     }
 }
 
-export { workGetBatchFetch, workGetByNameAndStatus, workCreateBatch, workGetTechnologyFetch };
+export { workGetBatchFetch, workGetByNameAndStatus, workCreateBatch, workGetTechnologyFetch, workInstructorFetch };

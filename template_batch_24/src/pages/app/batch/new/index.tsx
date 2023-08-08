@@ -1,46 +1,13 @@
 import Page from "@/pages/component/commons/Page";
 import AppLayout from "@/pages/component/layout/AppLayout";
-import { createBatchTry, getTechnologyFetch } from "@/redux/slices/batchSlices";
+import { createBatchTry, getInstructorFetch, getTechnologyFetch, changeToIdle } from "@/redux/slices/batchSlices";
 import { getPassedCandidateBootcampFetch } from "@/redux/slices/candidateSlices";
 import { Menu } from "@headlessui/react";
 import { useFormik } from "formik";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-const dummy_candidates = [
-    {
-        name: 'Roman',
-        university: 'Oxford',
-        added: false,
-    },
-    {
-        name: 'Sira',
-        university: 'Harvard',
-        added: false,
-    },
-    {
-        name: 'Rara',
-        university: 'Cambridge',
-        added: false,
-    },
-    {
-        name: 'Mira',
-        university: 'University A',
-        added: false,
-    },
-    {
-        name: 'Tes',
-        university: 'University B',
-        added: false,
-    },
-    {
-        name: 'Loop',
-        university: 'University C',
-        added: false,
-    }
-];
 
 export default function CreateBatch() {
   const dispatch = useDispatch();
@@ -48,35 +15,45 @@ export default function CreateBatch() {
   
   const candidates = useSelector((state: any) => state.candidates.bootcampCandidates);
   const technologies = useSelector((state: any) => state.batchs.technologies);
+  const error = useSelector((state: any) => state.batchs.error);
+  const instructors = useSelector((state: any) => state.batchs.instructors);
   const [selectedTech, setSelectedTech] = useState<any>('');
   const [members, setMembers] = useState<object[]>([]);
 
   useEffect(() => {
-    if(technologies.length == 0){
+    if(technologies.length == 0 || instructors.length == 0){
         dispatch(getTechnologyFetch());
+        dispatch(getInstructorFetch());
+        
     }
   }, []);
-
+  
   const formik = useFormik({
     initialValues: {
        batchName: '',
        batchStartDate: '',
        batchEndDate: '',
        batchInstructorId: '',
-       batchCoInstructor: '',
+       batchCoInstructorId: '',
     },
     onSubmit: (values) => {
         const {  batchStartDate, batchEndDate, ...rest } = values;
+        const batchData = {
+            ...rest,
+            batchEntityId: selectedTech,
+            batchStartDate : new Date(values.batchStartDate),
+            batchEndDate : new Date(values.batchEndDate),
+            trainees: members,
+        }
+        // console.log(batchData);
         
-      const batchData = {
-        ...rest,
-        prapProgEntityId: selectedTech,
-        batchStartDate : new Date(values.batchStartDate),
-        batchEndDate : new Date(values.batchEndDate),
-        // members: recommended,
-      }
-      
-      dispatch(createBatchTry(batchData));
+        dispatch(createBatchTry(batchData));
+
+        if(!error){
+            dispatch(changeToIdle('')),
+            router.push('/app/batch');
+        }
+
     },
   });
 
@@ -90,6 +67,7 @@ export default function CreateBatch() {
   
   const addMemberHandle = (e: any, id: number, status: string) => {
     e.preventDefault();
+    // formik.handleChange()
     const selectedCandidate = candidates.find((candidate: any) => candidate.prapUserEntityId == id);
     
     if(status == 'add'){
@@ -114,11 +92,11 @@ export default function CreateBatch() {
                         <input type="text" id="batchName" name="batchName" value={formik.values.batchName} onChange={formik.handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
                     </div>
                     <div className="mb-6">
-                        <label htmlFor="prapProgEntityId" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Technology</label>
-                        <select id="prapProgEntityId" name="prapProgEntityId" defaultValue='' onChange={(e) => onSelectTechChange(e)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full">
+                        <label htmlFor="batchEntityId" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Technology</label>
+                        <select id="batchEntityId" name="batchEntityId" defaultValue='' onChange={(e) => onSelectTechChange(e)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full">
                             <option value='' disabled>Select technology</option>
-                            {technologies.length != 0 && technologies.map((technology: any) => 
-                                <option key={technology.progEntityId} value={technology.progEntityId}>{technology.progTitle}</option>
+                            {technologies.length != 0 && technologies.map((technology: any, i: number) => 
+                                <option key={i} value={technology.progEntityId}>{technology.progTitle}</option>
                             )}
                         </select>
                     </div>
@@ -138,11 +116,21 @@ export default function CreateBatch() {
                     </div>
                     <div className="mb-6">
                         <label htmlFor="batchInstructorId" className="block mb-2 text-sm font-medium text-gray-900">Trainer</label>
-                        <input type="text" id="batchInstructorId" name="batchInstructorId" value={formik.values.batchInstructorId} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required onChange={formik.handleChange}/>
+                        <select id="batchInstructorId" name="batchInstructorId" defaultValue='' onChange={formik.handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full">
+                            <option value='' disabled>Select Trainer</option>
+                            {instructors.length != 0 && instructors.map((instructor: any, i: number) => 
+                                <option key={i} value={instructor.userEntityId}>{instructor.userFirstName} {instructor.userLastName}</option>
+                            )}
+                        </select>
                     </div>
                     <div className="mb-6">
-                        <label htmlFor="batchCoInstructor" className="block mb-2 text-sm font-medium text-gray-900">Co Trainer</label>
-                        <input type="text" id="batchCoInstructor" name="batchCoInstructor" value={formik.values.batchCoInstructor} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required onChange={formik.handleChange} />
+                        <label htmlFor="batchCoInstructorId" className="block mb-2 text-sm font-medium text-gray-900">Co Trainer</label>
+                        <select id="batchCoInstructorId" name="batchCoInstructorId" defaultValue='' onChange={formik.handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full">
+                            <option value='' disabled>Select Co Trainer</option>
+                            {instructors.length != 0 && instructors.map((instructor: any, i: number) => 
+                                <option key={i} value={instructor.userEntityId}>{instructor.userFirstName} {instructor.userLastName}</option>
+                            )}
+                        </select>
                     </div>
                 </div>
 

@@ -5,10 +5,9 @@ import { Repository } from 'typeorm';
 import { PaginationDto } from './batc.dto';
 import { RoomI } from './batc.interface';
 import { ProgramEntity } from 'output/entities/ProgramEntity';
-import { Category } from 'output/entities/Category';
 import { InstructorPrograms } from 'output/entities/InstructorPrograms';
 import { Users } from 'output/entities/Users';
-import { Employee } from 'output/entities/Employee';
+import { BatchTrainee } from 'output/entities/BatchTrainee';
 
 @Injectable()
 export class BatchService {
@@ -16,11 +15,11 @@ export class BatchService {
     @InjectRepository(Batch) private batchProgram: Repository<Batch>,
     @InjectRepository(ProgramEntity)
     private progEntity: Repository<ProgramEntity>,
-    @InjectRepository(Category) private catEntity: Repository<Category>,
     @InjectRepository(InstructorPrograms)
     private instProg: Repository<InstructorPrograms>,
     @InjectRepository(Users) private userRepo: Repository<Users>,
-    @InjectRepository(Employee) private empRepo: Repository<Employee>,
+    @InjectRepository(BatchTrainee)
+    private batchTraineeService: Repository<BatchTrainee>,
   ) {}
 
   public async findAll(options: PaginationDto): Promise<RoomI> {
@@ -96,56 +95,50 @@ export class BatchService {
   }
 
   public async create(fields: any) {
-    console.log(fields);
-    // const findTechByCat = await this.catEntity.findOne({where : { cateName : Like(`%${fields.tech}%`) }})
-    // console.log(findTechByCat.cateId)
+    const findProgEntity = await this.progEntity.findOne({
+      where: {
+        progEntityId: fields.batchEntityId,
+      },
+    });
 
-    // const findtProgEntity =  await this.progEntity.findOne({where : { progCate : findTechByCat.cateId as any}})
-    // console.log({findtProgEntity})
+    const batch = await this.batchProgram.save({
+      batchStatus: {
+        status: 'New',
+      },
+      batchName: fields.batchName,
+      batchEntityId: fields.batchEntityId,
+      batchType: findProgEntity.progLearningType,
+      batchStartDate: fields.batchStartDate,
+      batchEndDate: fields.batchEndDate,
+      batchModifiedDate: new Date(),
+    });
 
-    // const findTechByCat = await this.catEntity
-    //   .createQueryBuilder('category')
-    //   .where('category.cateName Like :name', { name: `%${fields.tech}%` })
-    //   .getOne();
+    for (let i = 0; i < fields.trainees.length; i++) {
+      await this.batchTraineeService.save({
+        batrCertificated: '0',
+        batrStatus: 'running',
+        batrTraineeEntity: {
+          userEntityId: fields.trainees[i].prapUserEntityId,
+        },
+        batrModifiedDate: new Date(),
+        batrBatchId: batch.batchId,
+        batrAccessGrant: '0',
+      });
+    }
 
-    // console.log(findTechByCat.cateId);
+    const trainer = [
+      parseInt(fields.batchInstructorId),
+      parseInt(fields.batchCoInstructorId),
+    ];
 
-    // const findProgEntity = await this.progEntity
-    //   .createQueryBuilder('program_entity')
-    //   .where('program_entity.progCate = :id', { id: findTechByCat.cateId })
-    //   .getOne();
-
-    // console.log(findProgEntity.progEntityId);
-
-    // const batch = await this.batchProgram.save({
-    //   batchName: fields.name,
-    //   batchEntityId: findProgEntity.progEntityId,
-    //   batchStartDate: new Date(fields.datestart),
-    //   batchEndDate: new Date(fields.dateend),
-    //   batchModifiedDate: new Date(),
-    // });
-
-    // // const findTrainId = await this.userRepo.findOne({where : { userFirstName : Like(`%${fields.nameins}%`)}})
-    // const findTrainId = await this.userRepo
-    //   .createQueryBuilder('users')
-    //   .where(
-    //     "CONCAT(users.userFirstName, ' ', users.userLastName) Like :fullname",
-    //     { fullname: `%${fields.nameins}%` },
-    //   )
-    //   .getOne();
-    // console.log(findTrainId.userEntityId);
-
-    // const findEmpId = await this.empRepo
-    //   .createQueryBuilder('employee')
-    //   .where('employee.empEntityId = :id', { id: findTrainId.userEntityId })
-    //   .getOne();
-    // console.log(findEmpId.empEntityId);
-
-    // const instructor = await this.instProg.save({
-    //   batchId: batch.batchId,
-    //   inproEntityId: findProgEntity.progEntityId,
-    //   inproEmpEntityId: findEmpId.empEntityId,
-    // });
+    for (let i = 0; i < trainer.length; i++) {
+      await this.instProg.save({
+        batchId: batch.batchId,
+        inproEntityId: fields.batchEntityId,
+        inproEmpEntityId: trainer[i],
+        inproModifiedDate: new Date(),
+      });
+    }
   }
 
   public async getProgramEntity() {
@@ -156,5 +149,13 @@ export class BatchService {
       },
     });
     return getAllProgramEntity;
+  }
+
+  public async getInstructors() {
+    const getAllInstructor = await this.userRepo.find({
+      where: { userCurrentRole: 4 },
+    });
+
+    return getAllInstructor;
   }
 }

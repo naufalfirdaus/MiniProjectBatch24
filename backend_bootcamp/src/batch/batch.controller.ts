@@ -47,6 +47,11 @@ export class BatchController {
     return this.serBatch.getProgramEntity();
   }
 
+  @Get('instructor')
+  public async getInstructor() {
+    return this.serBatch.getInstructors();
+  }
+
   @Post('create')
   public async createBatch(@Body() fields: any) {
     return this.serBatch.create(fields);

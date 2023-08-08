@@ -8,6 +8,7 @@ import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { getBatchFetch, getByNameAndStatusFetch } from '@/redux/slices/batchSlices';
+import { getPassedCandidateBootcampFetch } from '@/redux/slices/candidateSlices';
 
 export default function Batch() {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ export default function Batch() {
     if(batchLoad == 'idle'){
       dispatch(getBatchFetch(''));
     }
+    dispatch(getPassedCandidateBootcampFetch(0))
   }, [batchs, batchLoad, dispatch]);
 
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
