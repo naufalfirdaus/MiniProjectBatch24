@@ -42,18 +42,21 @@ export class JobhireService {
   async FindOne(jopoEntityId: number) {
     const jobPost = await this.jobPostRepository.findOne({
       where: { jopoEntityId },
-      relations: [
-        'jobPhotos',
-        'jobPostDesc',
-        'jopoClit',
-        'jopoJoro',
-        'jopoJoca',
-        'jopoJoty',
-        'jopoEduCode',
-        'jopoInduCode',
-        'jopoStatus',
-        'jopoWorkCode',
-      ],
+      relations: {
+        jobPhotos: true,
+        jobPostDesc: true,
+        jopoClit: true,
+        jopoAddr: {
+          addrCity: { cityProv: { provCountryCode: true } },
+        },
+        jopoJoro: true,
+        jopoJoca: true,
+        jopoJoty: true,
+        jopoEduCode: true,
+        jopoInduCode: true,
+        jopoStatus: true,
+        jopoWorkCode: true,
+      },
     });
 
     if (!jobPost) throw new NotFoundException();
@@ -112,26 +115,67 @@ export class JobhireService {
     }
   }
 
-  async Update(jopoEntityId: number, updatedPost: UpdateJobPostDto) {
+  async Update(
+    jopoEntityId: number,
+    updatedPost: UpdateJobPostDto,
+    photos: Array<Express.Multer.File>,
+  ) {
     try {
-      return await this.jobPostRepository.update(jopoEntityId, {
+      const jobPost = this.jobPostRepository.create({
+        jopoEntityId,
         jopoTitle: updatedPost.title,
         jopoStartDate: updatedPost.start_date,
         jopoEndDate: updatedPost.end_date,
-        // jopoMinSalary: updatedPost.min_sal,
-        // jopoMaxSalary: updatedPost.max_sal,
+        jopoMinSalary: updatedPost.min_sal,
+        jopoMaxSalary: updatedPost.max_sal,
         jopoMinExperience: updatedPost.min_exp,
         jopoMaxExperience: updatedPost.max_exp,
         jopoPrimarySkill: updatedPost.primary_skill,
         jopoSecondarySkill: updatedPost.secondary_skill,
-        // jobPostDesc: {
-        //   jopoDescription: updatedPost.des,
-        //   jopoResponsibility: updatedPost.resp,
-        //   jopoTarget: updatedPost.target,
-        //   jopoBenefit: updatedPost.benefit,
-        // },
+        jopoJoca: {
+          jocaId: updatedPost.joca_id,
+        },
+        jopoJoty: {
+          jotyId: updatedPost.joty_id,
+        },
+        jopoClit: {
+          clitId: updatedPost.clit_id,
+        },
+        jopoAddr: {
+          addrId: updatedPost.addr_id,
+        },
+        jopoStatus: {
+          status: updatedPost.status,
+        },
         jopoModifiedDate: new Date(),
       });
+
+      const updateJobDesc = this.jobPostDescRepository.create({
+        jopoDescription: updatedPost.des,
+        jopoResponsibility: updatedPost.resp,
+        jopoTarget: updatedPost.target,
+        jopoBenefit: updatedPost.benefit,
+      });
+
+      jobPost.jobPostDesc = updateJobDesc;
+
+      const parsedOldPhotoData =
+        updatedPost.oldPhotoData && JSON.parse(updatedPost.oldPhotoData);
+      if (updatedPost.removePhoto) {
+        await this.jobPhotoRepository.delete(parsedOldPhotoData.jophoId);
+      } else if (photos.length > 0) {
+        jobPost.jobPhotos = [
+          this.jobPhotoRepository.create({
+            jophoId: parsedOldPhotoData?.jophoId,
+            jophoFilename: photos[0].filename,
+            jophoFilesize: photos[0].size,
+            jophoFiletype: photos[0].mimetype.split('/')[1],
+            jophoModifiedDate: new Date(),
+          }),
+        ];
+      }
+
+      return await this.jobPostRepository.save(jobPost);
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

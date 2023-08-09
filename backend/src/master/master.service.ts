@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Address } from 'output/entities/Address';
+import { Education } from 'output/entities/Education';
+import { Industry } from 'output/entities/Industry';
 import { JobType } from 'output/entities/JobType';
 import { Repository } from 'typeorm';
 
@@ -11,6 +13,10 @@ export class MasterService {
     private readonly addressRepo: Repository<Address>,
     @InjectRepository(JobType)
     private readonly jobTypeRepo: Repository<JobType>,
+    @InjectRepository(Industry)
+    private readonly industryRepo: Repository<Industry>,
+    @InjectRepository(Education)
+    private readonly educationRepo: Repository<Education>,
   ) {}
 
   async FindAllAddress() {
@@ -35,5 +41,13 @@ export class MasterService {
 
   async FindAllJobType() {
     return this.jobTypeRepo.find();
+  }
+
+  async FindAllIndustry() {
+    return this.industryRepo.find();
+  }
+
+  async FindAllEducation() {
+    return this.educationRepo.find();
   }
 }

@@ -24,6 +24,8 @@ import { JobRole } from 'output/entities/JobRole';
 import { JobType } from 'output/entities/JobType';
 import { MasterController } from 'src/master/master.controller';
 import { MasterService } from 'src/master/master.service';
+import { Industry } from 'output/entities/Industry';
+import { Education } from 'output/entities/Education';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { MasterService } from 'src/master/master.service';
       Status,
       JobRole,
       JobType,
+      Industry,
+      Education,
     ]),
     MulterModule.register(JobPhotoMulter.MulterOption()),
   ],

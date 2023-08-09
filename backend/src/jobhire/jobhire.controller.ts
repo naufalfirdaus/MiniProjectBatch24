@@ -3,10 +3,12 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   Post,
   Put,
   Query,
+  StreamableFile,
   UploadedFiles,
   UseInterceptors,
   UsePipes,
@@ -16,6 +18,8 @@ import { JobhireService } from './jobhire.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { CreateJobPostDto } from './dto/create-jobpost.dto';
 import { UpdateJobPostDto } from './dto/update-jobpost.dto';
+import { createReadStream } from 'fs';
+import { join } from 'path';
 
 @Controller('jobs')
 @UsePipes(
@@ -42,6 +46,16 @@ export class JobhireController {
     return this.services.GenerateJopoNumber();
   }
 
+  @Get('photo/:name')
+  @Header('Content-Type', `image/${'png' || 'jpg' || 'jpeg'}`)
+  @Header('Content-Disposition', 'attachment')
+  getStaticPhoto(@Param('name') name: string): StreamableFile {
+    const file = createReadStream(
+      join(`${process.cwd()}/uploads/jobphoto/`, name),
+    );
+    return new StreamableFile(file);
+  }
+
   @Get(':id')
   async GetOne(@Param('id') id: number) {
     return this.services.FindOne(id);
@@ -57,11 +71,13 @@ export class JobhireController {
   }
 
   @Put('posting/update/:id')
+  @UseInterceptors(FilesInterceptor('photos'))
   async Update(
     @Param('id') id: number,
+    @UploadedFiles() photos: Array<Express.Multer.File>,
     @Body() updateJobPostDto: UpdateJobPostDto,
   ) {
-    return this.services.Update(id, updateJobPostDto);
+    return this.services.Update(id, updateJobPostDto, photos);
   }
 
   @Delete(':id')
