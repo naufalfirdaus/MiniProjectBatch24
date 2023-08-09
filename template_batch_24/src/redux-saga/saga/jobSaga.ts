@@ -2,6 +2,8 @@ import { put, call } from "redux-saga/effects";
 import {
   CreateJobFail,
   CreateJobSuccess,
+  GetJobByIdFail,
+  GetJobByIdSuccess,
   GetJobCategoryFail,
   GetJobCategorySuccess,
   GetJobFail,
@@ -51,11 +53,22 @@ function* handleCreateJob(action: any): any {
   }
 }
 
-function* handleUpdateJob(action: any): any {
-  const { id, payload } = action;
+function* handleGetJob(action: any): any {
+  const { payload } = action;
 
   try {
-    const result = yield call(job.UpdateJobPost, id, payload);
+    const result = yield call(job.GetJobPostById, payload);
+    yield put(GetJobByIdSuccess(result));
+  } catch (error) {
+    yield put(GetJobByIdFail(error));
+  }
+}
+
+function* handleUpdateJob(action: any): any {
+  const { payload } = action;
+
+  try {
+    const result = yield call(job.UpdateJobPost, payload.id, payload.formData);
     yield put(UpdateJobSuccess(result));
   } catch (error) {
     yield put(UpdateJobFail(error));
@@ -67,5 +80,6 @@ export {
   handleGetJoponumber,
   handleGetJobCategory,
   handleCreateJob,
+  handleGetJob,
   handleUpdateJob,
 };

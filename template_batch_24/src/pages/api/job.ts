@@ -50,7 +50,10 @@ const GetJobPostById = async (id: string) => {
 
 const UpdateJobPost = async (id: string, payload: any) => {
   try {
-    const result = await axios.put(`${domain}/jobs/posting/update/${id}`);
+    const result = await axios.put(
+      `${domain}/jobs/posting/update/${id}`,
+      payload
+    );
     return result.data;
   } catch (error) {
     throw error;

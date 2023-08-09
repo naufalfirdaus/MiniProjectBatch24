@@ -4,6 +4,7 @@ const INIT_STATE = {
   jobs: [],
   jobCategory: [],
   error: null,
+  job: {},
 };
 
 const JobReducer = (state = INIT_STATE, action: any) => {
@@ -13,6 +14,12 @@ const JobReducer = (state = INIT_STATE, action: any) => {
     case ActionType.GET_JOB_OK:
       return { ...state, jobs: action.payload };
     case ActionType.GET_JOB_FAILED:
+      return { ...state, error: action.error };
+    case ActionType.GET_JOB_BYID_REQ:
+      return { ...state };
+    case ActionType.GET_JOB_BYID_OK:
+      return GetJobById(state, action);
+    case ActionType.GET_JOB_BYID_FAILED:
       return { ...state, error: action.error };
     case ActionType.GET_JOPONUMBER_REQ:
       return { ...state, jopoNumber: "" };
@@ -32,6 +39,12 @@ const JobReducer = (state = INIT_STATE, action: any) => {
       return CreateJob(state, action);
     case ActionType.CREATE_JOB_FAILED:
       return { ...state, error: action.error };
+    case ActionType.UPDATE_JOB_REQ:
+      return { ...state };
+    case ActionType.UPDATE_JOB_OK:
+      return UpdateJob(state, action);
+    case ActionType.UPDATE_JOB_FAILED:
+      return { ...state, error: action.error };
     default:
       return { ...state };
   }
@@ -50,6 +63,21 @@ const GetJopoNumber = (state: any, action: any) => {
 
 const GetJobCategory = (state: any, action: any) => {
   return { ...state, jobCategory: action.payload };
+};
+
+const GetJobById = (state: any, action: any) => {
+  return {
+    ...state,
+    job: action.payload,
+  };
+};
+
+const UpdateJob = (state: any, action: any) => {
+  return {
+    ...state,
+    job: action.payload, //update state change for job
+    // jobs: [...state], //update the state for jobs
+  };
 };
 
 export default JobReducer;

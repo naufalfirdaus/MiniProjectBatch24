@@ -9,3 +9,7 @@ export const GET_ADDRESS_FAILED = "get/address/failed";
 export const GET_JOB_TYPE_REQ = "get/jobtype/req";
 export const GET_JOB_TYPE_OK = "get/jobtype/success";
 export const GET_JOB_TYPE_FAILED = "get/jobtype/failed";
+
+export const GET_EDUCATION_REQ = "get/education/req";
+export const GET_EDUCATION_OK = "get/education/success";
+export const GET_EDUCATION_FAILED = "get/education/failed";

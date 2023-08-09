@@ -3,6 +3,10 @@ import master from "@/pages/api/master";
 import {
   GetAddressFail,
   GetAddressSuccess,
+  GetEducationFail,
+  GetEducationSuccess,
+  GetIndustryFail,
+  GetIndustrySuccess,
   GetJobTypeFail,
   GetJobTypeSuccess,
 } from "../action/MasterAction";
@@ -25,4 +29,27 @@ function* handleGetJobType(): any {
   }
 }
 
-export { handleGetAddress, handleGetJobType };
+function* handleGetIndustry(): any {
+  try {
+    const result = yield call(master.GetIndustry);
+    yield put(GetIndustrySuccess(result));
+  } catch (error) {
+    yield put(GetIndustryFail(error));
+  }
+}
+
+function* handleGetEducation(): any {
+  try {
+    const result = yield call(master.GetEducation);
+    yield put(GetEducationSuccess(result));
+  } catch (error) {
+    yield put(GetEducationFail(error));
+  }
+}
+
+export {
+  handleGetAddress,
+  handleGetJobType,
+  handleGetIndustry,
+  handleGetEducation,
+};

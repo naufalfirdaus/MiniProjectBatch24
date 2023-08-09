@@ -11,7 +11,7 @@ export const GetJoponumberSuccess = (payload: any) => ({
 
 export const GetJoponumberFail = (error: any) => ({
   type: JobAction.GET_JOPONUMBER_FAILED,
-  error: error.response.data,
+  error,
 });
 
 export const GetJobCategoryReq = () => ({
@@ -25,7 +25,7 @@ export const GetJobCategorySuccess = (payload: any) => ({
 
 export const GetJobCategoryFail = (error: any) => ({
   type: JobAction.GET_JOBCATEGORY_FAILED,
-  error: error.response.data,
+  error,
 });
 
 export const CreateJobReq = (payload: any) => ({
@@ -40,7 +40,7 @@ export const CreateJobSuccess = (payload: any) => ({
 
 export const CreateJobFail = (error: any) => ({
   type: JobAction.CREATE_JOB_FAILED,
-  error: error.response.data,
+  error,
 });
 
 export const GetJobReq = () => ({
@@ -51,7 +51,23 @@ export const GetJobSuccess = (payload: any) => ({
   type: JobAction.GET_JOB_OK,
   payload,
 });
+
 export const GetJobFail = (error: any) => ({
+  type: JobAction.GET_JOB_FAILED,
+  error,
+});
+
+export const GetJobByIdReq = (payload: any) => ({
+  type: JobAction.GET_JOB_BYID_REQ,
+  payload,
+});
+
+export const GetJobByIdSuccess = (payload: any) => ({
+  type: JobAction.GET_JOB_BYID_OK,
+  payload,
+});
+
+export const GetJobByIdFail = (error: any) => ({
   type: JobAction.GET_JOB_FAILED,
   error,
 });
@@ -68,5 +84,5 @@ export const UpdateJobSuccess = (payload: any) => ({
 
 export const UpdateJobFail = (error: any) => ({
   type: JobAction.UPDATE_JOB_FAILED,
-  error: error.response.data,
+  error,
 });

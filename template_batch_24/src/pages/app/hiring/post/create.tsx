@@ -1,7 +1,12 @@
 import AppLayout from "@/pages/component/layout/AppLayout";
 import { GetClientReq } from "@/redux-saga/action/ClientAction";
-import { GetAddressReq, GetJobTypeReq } from "@/redux-saga/action/MasterAction";
-import { useEffect, useState } from "react";
+import {
+  GetAddressReq,
+  GetEducationReq,
+  GetIndustryReq,
+  GetJobTypeReq,
+} from "@/redux-saga/action/MasterAction";
+import { useEffect, useState, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -10,7 +15,7 @@ import {
   GetJobCategoryReq,
   GetJoponumberReq,
 } from "@/redux-saga/action/JobAction";
-import { Combobox } from "@headlessui/react";
+import { Combobox, Dialog, Transition } from "@headlessui/react";
 import Editor from "@/pages/component/form/Editor";
 import Image from "next/image";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/outline";
@@ -20,11 +25,13 @@ import { useRouter } from "next/router";
 export default function Create() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { jopoNumber, jobCategory } = useSelector(
+  const { jopoNumber, jobCategory, onCreate } = useSelector(
     (state: any) => state.jobState
   );
   const { clients } = useSelector((state: any) => state.clientState);
-  const { jobType, address } = useSelector((state: any) => state.masterState);
+  const { jobType, address, industry, education } = useSelector(
+    (state: any) => state.masterState
+  );
 
   const [queryClient, setQueryClient] = useState("");
   const [selectedClient, setSelectedClient] = useState(clients[0] || "");
@@ -33,11 +40,12 @@ export default function Create() {
   const [toggleData, setToggleData] = useState({
     status: false,
     woty: false,
-    hiring: false,
+    closehiring: false,
   });
   const [description, setDescription] = useState("");
   const [previewImg, setPreviewImg] = useState<string>("");
   const [upload, setUpload] = useState(false);
+  const [alert, setAlert] = useState({ open: false, status: "" });
 
   const filteredClient =
     queryClient === ""
@@ -79,6 +87,7 @@ export default function Create() {
     onSubmit: async (values: typeof initialValues) => {
       const formData = new FormData();
       formData.append("emp_id", "7");
+      toggleData.closehiring && (values.end_date = new Date().toISOString());
 
       for (let value in values) {
         if (values[value as keyof typeof initialValues])
@@ -88,7 +97,6 @@ export default function Create() {
       formData.set("clit_id", selectedClient.clitId || "");
       formData.set("addr_id", selectedAddr.addrId || "");
       formData.set("status", toggleData.status ? "Publish" : "Draft");
-      formData.set("woty_code", toggleData.woty ? "Remote" : "");
       formData.set(
         "benefit",
         values.benefit && JSON.stringify({ item: values.benefit })
@@ -98,7 +106,11 @@ export default function Create() {
       formData.forEach((val, key) => console.log(`${key}: ${val}`));
 
       dispatch(CreateJobReq(formData));
-      router.push("/app/hiring");
+      setAlert({ open: true, status: "success" });
+      setTimeout(() => {
+        router.push("/app/hiring");
+        setAlert({ ...alert, open: false });
+      }, 2000);
     },
   });
 
@@ -125,7 +137,9 @@ export default function Create() {
     dispatch(GetClientReq());
     dispatch(GetJobTypeReq());
     dispatch(GetAddressReq());
-  }, []);
+    dispatch(GetIndustryReq());
+    dispatch(GetEducationReq());
+  }, [dispatch]);
 
   return (
     <AppLayout>
@@ -264,9 +278,14 @@ export default function Create() {
                   className="block mt-1 w-full text-xs p-2"
                   onChange={formik.handleChange}
                 >
-                  <option value="">Telecomunication</option>
-                  <option value="">Retail</option>
-                  <option value="">Bank</option>
+                  {industry.length > 0 &&
+                    industry.map((indu: any) => {
+                      return (
+                        <option key={indu.indu_code} value={indu.indu_code}>
+                          {indu.indu_name}
+                        </option>
+                      );
+                    })}
                 </select>
               </label>
 
@@ -318,9 +337,14 @@ export default function Create() {
                   className="block mt-1 w-full text-xs p-2"
                   onChange={formik.handleChange}
                 >
-                  <option value="">S1/S2/S3</option>
-                  <option value="">Diploma 3/4</option>
-                  <option value="">SMK</option>
+                  {education.length > 0 &&
+                    education.map((edu: any) => {
+                      return (
+                        <option key={edu.edu_code} value={edu.edu_code}>
+                          {edu.edu_name}
+                        </option>
+                      );
+                    })}
                 </select>
               </label>
             </div>
@@ -512,15 +536,13 @@ export default function Create() {
                     toggleData.status
                       ? "bg-green-600"
                       : "bg-gray-200 dark:bg-gray-700"
-                  }
-              relative inline-flex h-[1.5rem] w-[2.75rem] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+                  } relative inline-flex h-[1.5rem] w-[2.75rem] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
                 >
                   <span
                     aria-hidden="false"
                     className={`${
                       toggleData.status ? "translate-x-5" : "translate-x-0"
-                    }
-              pointer-events-none inline-block h-[1.3rem] w-[1.3rem] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+                    } pointer-events-none inline-block h-[1.3rem] w-[1.3rem] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
                   />
                 </Switch>
               </div>
@@ -540,15 +562,13 @@ export default function Create() {
                     toggleData.woty
                       ? "bg-green-600"
                       : "bg-gray-200 dark:bg-gray-700"
-                  }
-              relative inline-flex h-[1.5rem] w-[2.75rem] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+                  } relative inline-flex h-[1.5rem] w-[2.75rem] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
                 >
                   <span
                     aria-hidden="false"
                     className={`${
                       toggleData.woty ? "translate-x-5" : "translate-x-0"
-                    }
-              pointer-events-none inline-block h-[1.3rem] w-[1.3rem] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+                    } pointer-events-none inline-block h-[1.3rem] w-[1.3rem] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
                   />
                 </Switch>
               </div>
@@ -560,23 +580,24 @@ export default function Create() {
                   Close Hiring?
                 </Switch.Label>
                 <Switch
-                  checked={toggleData.hiring}
+                  checked={toggleData.closehiring}
                   onChange={() =>
-                    setToggleData({ ...toggleData, hiring: !toggleData.hiring })
+                    setToggleData({
+                      ...toggleData,
+                      closehiring: !toggleData.closehiring,
+                    })
                   }
                   className={`${
-                    toggleData.hiring
+                    toggleData.closehiring
                       ? "bg-green-600"
                       : "bg-gray-200 dark:bg-gray-700"
-                  }
-              relative inline-flex h-[1.5rem] w-[2.75rem] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+                  } relative inline-flex h-[1.5rem] w-[2.75rem] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
                 >
                   <span
                     aria-hidden="false"
                     className={`${
-                      toggleData.hiring ? "translate-x-5" : "translate-x-0"
-                    }
-              pointer-events-none inline-block h-[1.3rem] w-[1.3rem] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+                      toggleData.closehiring ? "translate-x-5" : "translate-x-0"
+                    } pointer-events-none inline-block h-[1.3rem] w-[1.3rem] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
                   />
                 </Switch>
               </div>
@@ -600,6 +621,61 @@ export default function Create() {
           </button>
         </div>
       </form>
+
+      <Transition appear show={alert.open} as={Fragment}>
+        <Dialog as="div" onClose={() => ""} className="relative z-50">
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900"
+                  >
+                    Create Data Success
+                  </Dialog.Title>
+                  <Dialog.Description className="mt-2 text-sm text-gray-500">
+                    New job post successfully created
+                  </Dialog.Description>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-green-200 px-4 py-2 text-sm font-medium text-green-950 hover:bg-green-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
+                      onClick={() => {
+                        router.push("/app/hiring");
+                        setAlert({ ...alert, open: false });
+                      }}
+                    >
+                      OK
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </AppLayout>
   );
 }

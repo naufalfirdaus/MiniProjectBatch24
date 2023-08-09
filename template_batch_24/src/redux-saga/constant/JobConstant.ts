@@ -14,6 +14,10 @@ export const GET_JOB_REQ = "get/job/req";
 export const GET_JOB_OK = "get/job/success";
 export const GET_JOB_FAILED = "get/job/failed";
 
+export const GET_JOB_BYID_REQ = "get/job/id/req";
+export const GET_JOB_BYID_OK = "get/job/id/success";
+export const GET_JOB_BYID_FAILED = "get/job/id/failed";
+
 export const UPDATE_JOB_REQ = "update/job/req";
 export const UPDATE_JOB_OK = "update/job/success";
 export const UPDATE_JOB_FAILED = "update/job/failed";

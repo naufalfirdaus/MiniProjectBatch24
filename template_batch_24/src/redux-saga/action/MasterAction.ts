@@ -27,3 +27,31 @@ export const GetJobTypeFail = (error: any) => ({
   type: MasterAction.GET_JOB_TYPE_FAILED,
   error,
 });
+
+export const GetEducationReq = () => ({
+  type: MasterAction.GET_EDUCATION_REQ,
+});
+
+export const GetEducationSuccess = (payload: any) => ({
+  type: MasterAction.GET_EDUCATION_OK,
+  payload,
+});
+
+export const GetEducationFail = (error: any) => ({
+  type: MasterAction.GET_EDUCATION_FAILED,
+  error,
+});
+
+export const GetIndustryReq = () => ({
+  type: MasterAction.GET_INDUSTRY_REQ,
+});
+
+export const GetIndustrySuccess = (payload: any) => ({
+  type: MasterAction.GET_INDUSTRY_OK,
+  payload,
+});
+
+export const GetIndustryFail = (error: any) => ({
+  type: MasterAction.GET_INDUSTRY_FAILED,
+  error,
+});
