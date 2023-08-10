@@ -24,7 +24,6 @@ export default function CreateBatch() {
     if(technologies.length == 0 || instructors.length == 0){
         dispatch(getTechnologyFetch());
         dispatch(getInstructorFetch());
-        
     }
   }, []);
   
@@ -45,7 +44,6 @@ export default function CreateBatch() {
             batchEndDate : new Date(values.batchEndDate),
             trainees: members,
         }
-        // console.log(batchData);
         
         dispatch(createBatchTry(batchData));
 
@@ -67,7 +65,6 @@ export default function CreateBatch() {
   
   const addMemberHandle = (e: any, id: number, status: string) => {
     e.preventDefault();
-    // formik.handleChange()
     const selectedCandidate = candidates.find((candidate: any) => candidate.prapUserEntityId == id);
     
     if(status == 'add'){

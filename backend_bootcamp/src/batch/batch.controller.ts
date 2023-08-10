@@ -6,6 +6,7 @@ import {
   ParseIntPipe,
   Post,
   Body,
+  Put,
 } from '@nestjs/common';
 import { BatchService } from './batch.service';
 
@@ -55,5 +56,10 @@ export class BatchController {
   @Post('create')
   public async createBatch(@Body() fields: any) {
     return this.serBatch.create(fields);
+  }
+
+  @Put('update/batchid')
+  public async updateBatch(@Query('id') id: number, @Body() fields: any) {
+    return this.serBatch.update(id, fields);
   }
 }

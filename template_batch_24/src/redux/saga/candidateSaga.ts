@@ -1,5 +1,5 @@
 import { call, put } from "redux-saga/effects";
-import { getCandidateFail, getCandidateSuccess, getPassedCandidateBootcampSuccess } from "../slices/candidateSlices";
+import { getCandidateByProgramSuccess, getCandidateFail, getCandidateSuccess, getPassedCandidateBootcampSuccess } from "../slices/candidateSlices";
 import candidateApi from "../../pages/api/candidate";
 
 
@@ -19,5 +19,12 @@ function* workGetPassedCandidateBootcamp(action: any): any {
     yield put(getPassedCandidateBootcampSuccess(bootcampCandidates));
 }
 
+function* workGetCandidateByProgram(action: any): any {
+    const { payload } = action;
+    
+    const programCandidates = yield call(candidateApi.getCandidateByProgram, payload);
+    yield put(getCandidateByProgramSuccess(programCandidates));
+}
 
-export { workGetCandidateFetch, workGetPassedCandidateBootcamp };
+
+export { workGetCandidateFetch, workGetPassedCandidateBootcamp, workGetCandidateByProgram };

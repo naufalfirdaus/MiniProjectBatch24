@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { getBatchFetch, getByNameAndStatusFetch } from '@/redux/slices/batchSlices';
+import { changeToIdle, getBatchFetch, getByNameAndStatusFetch } from '@/redux/slices/batchSlices';
 import { getPassedCandidateBootcampFetch } from '@/redux/slices/candidateSlices';
 
 export default function Batch() {
@@ -19,8 +19,9 @@ export default function Batch() {
     if(batchLoad == 'idle'){
       dispatch(getBatchFetch(''));
     }
-    dispatch(getPassedCandidateBootcampFetch(0))
-  }, [batchs, batchLoad, dispatch]);
+    dispatch(getPassedCandidateBootcampFetch(0));
+    
+  }, [batchLoad]);
 
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
 
@@ -35,6 +36,11 @@ export default function Batch() {
     },
   });
 
+  const handleEditButton = (e: any, id:number) => {
+    e.preventDefault();
+    navigate.push(`/app/batch/${id}`).then(() => dispatch(changeToIdle('')));
+  }
+  
   return (
     <AppLayout>
       <Page title='Batch' titleButton='Create' onClick={() => navigate.push('/app/batch/new')}>
@@ -123,7 +129,7 @@ export default function Batch() {
                     </Menu.Button>
                     <Menu.Items className='absolute z-10 text-sm w-32 text-gray-600 right-0 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
                       <Menu.Item>
-                          <Link href={`/app/batch/${12}`} className="block px-4 py-2 hover:bg-gray-100">Edit</Link>
+                          <Link href='#' onClick={(e) => handleEditButton(e, batch.batchId)} className="block px-4 py-2 hover:bg-gray-100">Edit</Link>
                       </Menu.Item>
                       <Menu.Item>
                           <a href="#" className="block px-4 py-2 hover:bg-gray-100">Delete</a>

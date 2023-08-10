@@ -4,12 +4,14 @@ const initialState: {
   technologies: object[];
   instructors: object[];
   batchs: object;
+  batch: object;
   status: string;
   error: any;
 } = {
   technologies: [],
   instructors: [],
   batchs: {},
+  batch: {},
   status: "idle",
   error: null,
 };
@@ -23,6 +25,13 @@ const batchSlices = createSlice({
     },
     getBatchFetch: (state, payload: PayloadAction<any>) => {
       state.status = "loading";
+    },
+    getBatchByIdFetch: (state, payload: PayloadAction<any>) => {
+      state.status = 'loading';
+    },
+    getBatchByIdSuccess: (state, action) => {
+      state.status = 'succeeded';
+      state.batch = action.payload;
     },
     getBatchSuccess: (state, action) => {
       state.status = "succeeded";
@@ -49,6 +58,16 @@ const batchSlices = createSlice({
       state.status = "failed";
       state.error = action.error.message;
     },
+    updateBatchTry: (state, action: PayloadAction<any>) => {
+      state.status = 'loading';
+    },
+    updateBatchSuccess: (state, action: PayloadAction<any>) => {
+      state.status = "idle";
+    },
+    updateBatchFail: (state, action: any) => {
+      state.status = "failed";
+      state.error = action.error.message;
+    },
     getTechnologyFetch: (state) => {
       state.status = "loading";
     },
@@ -69,12 +88,17 @@ const batchSlices = createSlice({
 export const {
   changeToIdle,
   getBatchFetch,
+  getBatchByIdFetch,
+  getBatchByIdSuccess,
   getBatchSuccess,
   getBatchFail,
   getByNameAndStatusFetch,
   createBatchTry,
   createBatchFail,
   createBatchSuccess,
+  updateBatchTry,
+  updateBatchSuccess,
+  updateBatchFail,
   getTechnologyFetch,
   getTechnologySuccess,
   getInstructorFetch,

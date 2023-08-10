@@ -231,4 +231,24 @@ export class CandidatesService {
     }
     return [];
   }
+
+  public async findCandidateByProgram(id: number) {
+    if (id) {
+      const candidates = await this.serviceProgram.find({
+        relations: {
+          prapUserEntity: {
+            usersEducations: true,
+          },
+          prapStatus: true,
+          prapProgEntity: true,
+        },
+        where: {
+          prapProgEntity: { progEntityId: id },
+          prapStatus: { status: 'Passed' },
+        },
+      });
+      return candidates;
+    }
+    return [];
+  }
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tab } from '@headlessui/react';
 import AppLayout from '../../component/layout/AppLayout';
 import Apply from './apply';
@@ -36,6 +36,10 @@ const tabs = [
 export default function Candidat() {
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(changeToIdle(''));
+  });
 
   return (
     <AppLayout>

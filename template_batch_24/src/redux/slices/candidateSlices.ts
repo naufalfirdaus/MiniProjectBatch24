@@ -2,11 +2,13 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 const initialState: {
   candidates: object;
+  programCandidates: object[];
   bootcampCandidates: object[];
   status: string;
   error: any;
 } = {
   candidates: {},
+  programCandidates: [],
   bootcampCandidates: [],
   status: "idle",
   error: null,
@@ -37,6 +39,13 @@ export const candidateSlices = createSlice({
       state.status = "succeeded";
       state.bootcampCandidates = action.payload;
     },
+    getCandidateByProgramFetch: (state, payload: PayloadAction<number>) => {
+      state.status = 'loading';
+    },
+    getCandidateByProgramSuccess: (state, action) => {
+      state.status = 'loading';
+      state.programCandidates = action.payload;
+    }
   },
 });
 
@@ -47,6 +56,8 @@ export const {
   getCandidateFail,
   getPassedCandidateBootcampFetch,
   getPassedCandidateBootcampSuccess,
+  getCandidateByProgramFetch,
+  getCandidateByProgramSuccess
 } = candidateSlices.actions;
 
 export default candidateSlices.reducer;

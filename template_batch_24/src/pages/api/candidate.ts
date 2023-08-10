@@ -29,4 +29,13 @@ const getPassedCandidate = async (program: number) => {
   }
 }
 
-export default { GetByStatus, UpdateStatus, getPassedCandidate };
+const getCandidateByProgram = async (program: number) => {
+  try {
+    const result = await axios.get(`${config.domain}/api/bootcamp/candidate/program`, {params: {id: program}})
+    return result.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export default { GetByStatus, UpdateStatus, getPassedCandidate, getCandidateByProgram };

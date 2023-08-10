@@ -87,7 +87,8 @@ export class BatchService {
       .leftJoinAndSelect('batch.instructorPrograms', 'instructor_program')
       .leftJoinAndSelect('batch.batchEntity', 'program_entity')
       .leftJoinAndSelect('batch.batchStatus', 'status')
-      .leftJoinAndSelect('batch_trainee.batrTraineeEntity', 'user')
+      .leftJoinAndSelect('batch_trainee.batrTraineeEntity', 'users')
+      .leftJoinAndSelect('users.usersEducations', 'users_education')
       .where('batch.batchId = :id', { id: id })
       .getOne();
 
@@ -139,6 +140,10 @@ export class BatchService {
         inproModifiedDate: new Date(),
       });
     }
+  }
+
+  public async update(id: any, fields: any) {
+    console.log(id, fields);
   }
 
   public async getProgramEntity() {

@@ -7,7 +7,6 @@ import {
   Put,
   Param,
   Body,
-  Post,
 } from '@nestjs/common';
 import { CandidatesService } from './candidates.service';
 
@@ -54,5 +53,10 @@ export class CandidatesController {
     @Query('program') program: number,
   ) {
     return await this.Service.findPassedCandidateWithoutBootcamp(program);
+  }
+
+  @Get('program')
+  public async getCandidateByProgram(@Query('id') id: number) {
+    return await this.Service.findCandidateByProgram(id);
   }
 }
