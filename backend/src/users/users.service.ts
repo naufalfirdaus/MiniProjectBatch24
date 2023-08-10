@@ -641,6 +641,24 @@ export class UsersService {
         startMonth = 2;
       } else if (fields.start === 'Maret') {
         startMonth = 3;
+      } else if (fields.start === 'April') {
+        startMonth = 4;
+      } else if (fields.start === 'Mei') {
+        startMonth = 5;
+      } else if (fields.start === 'Juni') {
+        startMonth = 6;
+      } else if (fields.start === 'Juli') {
+        startMonth = 7;
+      } else if (fields.start === 'Agustus') {
+        startMonth = 8;
+      } else if (fields.start === 'September') {
+        startMonth = 9;
+      } else if (fields.start === 'Oktober') {
+        startMonth = 10;
+      } else if (fields.start === 'November') {
+        startMonth = 11;
+      } else if (fields.start === 'Desember') {
+        startMonth = 12;
       } else {
         throw new Error('Invalid month not found.');
       }
@@ -661,6 +679,24 @@ export class UsersService {
         endMonth = 2;
       } else if (fields.end === 'Maret') {
         endMonth = 3;
+      } else if (fields.end === 'April') {
+        endMonth = 4;
+      } else if (fields.end === 'Mei') {
+        endMonth = 5;
+      } else if (fields.end === 'Juni') {
+        endMonth = 6;
+      } else if (fields.end === 'Juli') {
+        endMonth = 7;
+      } else if (fields.end === 'Agustus') {
+        endMonth = 8;
+      } else if (fields.end === 'September') {
+        endMonth = 9;
+      } else if (fields.end === 'Oktober') {
+        endMonth = 10;
+      } else if (fields.end === 'November') {
+        endMonth = 11;
+      } else if (fields.end === 'Desember') {
+        endMonth = 12;
       } else {
         throw new Error('Invalid month not found.');
       }
@@ -719,6 +755,24 @@ export class UsersService {
         startMonth = 2;
       } else if (fields.start === 'Maret') {
         startMonth = 3;
+      } else if (fields.start === 'April') {
+        startMonth = 4;
+      } else if (fields.start === 'Mei') {
+        startMonth = 5;
+      } else if (fields.start === 'Juni') {
+        startMonth = 6;
+      } else if (fields.start === 'Juli') {
+        startMonth = 7;
+      } else if (fields.start === 'Agustus') {
+        startMonth = 8;
+      } else if (fields.start === 'September') {
+        startMonth = 9;
+      } else if (fields.start === 'Oktober') {
+        startMonth = 10;
+      } else if (fields.start === 'November') {
+        startMonth = 11;
+      } else if (fields.start === 'Desember') {
+        startMonth = 12;
       } else {
         throw new Error('Invalid month not found.');
       }
@@ -739,6 +793,24 @@ export class UsersService {
         endMonth = 2;
       } else if (fields.end === 'Maret') {
         endMonth = 3;
+      } else if (fields.end === 'April') {
+        endMonth = 4;
+      } else if (fields.end === 'Mei') {
+        endMonth = 5;
+      } else if (fields.end === 'Juni') {
+        endMonth = 6;
+      } else if (fields.end === 'Juli') {
+        endMonth = 7;
+      } else if (fields.end === 'Agustus') {
+        endMonth = 8;
+      } else if (fields.end === 'September') {
+        endMonth = 9;
+      } else if (fields.end === 'Oktober') {
+        endMonth = 10;
+      } else if (fields.end === 'November') {
+        endMonth = 11;
+      } else if (fields.end === 'Desember') {
+        endMonth = 12;
       } else {
         throw new Error('Invalid month not found.');
       }
