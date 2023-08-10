@@ -18,11 +18,13 @@ import { UsersAddress } from 'output/entities/UsersAddress';
 import { Address } from 'output/entities/Address';
 import { AddressType } from 'output/entities/AddressType';
 import { City } from 'output/entities/City';
+import { UsersExperiences } from 'output/entities/UsersExperiences';
+import { UsersSkill } from 'output/entities/UsersSkill';
+import { SkillType } from 'output/entities/SkillType';
 
 import { LocalGuard } from 'src/auth/local/local.guard';
 import { JwtGuard } from 'src/auth/jwt/jwt.guard';
 import { UploadMulter } from 'src/multer/multer';
-import { UsersExperiences } from 'output/entities/UsersExperiences';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { UsersExperiences } from 'output/entities/UsersExperiences';
       City,
       UsersEducation,
       UsersExperiences,
+      UsersSkill,
+      SkillType,
     ]),
     MulterModule.register(UploadMulter.MulterOption()),
     PassportModule,
