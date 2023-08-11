@@ -60,6 +60,18 @@ const UpdateJobPost = async (id: string, payload: any) => {
   }
 };
 
+const CreateJobApply = async (payload: any) => {
+  try {
+    const result = await axios.post(
+      `${domain}/jobs/applyProfessional`,
+      payload
+    );
+    return result.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   GetJobs,
   GetJopoNumber,
@@ -67,4 +79,5 @@ export default {
   CreateJobPost,
   GetJobPostById,
   UpdateJobPost,
+  CreateJobApply,
 };

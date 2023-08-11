@@ -15,11 +15,18 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { JobhireService } from './jobhire.service';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import {
+  FileFieldsInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
 import { CreateJobPostDto } from './dto/create-jobpost.dto';
 import { UpdateJobPostDto } from './dto/update-jobpost.dto';
 import { createReadStream } from 'fs';
 import { join } from 'path';
+import { CreateTalentApplyDto } from './dto/create-talentapply.dto';
+import { JobPhotoMulter } from 'src/multer/jobphoto-multer';
+import { TalentApplyService } from './talent-apply/talent-apply.service';
+import { UserMediaMulter } from 'src/multer/usermedia-multer';
 
 @Controller('jobs')
 @UsePipes(
@@ -29,7 +36,10 @@ import { join } from 'path';
   }),
 )
 export class JobhireController {
-  constructor(private services: JobhireService) {}
+  constructor(
+    private services: JobhireService,
+    private talentApplyService: TalentApplyService,
+  ) {}
 
   @Get()
   async GetAll() {
@@ -62,7 +72,9 @@ export class JobhireController {
   }
 
   @Post('posting/create')
-  @UseInterceptors(FilesInterceptor('photos'))
+  @UseInterceptors(
+    FilesInterceptor('photos', 10, JobPhotoMulter.MulterOption()),
+  )
   async Create(
     @UploadedFiles() photos: Array<Express.Multer.File>,
     @Body() createJobPostDto: CreateJobPostDto,
@@ -83,5 +95,23 @@ export class JobhireController {
   @Delete(':id')
   async Delete(@Param('id') id: number) {
     return this.services.Delete(id);
+  }
+
+  @Post('applyProfessional')
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: 'resume', maxCount: 1 },
+        { name: 'photo', maxCount: 1 },
+      ],
+      UserMediaMulter.MulterOption(),
+    ),
+  )
+  async CreateTalentApply(
+    @Body() taapData: CreateTalentApplyDto,
+    @UploadedFiles()
+    files: { resume?: Express.Multer.File; photo?: Express.Multer.File },
+  ) {
+    return this.talentApplyService.Create(taapData, files.resume, files.photo);
   }
 }
