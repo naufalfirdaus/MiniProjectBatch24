@@ -53,7 +53,8 @@ export class UsersAccountService {
         body.usac_saldo,
         body.user_id,
         'SD',
-        'Saldo'
+        'Saldo',
+        null
       );
 
       const time = new Date().toISOString();
