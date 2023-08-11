@@ -6,6 +6,7 @@ import { Category } from 'output/entities/Category';
 import { Employee } from 'output/entities/Employee';
 import { InstructorPrograms } from 'output/entities/InstructorPrograms';
 import { ProgramApply } from 'output/entities/ProgramApply';
+import { ProgramApplyProgress } from 'output/entities/ProgramApplyProgress';
 import { ProgramEntity } from 'output/entities/ProgramEntity';
 import { RouteActions } from 'output/entities/RouteActions';
 import { Status } from 'output/entities/Status';
@@ -28,6 +29,7 @@ import { CandidatesService } from 'src/candidates/candidates.service';
       Users,
       Employee,
       BatchTrainee,
+      ProgramApplyProgress,
     ]),
   ],
   providers: [CandidatesService, BatchService],

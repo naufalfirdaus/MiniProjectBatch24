@@ -8,6 +8,8 @@ import { ProgramEntity } from 'output/entities/ProgramEntity';
 import { InstructorPrograms } from 'output/entities/InstructorPrograms';
 import { Users } from 'output/entities/Users';
 import { BatchTrainee } from 'output/entities/BatchTrainee';
+import { ProgramApply } from 'output/entities/ProgramApply';
+import { ProgramApplyProgress } from 'output/entities/ProgramApplyProgress';
 
 @Injectable()
 export class BatchService {
@@ -20,6 +22,10 @@ export class BatchService {
     @InjectRepository(Users) private userRepo: Repository<Users>,
     @InjectRepository(BatchTrainee)
     private batchTraineeService: Repository<BatchTrainee>,
+    @InjectRepository(ProgramApply)
+    private candidateApply: Repository<ProgramApply>,
+    @InjectRepository(ProgramApplyProgress)
+    private candidateApplyProgress: Repository<ProgramApplyProgress>,
   ) {}
 
   public async findAll(options: PaginationDto): Promise<RoomI> {
@@ -40,6 +46,7 @@ export class BatchService {
       },
       skip: skippedItems,
       take: options.limit,
+      order: { batchId: 'ASC' },
     });
 
     return {
@@ -143,7 +150,148 @@ export class BatchService {
   }
 
   public async update(id: any, fields: any) {
-    console.log(id, fields);
+    // Find previous batch data;
+    const oldBatch = await this.findOne(id);
+
+    // Map userEntityId from frontend
+    const feTraineesId = fields.trainees.map((trainee: any) => trainee.idUser);
+    // Map userEntityId from old batch data (previous)
+    const oldBatchTraineeId = oldBatch.batchTrainees.map(
+      (oldTrainee: any) => oldTrainee.batrTraineeEntity.userEntityId,
+    );
+
+    // Find userEntityId of removed trainee
+    const removedTrainee = oldBatchTraineeId.filter(
+      (old) => !feTraineesId.includes(old),
+    );
+
+    // Find userEntityId of added trainee
+    const addedTrainee = feTraineesId.filter(
+      (trainee: any) => !oldBatchTraineeId.includes(trainee),
+    );
+
+    // Check if technology field change
+    if (fields.batchEntityId !== oldBatch.batchEntityId) {
+      // Update the batch
+      await this.batchProgram
+        .createQueryBuilder()
+        .update(Batch)
+        .set({
+          batchEntityId: fields.batchEntityId,
+          batchName: fields.batchName,
+          batchStartDate: fields.batchStartDate,
+          batchEndDate: fields.batchEndDate,
+          batchModifiedDate: new Date(),
+        })
+        .where('batchId = :id', { id: id })
+        .execute();
+
+      // If there are new trainee
+      if (addedTrainee.length != 0) {
+        for (let i = 0; i < addedTrainee.length; i++) {
+          // Insert them to batch_trainee
+          await this.batchTraineeService.save({
+            batrCertificated: '0',
+            batrStatus: 'running',
+            batrTraineeEntity: {
+              userEntityId: addedTrainee[i],
+            },
+            batrModifiedDate: new Date(),
+            batrBatchId: id,
+            batrAccessGrant: '0',
+          });
+
+          // update their progress (soon)
+        }
+      }
+
+      // If there are trainee that deleted
+      if (removedTrainee.length != 0) {
+        for (let i = 0; i < removedTrainee.length; i++) {
+          // Delete them from batch_trainee
+          await this.batchTraineeService.delete({
+            batrTraineeEntity: {
+              userEntityId: removedTrainee[i],
+            },
+          });
+
+          // update their progress (soon)
+        }
+      }
+
+      const newBatchTraineeData = await this.findOne(id);
+      const newBatchTraineeId = newBatchTraineeData.batchTrainees.map(
+        (newTrainee: any) => newTrainee.batrTraineeEntity.userEntityId,
+      );
+
+      // Update trainee programEntityId
+      for (let i = 0; i < newBatchTraineeId.length; i++) {
+        // update programEntityId in programApply
+        await this.candidateApply
+          .createQueryBuilder()
+          .update(ProgramApply)
+          .set({ prapProgEntityId: fields.batchEntityId })
+          .where('prapUserEntityId = :userId', { userId: newBatchTraineeId[i] })
+          .execute();
+
+        // update programEntityId in programApplyProgress
+        await this.candidateApplyProgress
+          .createQueryBuilder()
+          .update(ProgramApplyProgress)
+          .set({
+            parogProgEntityId: fields.batchEntityId,
+          })
+          .where('parogUserEntityId = :userId', {
+            userId: newBatchTraineeId[i],
+          })
+          .execute();
+      }
+    } else {
+      await this.batchProgram
+        .createQueryBuilder()
+        .update(Batch)
+        .set({
+          batchName: fields.batchName,
+          batchStartDate: fields.batchStartDate,
+          batchEndDate: fields.batchEndDate,
+          batchModifiedDate: new Date(),
+        })
+        .where('batchId = :id', { id: id })
+        .execute();
+
+      // If there are new trainee
+      if (addedTrainee.length != 0) {
+        for (let i = 0; i < addedTrainee.length; i++) {
+          // Insert them to batch_trainee
+          await this.batchTraineeService.save({
+            batrCertificated: '0',
+            batrStatus: 'running',
+            batrTraineeEntity: {
+              userEntityId: addedTrainee[i],
+            },
+            batrModifiedDate: new Date(),
+            batrBatchId: id,
+            batrAccessGrant: '0',
+          });
+
+          // update their progress (soon)
+        }
+      }
+
+      // If there are trainee that deleted
+      if (removedTrainee.length != 0) {
+        for (let i = 0; i < removedTrainee.length; i++) {
+          // Delete them from batch_trainee
+          await this.batchTraineeService.delete({
+            batrTraineeEntity: {
+              userEntityId: removedTrainee[i],
+            },
+          });
+
+          // update their progress (soon)
+        }
+      }
+    }
   }
 
   public async getProgramEntity() {
