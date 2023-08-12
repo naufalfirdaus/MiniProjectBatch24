@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Batch } from 'output/entities/Batch';
 import { BatchTrainee } from 'output/entities/BatchTrainee';
+import { BatchTraineeEvaluation } from 'output/entities/BatchTraineeEvaluation';
 import { Category } from 'output/entities/Category';
 import { Employee } from 'output/entities/Employee';
 import { InstructorPrograms } from 'output/entities/InstructorPrograms';
@@ -29,6 +30,7 @@ import { CandidatesService } from 'src/candidates/candidates.service';
       Users,
       Employee,
       BatchTrainee,
+      BatchTraineeEvaluation,
       ProgramApplyProgress,
     ]),
   ],

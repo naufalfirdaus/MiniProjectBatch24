@@ -64,4 +64,22 @@ const getInstructors = async () => {
   }
 }
 
-export default { getAll, getByNameAndStatus, createBatch, getTechnology, getInstructors, getById, updateBatch };
+const getBatchEvaluation = async (payload: any) => {
+  try {
+    const result = await axios.get(`${config.domain}/api/bootcamp/batch/evaluation/view`, { params: { batchid : payload } })
+    return result.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+const getBatchTraineeEvaluation = async (payload: any) => {
+  try {
+    const result = await axios.get(`${config.domain}/api/bootcamp/batch/evaluation/scoring`, { params: { userentityid : payload } })
+    return result.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export default { getAll, getByNameAndStatus, createBatch, getTechnology, getInstructors, getById, updateBatch, getBatchEvaluation, getBatchTraineeEvaluation };

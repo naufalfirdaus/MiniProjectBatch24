@@ -40,6 +40,11 @@ export default function Batch() {
     e.preventDefault();
     navigate.push(`/app/batch/${id}`).then(() => dispatch(changeToIdle('')));
   }
+
+  const handleEvaluationButton = (e:any, id: number) => {
+    e.preventDefault();
+    navigate.push({pathname: `/app/batch/evaluation`, query: {batchid: id}}).then(() => dispatch(changeToIdle('')));
+  }
   
   return (
     <AppLayout>
@@ -141,7 +146,7 @@ export default function Batch() {
                           <a href="#" className="block px-4 py-2 hover:bg-gray-100">Set To Running</a>
                       </Menu.Item>
                       <Menu.Item>
-                          <Link href={{ pathname: '/app/batch/evaluation', query: {batchId: 20} }} className="block px-4 py-2 hover:bg-gray-100">Evaluation</Link>
+                          <Link href='#' onClick={(e) => handleEvaluationButton(e, batch.batchId)} className="block px-4 py-2 hover:bg-gray-100">Evaluation</Link>
                       </Menu.Item>
                     </Menu.Items>
                   </Menu>

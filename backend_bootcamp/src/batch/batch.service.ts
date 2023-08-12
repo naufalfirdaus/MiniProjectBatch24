@@ -10,6 +10,7 @@ import { Users } from 'output/entities/Users';
 import { BatchTrainee } from 'output/entities/BatchTrainee';
 import { ProgramApply } from 'output/entities/ProgramApply';
 import { ProgramApplyProgress } from 'output/entities/ProgramApplyProgress';
+import { BatchTraineeEvaluation } from 'output/entities/BatchTraineeEvaluation';
 
 @Injectable()
 export class BatchService {
@@ -22,6 +23,8 @@ export class BatchService {
     @InjectRepository(Users) private userRepo: Repository<Users>,
     @InjectRepository(BatchTrainee)
     private batchTraineeService: Repository<BatchTrainee>,
+    @InjectRepository(BatchTraineeEvaluation)
+    private batchTraineeEvService: Repository<BatchTraineeEvaluation>,
     @InjectRepository(ProgramApply)
     private candidateApply: Repository<ProgramApply>,
     @InjectRepository(ProgramApplyProgress)
@@ -122,16 +125,7 @@ export class BatchService {
     });
 
     for (let i = 0; i < fields.trainees.length; i++) {
-      await this.batchTraineeService.save({
-        batrCertificated: '0',
-        batrStatus: 'running',
-        batrTraineeEntity: {
-          userEntityId: fields.trainees[i].prapUserEntityId,
-        },
-        batrModifiedDate: new Date(),
-        batrBatchId: batch.batchId,
-        batrAccessGrant: '0',
-      });
+      this.addTrainee(batch.batchId, fields.trainees[i].prapUserEntityId);
     }
 
     const trainer = [
@@ -190,16 +184,7 @@ export class BatchService {
       if (addedTrainee.length != 0) {
         for (let i = 0; i < addedTrainee.length; i++) {
           // Insert them to batch_trainee
-          await this.batchTraineeService.save({
-            batrCertificated: '0',
-            batrStatus: 'running',
-            batrTraineeEntity: {
-              userEntityId: addedTrainee[i],
-            },
-            batrModifiedDate: new Date(),
-            batrBatchId: id,
-            batrAccessGrant: '0',
-          });
+          this.addTrainee(id, addedTrainee[i]);
 
           // update their progress (soon)
         }
@@ -209,11 +194,7 @@ export class BatchService {
       if (removedTrainee.length != 0) {
         for (let i = 0; i < removedTrainee.length; i++) {
           // Delete them from batch_trainee
-          await this.batchTraineeService.delete({
-            batrTraineeEntity: {
-              userEntityId: removedTrainee[i],
-            },
-          });
+          await this.deleteTrainee(removedTrainee[i]);
 
           // update their progress (soon)
         }
@@ -263,16 +244,7 @@ export class BatchService {
       if (addedTrainee.length != 0) {
         for (let i = 0; i < addedTrainee.length; i++) {
           // Insert them to batch_trainee
-          await this.batchTraineeService.save({
-            batrCertificated: '0',
-            batrStatus: 'running',
-            batrTraineeEntity: {
-              userEntityId: addedTrainee[i],
-            },
-            batrModifiedDate: new Date(),
-            batrBatchId: id,
-            batrAccessGrant: '0',
-          });
+          await this.addTrainee(id, addedTrainee[i]);
 
           // update their progress (soon)
         }
@@ -282,11 +254,7 @@ export class BatchService {
       if (removedTrainee.length != 0) {
         for (let i = 0; i < removedTrainee.length; i++) {
           // Delete them from batch_trainee
-          await this.batchTraineeService.delete({
-            batrTraineeEntity: {
-              userEntityId: removedTrainee[i],
-            },
-          });
+          await this.deleteTrainee(removedTrainee[i]);
 
           // update their progress (soon)
         }
@@ -310,5 +278,75 @@ export class BatchService {
     });
 
     return getAllInstructor;
+  }
+
+  public async findBatchEvaluation(batchId: number) {
+    const trainees = await this.batchTraineeService.find({
+      relations: {
+        batrTraineeEntity: true,
+      },
+      where: { batrBatchId: batchId },
+    });
+
+    return trainees || [];
+  }
+
+  public async findTraineeEvaluationScoring(userId: number) {
+    const traineeEvaluation = await this.batchTraineeEvService.find({
+      where: { btevTraineeEntity: { userEntityId: userId } },
+    });
+
+    const user = await this.userRepo.findOne({
+      relations: {
+        usersEducations: true,
+      },
+      where: { userEntityId: userId },
+    });
+
+    const trainee = await this.batchTraineeService.findOne({
+      relations: {
+        batrBatch: {
+          batchEntity: true,
+        },
+      },
+      where: { batrTraineeEntity: { userEntityId: userId } },
+    });
+
+    const traineeEvaluationData = {
+      user,
+      trainee,
+      traineeEvaluation,
+    };
+
+    return traineeEvaluationData || null;
+  }
+
+  async addTrainee(batchId: number, userId: number) {
+    const candidate = await this.candidateApply.findOne({
+      where: { prapUserEntityId: userId },
+    });
+
+    const candidateTotalScore =
+      (candidate.prapIqTest + candidate.prapTestScore) / 2;
+
+    await this.batchTraineeService.save({
+      batrCertificated: '0',
+      batrStatus: 'running',
+      batrTotalScore: candidateTotalScore,
+      batrTraineeEntity: {
+        userEntityId: userId,
+      },
+      batrModifiedDate: new Date(),
+      batrBatchId: batchId,
+      batrAccessGrant: '0',
+    });
+  }
+
+  async deleteTrainee(userId: number) {
+    await this.batchTraineeService.delete({
+      batrTraineeEntity: {
+        userEntityId: userId,
+      },
+    });
   }
 }

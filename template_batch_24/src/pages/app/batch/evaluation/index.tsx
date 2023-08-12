@@ -1,9 +1,11 @@
 import Page from "@/pages/component/commons/Page";
 import AppLayout from "@/pages/component/layout/AppLayout";
+import { changeToIdle, getBatchByIdFetch, getBatchEvaluationFetch } from "@/redux/slices/batchSlices";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const dummy_student = [
     {
@@ -37,7 +39,19 @@ export default function BatchEvaluation(){
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenR, setIsOpenR] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState<any | null>(null);
-
+    const status = useSelector((state: any) => state.batchs.status);
+    const batch = useSelector((state: any) => state.batchs.batch);
+    const batchEvaluation = useSelector((state: any) => state.batchs.evaluations);
+    const dispatch = useDispatch();
+    const router = useRouter();
+    
+    useEffect(() => {
+        if(status == 'idle' && router.query.batchid){
+            dispatch(getBatchEvaluationFetch(router.query.batchid));
+            dispatch(getBatchByIdFetch(router.query.batchid));
+        }
+    }, [status, router]);
+    
     const handleReviewClick = (e: any, name: string) => {
         const findStudent = studentData.find(el => el.name == name);
         setSelectedStudent(findStudent);
@@ -69,13 +83,12 @@ export default function BatchEvaluation(){
         setIsOpenR(false);
     }
 
-    const router = useRouter();
     return (
         <AppLayout>
-            <Page title={`Batch#${router.query.batchId}`} titleButton='Back' onClick={() => router.push('/app/batch')}>
+            <Page title={`Batch#${router.query.batchid} ${Object.keys(batch).length != 0 && batch.batchEntity.progTitle} `} titleButton='Back' onClick={() => router.push('/app/batch').then(() => dispatch(changeToIdle('')))}>
                 <div className="border border-slate-300 rounded-lg p-4">
                     <div className="grid grid-cols-4 gap-4">
-                        {studentData.map((student, i) => 
+                        {batchEvaluation.length != 0 && batchEvaluation.map((student: any, i: number) => 
                             <div key={i} className="w-full max-w-xs py-2 bg-white border border-gray-200 rounded-lg shadow">
                                 <div className="flex justify-end px-4">
                                     <Menu as='div' className='relative'>
@@ -85,7 +98,7 @@ export default function BatchEvaluation(){
                                         </Menu.Button>
                                         <Menu.Items className='absolute z-10 text-sm w-32 text-gray-600 right-0 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
                                             <Menu.Item>
-                                                <Link href={`/app/batch/evaluation/${1}`} className="block px-4 py-2 hover:bg-gray-100">Evaluation</Link>
+                                                <Link href={`/app/batch/evaluation/${student.batrTraineeEntity.userEntityId}`} className="block px-4 py-2 hover:bg-gray-100">Evaluation</Link>
                                             </Menu.Item>
                                             <Menu.Item>
                                                 <Link href='#' className="block px-4 py-2 hover:bg-gray-100" onClick={(e) => handleReviewClick(e, student.name)}>Review</Link>
@@ -98,9 +111,9 @@ export default function BatchEvaluation(){
                                 </div>
                                 <div className="flex flex-col items-center pb-5">
                                     <img className="w-32 h-32 mb-3 rounded-full" src="/assets/images/candidate.png" alt="User image"/>
-                                    <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">{student.name}</h5>
-                                    <span className="text-sm text-white bg-green-500 px-2 py-1 rounded-lg">{student.status}</span>
-                                    <h1 className="mt-3 text-md font-medium">Total Score: {student.score}</h1>
+                                    <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">{student.batrTraineeEntity.userFirstName} {student.batrTraineeEntity.userLastName}</h5>
+                                    <span className="text-sm text-white bg-green-500 px-2 py-1 rounded-lg">{student.batrStatus}</span>
+                                    <h1 className="mt-3 text-md font-medium">Total Score: {student.batrTotalScore}</h1>
                                 </div>
                             </div>
                         )}

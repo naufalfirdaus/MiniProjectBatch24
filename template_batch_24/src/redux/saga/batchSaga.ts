@@ -9,6 +9,8 @@ import {
   getBatchByIdSuccess,
   updateBatchSuccess,
   updateBatchFail,
+  getBatchEvaluationSuccess,
+  getBatchTraineeEvaluationSuccess,
 } from "../slices/batchSlices";
 import batchAPI from "../../pages/api/batch";
 
@@ -75,6 +77,18 @@ function* workUpdateBatch(action: any): any {
   }
 }
 
+function* workGetBatchEvaluation(action: any): any {
+  const { payload } = action;
+  const batchEv = yield call(batchAPI.getBatchEvaluation, payload);
+  yield put(getBatchEvaluationSuccess(batchEv));
+}
+
+function* workGetBatchTraineeEvaluation(action: any): any {
+  const { payload } = action;
+  const traineeEv = yield call(batchAPI.getBatchTraineeEvaluation, payload);
+  yield put(getBatchTraineeEvaluationSuccess(traineeEv));
+}
+
 export {
   workGetBatchFetch,
   workGetByNameAndStatus,
@@ -83,4 +97,6 @@ export {
   workInstructorFetch,
   workGetBatchByIdFetch,
   workUpdateBatch,
+  workGetBatchEvaluation,
+  workGetBatchTraineeEvaluation,
 };

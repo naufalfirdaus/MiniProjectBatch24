@@ -3,6 +3,8 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 const initialState: {
   technologies: object[];
   instructors: object[];
+  evaluations: object[];
+  traineeEvaluation: object;
   batchs: object;
   batch: object;
   status: string;
@@ -10,6 +12,8 @@ const initialState: {
 } = {
   technologies: [],
   instructors: [],
+  evaluations: [],
+  traineeEvaluation: {},
   batchs: {},
   batch: {},
   status: "idle",
@@ -82,6 +86,20 @@ const batchSlices = createSlice({
       state.status = "succeeded";
       state.instructors = action.payload;
     },
+    getBatchEvaluationFetch: (state, action: PayloadAction<any>) => {
+      state.status = 'loading'
+    },
+    getBatchEvaluationSuccess: (state, action: any) => {
+      state.status = 'succeeded';
+      state.evaluations = action.payload;
+    },
+    getBatchTraineeEvaluationFetch: (state, action: PayloadAction<any>) => {
+      state.status = 'loading';
+    },
+    getBatchTraineeEvaluationSuccess: (state, action) => {
+      state.status = 'succeeded';
+      state.traineeEvaluation = action.payload;
+    },
   },
 });
 
@@ -103,6 +121,10 @@ export const {
   getTechnologySuccess,
   getInstructorFetch,
   getInstructorSuccess,
+  getBatchEvaluationFetch,
+  getBatchEvaluationSuccess,
+  getBatchTraineeEvaluationFetch,
+  getBatchTraineeEvaluationSuccess,
 } = batchSlices.actions;
 
 export default batchSlices.reducer;

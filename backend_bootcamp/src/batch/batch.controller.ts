@@ -62,4 +62,16 @@ export class BatchController {
   public async updateBatch(@Query('id') id: number, @Body() fields: any) {
     return this.serBatch.update(id, fields);
   }
+
+  @Get('evaluation/view')
+  public async getBatchEvalutaionView(@Query('batchid') batchId: number) {
+    return await this.serBatch.findBatchEvaluation(batchId);
+  }
+
+  @Get('evaluation/scoring')
+  public async getBatchEvalutaionScoring(
+    @Query('userentityid') userId: number,
+  ) {
+    return await this.serBatch.findTraineeEvaluationScoring(userId);
+  }
 }
