@@ -112,11 +112,7 @@ export const GetCatFailed = (payload : any) => ({
     payload
 })
 
-<<<<<<< HEAD
-//reset
-=======
 // Reset
->>>>>>> 83cd4321747a6df064a464fc4a892b8a3e8af8dc
 export const ResetCurriculumState = () => ({
     type: 'RESET_CURRICULUM_STATE'
 })

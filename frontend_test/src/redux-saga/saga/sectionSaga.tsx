@@ -1,10 +1,6 @@
 import { call, put } from "redux-saga/effects";
 import section from "@/api/section";
-<<<<<<< HEAD
 import { AddSectionFailed, AddSectionSuccess, DeleteSectionSuccess, GetSectionFailed, GetSectionSuccess,EditSectionFailed,EditSectionSuccess } from "../action/sectionAction";
-=======
-import { AddSectionFailed, AddSectionSuccess, DeleteSectionSuccess, GetSectionFailed, GetSectionSuccess, UpdateSectionFailed, UpdateSectionSuccess } from "../action/sectionAction";
->>>>>>> 83cd4321747a6df064a464fc4a892b8a3e8af8dc
 
 function* handleGetSection(action: any): any {
     const { payload } = action;
@@ -37,7 +33,6 @@ function* handleAddSection(action: any): any {
     }
 }
 
-<<<<<<< HEAD
 function* handleEditSection(action: any): any {
     const {payload} = action;
     
@@ -46,20 +41,9 @@ function* handleEditSection(action: any): any {
         yield put(EditSectionSuccess(result.data))
     } catch (error) {
         yield put(EditSectionFailed(error))
-
-=======
-function* handleUpdateSection(action: any): any {
-    const { payload } = action
-
-    try {
-        const result = yield call(section.updateSection, payload)
-        yield put(UpdateSectionSuccess(result.data))
-    } catch (error) {
-        yield put(UpdateSectionFailed(error))
-
->>>>>>> 83cd4321747a6df064a464fc4a892b8a3e8af8dc
     }
 }
+
 
 // function* handleGetCategory(): any {
 //     try {
@@ -74,10 +58,6 @@ export {
     handleGetSection,
     handleDeleteSection,
     handleAddSection,
-<<<<<<< HEAD
     // handleGetCategory,
     handleEditSection,
-=======
-    handleUpdateSection,
->>>>>>> 83cd4321747a6df064a464fc4a892b8a3e8af8dc
 }

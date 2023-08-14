@@ -253,13 +253,9 @@ export default function EditModal(props: any) {
                                                             <div className="flex justify-between px-5">
                                                                 <div className="text-xl font-medium my-auto">{section.sectTitle}</div>
                                                                 <div className="flex">
-<<<<<<< HEAD
-                                                                    <EditSectionPage setAlertInfo={setAlertInfo} section={section} setRefreshView={props.setRefresh} setRefreshEdit={setRefresh}/>
-                                                                    <button className="btn btn-error btn-sm" onClick={()=>{setSectionDeleteView(true); setSectId(section.sectId)}}>Delete</button>
-=======
+                                                                <EditSectionPage setAlertInfo={setAlertInfo} section={section} setRefreshView={props.setRefresh} setRefreshEdit={setRefresh}/>
                                                                     <a onClick={()=>{setEditSectionView(true); setSection(section);}} className="btn  btn-neutral btn-sm mx-1">view</a>
                                                                     {section.sectionDetails?.length === 0 ? (<button className="btn btn-error btn-sm" onClick={()=>{setSectionDeleteView(true); setSection(section.sectId)}}>Delete</button>):(<></>)}
->>>>>>> 83cd4321747a6df064a464fc4a892b8a3e8af8dc
                                                                 </div>
                                                             </div>
                                                             <div className="card-body">

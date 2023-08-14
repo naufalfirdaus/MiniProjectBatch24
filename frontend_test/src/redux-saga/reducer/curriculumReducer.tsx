@@ -42,11 +42,7 @@ const getOneCurriculumReducer = (state = GET_ONE_STATE, action: any) => {
         case ActionType.GET_ONE_DATA_SUCCESS:
             return GetOneCurriculum(state, action);
         case 'RESET_CURRICULUM_STATE':
-<<<<<<< HEAD
-            return INIT_STATE;
-=======
             return GET_ONE_STATE;
->>>>>>> 83cd4321747a6df064a464fc4a892b8a3e8af8dc
         default:
             return { ...state };
     }
