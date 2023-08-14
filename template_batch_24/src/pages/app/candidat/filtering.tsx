@@ -1,12 +1,12 @@
 import Pagination from '@/pages/component/commons/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCandidateFetch } from '@/redux/slices/candidateSlices';
-import { Menu, Dialog, Transition } from '@headlessui/react';
+import { Dialog, Transition } from '@headlessui/react';
 import Image from 'next/image';
 import { Fragment, useEffect, useState } from 'react';
 import { paginate } from '@/helper/paginate';
 
-export default function Filtering(){
+export default function Filtering(props: any){
     const dispatch = useDispatch();
     const candidates = useSelector((state: any) => state.candidates.candidates);
     const candidateLoad = useSelector((state: any) => state.candidates.status);
@@ -16,7 +16,7 @@ export default function Filtering(){
 
     useEffect(() => {
         if (candidateLoad === "idle") {
-          dispatch(getCandidateFetch('Filtering'));
+          dispatch(getCandidateFetch({status: props.status}));
         }
         setCurrentPage(candidates.page);
     }, [candidateLoad, dispatch]);
@@ -35,7 +35,7 @@ export default function Filtering(){
     return (
         <>
             <div className="relative overflow-x-visible border border-t-0">
-                <div className="flex items-center justify-end gap-2 px-3 py-4 bg-white">
+                {/* <div className="flex items-center justify-end gap-2 px-3 py-4 bg-white">
                     <Menu as='div' className='relative'>
                         <Menu.Button className='inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5'> Filter by month
                         <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
@@ -66,7 +66,7 @@ export default function Filtering(){
                         </Menu.Item>
                         </Menu.Items>
                     </Menu>
-                </div>
+                </div> */}
                 <table className="w-full text-sm text-left text-gray-500">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>

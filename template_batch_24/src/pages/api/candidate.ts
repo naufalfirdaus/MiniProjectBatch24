@@ -1,9 +1,9 @@
 import axios from "axios";
 import config from "@/config/config";
 
-const GetByStatus = async (payload: any) => {
+const getByStatusAndDate = async (payload: any) => {
   try {
-    const result = await axios.get(`${config.domain}/api/bootcamp/candidate/filterby/status`, {params: {status: payload}}); 
+    const result = await axios.get(`${config.domain}/api/bootcamp/candidate/filterby`, {params: {status: payload.status, month: payload.month, year: payload.year}}); 
     return result.data;
   } catch (error) {
     return error;
@@ -38,4 +38,4 @@ const getCandidateByProgram = async (program: number) => {
   }
 }
 
-export default { GetByStatus, UpdateStatus, getPassedCandidate, getCandidateByProgram };
+export default { getByStatusAndDate, UpdateStatus, getPassedCandidate, getCandidateByProgram };

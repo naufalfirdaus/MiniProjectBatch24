@@ -21,7 +21,7 @@ export const candidateSlices = createSlice({
     changeToIdle: (state, _) =>{
       state.status = 'idle';
     },
-    getCandidateFetch: (state, payload: PayloadAction<string>) => {
+    getCandidateFetch: (state, payload: PayloadAction<object>) => {
       state.status = "loading";
     },
     getCandidateSuccess: (state, action) => {

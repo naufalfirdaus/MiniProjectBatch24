@@ -15,25 +15,14 @@ export class CandidatesController {
   constructor(private Service: CandidatesService) {}
 
   @Get('filterby')
-  public async getByDate(
+  public async getByStatusAndDate(
+    @Query('status') status: string,
     @Query('month', new DefaultValuePipe(null)) month: number,
     @Query('year', new DefaultValuePipe(null)) year: number,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
   ) {
-    return await this.Service.findByDate(month, year, {
-      page: page,
-      limit: limit,
-    });
-  }
-
-  @Get('filterby/status')
-  public async getByStatus(
-    @Query('status') status: string,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
-  ) {
-    return await this.Service.findByStatus(status, {
+    return await this.Service.findByStatusAndDate(status, month, year, {
       page: page,
       limit: limit,
     });

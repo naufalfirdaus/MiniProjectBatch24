@@ -6,7 +6,7 @@ import candidateApi from "../../pages/api/candidate";
 function* workGetCandidateFetch(action: any): any {
     const { payload } = action;
     try {
-        const candidates = yield call(candidateApi.GetByStatus, payload);
+        const candidates = yield call(candidateApi.getByStatusAndDate, payload);
         yield put(getCandidateSuccess(candidates));
     } catch (error: any) {
         yield put(getCandidateFail(error));
