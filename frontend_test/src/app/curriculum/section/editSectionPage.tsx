@@ -6,17 +6,13 @@ import { EditSectionRequest } from "@/redux-saga/action/sectionAction";
 
 export default function EditSectionPage(props: any) {
   const dispatch = useDispatch();
-  const [modal, setModal] = useState(false);
-  const [refresh, setRefresh] = useState(true);
+  const [view, setview] = useState(true);
   const section = props.section;
 
   function handleChange() {
-    setModal(!modal);
+    setview(!view);
+    props.setview(false)
   }
-
-  useEffect(() => {
-    setRefresh(false);
-  }, [refresh]);
 
   const formik = useFormik({
     initialValues: {
@@ -37,32 +33,19 @@ export default function EditSectionPage(props: any) {
     //   console.log(`TES DOANGGGGG ${payload}`)
     // section.updateSection(payload);
       dispatch(EditSectionRequest(payload));
-      setRefresh(true)
+      props.setRefreshView(true);
+      props.setRefreshEdit(true);
       handleChange();
-      props.setAlertInfo({
-        showAlert: true,
-        alertText: "Data Has Change!",
-        alertType: "success",
-      });
+      props.setAlertInfo({ showAlert: true, alertText: 'Data Successfully Added!', alertType: 'success'});
     },
   });
   return (
-    <div>
-      <a onClick={handleChange} className="btn btn-primary btn-sm mx-1">
-        Edit
-      </a>
-
-      <input
-        type="checkbox"
-        checked={modal}
-        onChange={handleChange}
-        className="modal-toggle"
-      />
-      <div className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Edit Section</h3>
-          <div className="border-t border-gray-300 my-3"></div>
-          <div>
+    <div className="">
+            <h3 className="font-bold text-lg">
+            Edit Section
+            </h3>
+            <div className="border-t border-gray-300 my-3"></div>
+            <div>
             <form>
               <div className="flex flex-col mb-3">
                 <label htmlFor="progEntityId" className="my-2 mr-5">
@@ -98,9 +81,7 @@ export default function EditSectionPage(props: any) {
                 </button>
               </div>
             </form>
-          </div>
+            </div>
         </div>
-      </div>
-    </div>
   );
 }
