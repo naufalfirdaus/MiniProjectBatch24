@@ -65,6 +65,9 @@ export class SectionService {
         {
           sectTitle: fields.sectTitle,
           sectDescription: fields.sectDescription,
+          sectTotalSection: fields.sectTotalSection,
+          sectTotalLecture: fields.sectTotalLecture,
+          sectTotalMinute: fields.sectTotalMinute,
         },
       );
 
