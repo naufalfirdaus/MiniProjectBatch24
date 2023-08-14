@@ -241,7 +241,7 @@ export default function EditModal(props: any) {
                                                             <div className="flex justify-between px-5">
                                                                 <div className="text-xl font-medium my-auto">{section.sectTitle}</div>
                                                                 <div className="flex">
-                                                                    <EditSectionPage/>
+                                                                    <EditSectionPage setAlertInfo={setAlertInfo} section={section} setRefreshView={props.setRefresh} setRefreshEdit={setRefresh}/>
                                                                     <button className="btn btn-error btn-sm" onClick={()=>{setSectionDeleteView(true); setSectId(section.sectId)}}>Delete</button>
                                                                 </div>
                                                             </div>

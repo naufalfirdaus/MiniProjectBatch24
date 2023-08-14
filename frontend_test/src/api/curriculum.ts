@@ -49,7 +49,7 @@ const createCurriculum = async (payload: any) => {
     }
 }
 
-const updateCurriculum = async (data: any,) => {
+const updateCurriculum = async (data: any) => {
     const id = data.id;
     const payload = data.data
     try {

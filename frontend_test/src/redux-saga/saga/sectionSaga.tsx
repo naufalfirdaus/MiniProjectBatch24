@@ -1,6 +1,6 @@
 import { call, put } from "redux-saga/effects";
 import section from "@/api/section";
-import { AddSectionFailed, AddSectionSuccess, DeleteSectionSuccess, GetSectionFailed, GetSectionSuccess } from "../action/sectionAction";
+import { AddSectionFailed, AddSectionSuccess, DeleteSectionSuccess, GetSectionFailed, GetSectionSuccess,EditSectionFailed,EditSectionSuccess } from "../action/sectionAction";
 
 function* handleGetSection(action: any): any {
     const { payload } = action;
@@ -43,19 +43,17 @@ function* handleAddSection(action: any): any {
     }
 }
 
-// function* handleEditCurriculum(action: any): any {
-//     const {payload} = action;
-//     const id = payload.id;
-//     const data = payload.data
+function* handleEditSection(action: any): any {
+    const {payload} = action;
+    
+    try {
+        const result = yield call(section.updateSection, payload)
+        yield put(EditSectionSuccess(result.data))
+    } catch (error) {
+        yield put(EditSectionFailed(error))
 
-//     try {
-//         const result = yield call(curriculum.updateCurriculum, id, data)
-//         yield put(EditCurriculumSuccess(result.data))
-//     } catch (error) {
-//         yield put(EditCurriculumFailed(error))
-
-//     }
-// }
+    }
+}
 
 // function* handleGetCategory(): any {
 //     try {
@@ -71,5 +69,5 @@ export {
     handleDeleteSection,
     handleAddSection,
     // handleGetCategory,
-    // handleEditCurriculum,
+    handleEditSection,
 }

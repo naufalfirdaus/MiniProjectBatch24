@@ -18,10 +18,10 @@ const SectionReducer = (state = INIT_STATE, action: any) => {
             return { ...state };
         case ActionType.ADD_SECTION_SUCCESS:
             return AddSection(state, action);
-        // case ActionType.EDIT_SECTION_REQUEST:
-        //     return { ...state };
-        // case ActionType.EDIT_SECTION_SUCCESS:
-        //     return EditSection(state, action);
+        case ActionType.EDIT_SECTION_REQUEST:
+            return { ...state };
+        case ActionType.EDIT_SECTION_SUCCESS:
+            return EditSection(state, action);
         case ActionType.DELETE_SECTION_REQUEST:
             return { ...state };
         case ActionType.DELETE_SECTION_SUCCESS:

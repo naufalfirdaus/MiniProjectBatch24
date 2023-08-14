@@ -47,3 +47,20 @@ export const DeleteSectionFailed = (payload : any) => ({
     type: Action.DELETE_SECTION_FAILED,
     payload
 })
+
+// Edit
+export const EditSectionRequest = (payload : any) => ({
+    type: Action.EDIT_SECTION_REQUEST,
+    payload
+})
+
+export const EditSectionSuccess = (payload : any) => ({
+    type: Action.EDIT_SECTION_SUCCESS,
+    payload
+})
+
+export const EditSectionFailed = (payload : any) => ({
+    type: Action.EDIT_SECTION_FAILED,
+    payload
+})
+

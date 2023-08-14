@@ -27,6 +27,8 @@ export default function CreateSectionPage(props: any) {
               }
             }
 
+            console.log(`TES DOANGGGGG ${data}`)
+
             // console.log(`Payload: ${JSON.stringify(data)}`);
 
             dispatch(AddSectionRequest(data));

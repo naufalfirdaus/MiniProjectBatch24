@@ -2,7 +2,7 @@ import { takeEvery, all, take } from "redux-saga/effects";
 import * as ActionCurriculum from '../constant/curriculumConstant';
 import * as ActionSection from '../constant/sectionConstant';
 import { handleCreateCurriculum, handleDeleteCurriculum, handleEditCurriculum, handleGetCategory, handleGetCurriculum, handleGetOneCurriculum, handleSearchCurriculum } from "./curriculumSaga";
-import { handleAddSection, handleDeleteSection, handleGetSection } from "./sectionSaga";
+import { handleAddSection, handleDeleteSection, handleGetSection, handleEditSection } from "./sectionSaga";
 
 
 function* watchAll(){
@@ -19,6 +19,7 @@ function* watchAll(){
         takeEvery(ActionSection.GET_SECTION_REQUEST, handleGetSection),
         takeEvery(ActionSection.DELETE_SECTION_REQUEST, handleDeleteSection),
         takeEvery(ActionSection.ADD_SECTION_REQUEST, handleAddSection),
+        takeEvery(ActionSection.EDIT_SECTION_REQUEST, handleEditSection),
     ])
 }
 

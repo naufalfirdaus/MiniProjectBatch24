@@ -34,10 +34,14 @@ const createSection = async (data: any) => {
     }
 }
 
-const updateSection = async (id: any, payload: any) => {
+const updateSection = async (data: any) => {
+    const sectId = data.sectId;
+    const sectProgEntityId = data.sectProgEntityId;
+    const payload = data.data;
+    // console.log(`TES DOANGGGGG ${data}`)
     try {
-        // const { id } = payload;
-        const result = await axios.put(`${config.domain}/curriculum/update/${id}`, payload);
+        
+        const result = await axios.put(`${config.domain}/curriculum/section/update/${sectProgEntityId}/${sectId}`, payload);
         return result;
     } catch (error) {
         return error;
@@ -58,5 +62,5 @@ export default {
     deleteSection,
     createSection,
     // getCategory,
-    // updateSection,
+    updateSection,
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { EditCurriculumReq, GetOneCurriculumReq } from "@/redux-saga/action/curriculumAction";
+import { EditCurriculumReq, GetOneCurriculumReq, ResetCurriculumState } from "@/redux-saga/action/curriculumAction";
 import Image from "next/image"
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
@@ -81,6 +81,11 @@ export default function ViewProgram(props: any) {
     setImageExists(false);
   };
 
+  const handleResetState = () => {
+    props.setDisplay(false);
+    dispatch(ResetCurriculumState());
+  }
+
   if (!program || program.length === 0) {
     return <div>Loading...</div>;
   } else {
@@ -90,7 +95,7 @@ export default function ViewProgram(props: any) {
       <div className='py-2'>
         <div className='grid grid-cols-2 gap-4'>
             <div className='flex justify-start font-extrabold text-xl my-auto'>{program?.progTitle} ({program?.progEntityId})</div>
-          <div className='flex justify-end'><button onClick={() => {props.setDisplay(false);}} className="btn btn-primary btn-sm my-auto">
+          <div className='flex justify-end'><button onClick={handleResetState} className="btn btn-primary btn-sm my-auto">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>

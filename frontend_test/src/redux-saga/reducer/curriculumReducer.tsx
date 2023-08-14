@@ -29,7 +29,7 @@ const CurriculumReducer = (state = INIT_STATE, action: any) => {
         case ActionType.DELETE_DATA_REQ:
             return { ...state };
         case ActionType.DELETE_DATA_SUCCESS:
-            return DeleteCurriculum(action);
+            return DeleteCurriculum(action); 
         default:
             return { ...state };
     }
@@ -41,6 +41,8 @@ const getOneCurriculumReducer = (state = INIT_STATE, action: any) => {
             return { ...state };
         case ActionType.GET_ONE_DATA_SUCCESS:
             return GetOneCurriculum(state, action);
+        case 'RESET_CURRICULUM_STATE':
+            return INIT_STATE;
         default:
             return { ...state };
     }
