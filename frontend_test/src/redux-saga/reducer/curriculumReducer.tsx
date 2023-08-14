@@ -4,16 +4,16 @@ const INIT_STATE = {
     curriculum: [],
 }
 
+const GET_ONE_STATE = {
+    program: [],
+}
+
 const CurriculumReducer = (state = INIT_STATE, action: any) => {
     switch (action.type) {
         case ActionType.GET_DATA_REQ:
             return { ...state };
         case ActionType.GET_DATA_SUCCESS:
             return GetCurriculum(state, action);
-        case ActionType.GET_ONE_DATA_REQ:
-            return { ...state };
-        case ActionType.GET_ONE_DATA_SUCCESS:
-            return GetOneCurriculum(state, action);
         case ActionType.SEARCH_DATA_REQ:
             return { ...state };
         case ActionType.SEARCH_DATA_SUCCESS:
@@ -35,14 +35,18 @@ const CurriculumReducer = (state = INIT_STATE, action: any) => {
     }
 }
 
-const getOneCurriculumReducer = (state = INIT_STATE, action: any) => {
+const getOneCurriculumReducer = (state = GET_ONE_STATE, action: any) => {
     switch (action.type) {
         case ActionType.GET_ONE_DATA_REQ:
             return { ...state };
         case ActionType.GET_ONE_DATA_SUCCESS:
             return GetOneCurriculum(state, action);
         case 'RESET_CURRICULUM_STATE':
+<<<<<<< HEAD
             return INIT_STATE;
+=======
+            return GET_ONE_STATE;
+>>>>>>> 83cd4321747a6df064a464fc4a892b8a3e8af8dc
         default:
             return { ...state };
     }

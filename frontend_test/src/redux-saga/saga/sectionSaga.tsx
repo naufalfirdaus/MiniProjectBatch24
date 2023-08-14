@@ -1,6 +1,10 @@
 import { call, put } from "redux-saga/effects";
 import section from "@/api/section";
+<<<<<<< HEAD
 import { AddSectionFailed, AddSectionSuccess, DeleteSectionSuccess, GetSectionFailed, GetSectionSuccess,EditSectionFailed,EditSectionSuccess } from "../action/sectionAction";
+=======
+import { AddSectionFailed, AddSectionSuccess, DeleteSectionSuccess, GetSectionFailed, GetSectionSuccess, UpdateSectionFailed, UpdateSectionSuccess } from "../action/sectionAction";
+>>>>>>> 83cd4321747a6df064a464fc4a892b8a3e8af8dc
 
 function* handleGetSection(action: any): any {
     const { payload } = action;
@@ -11,16 +15,6 @@ function* handleGetSection(action: any): any {
         yield put(GetSectionFailed(error))
     }
 }
-
-// function* handleSearchCurriculum(action: any): any {
-//     const { payload } = action;
-//     try {
-//         const result = yield call(curriculum.searchCurriculum, payload)
-//         yield put(SearchCurriculumSuccess(result.data))
-//     } catch (error) {
-//         yield put(SearchCurriculumFailed(error))
-//     }
-// }
 
 function* handleDeleteSection(action: any): any {
     const { payload } = action;
@@ -43,6 +37,7 @@ function* handleAddSection(action: any): any {
     }
 }
 
+<<<<<<< HEAD
 function* handleEditSection(action: any): any {
     const {payload} = action;
     
@@ -52,6 +47,17 @@ function* handleEditSection(action: any): any {
     } catch (error) {
         yield put(EditSectionFailed(error))
 
+=======
+function* handleUpdateSection(action: any): any {
+    const { payload } = action
+
+    try {
+        const result = yield call(section.updateSection, payload)
+        yield put(UpdateSectionSuccess(result.data))
+    } catch (error) {
+        yield put(UpdateSectionFailed(error))
+
+>>>>>>> 83cd4321747a6df064a464fc4a892b8a3e8af8dc
     }
 }
 
@@ -68,6 +74,10 @@ export {
     handleGetSection,
     handleDeleteSection,
     handleAddSection,
+<<<<<<< HEAD
     // handleGetCategory,
     handleEditSection,
+=======
+    handleUpdateSection,
+>>>>>>> 83cd4321747a6df064a464fc4a892b8a3e8af8dc
 }
