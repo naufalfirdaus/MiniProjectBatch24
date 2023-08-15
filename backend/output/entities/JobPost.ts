@@ -146,6 +146,6 @@ export class JobPost {
   })
   jobPostDesc: JobPostDesc;
 
-  @OneToOne(() => TalentApply, (talentApply) => talentApply.taapEntity)
-  talentApply: TalentApply;
+  @OneToMany(() => TalentApply, (talentApply) => talentApply.taapEntity)
+  talentApplies: TalentApply[];
 }

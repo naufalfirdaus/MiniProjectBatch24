@@ -1,6 +1,7 @@
 export const JOB_APPLY_REQ = "jobapply/req";
 export const JOB_APPLY_OK = "jobapply/success";
 export const JOB_APPLY_FAIL = "jobapply/failed";
+export const JOB_APPLY_RESET = "jobapply/reset";
 
 export const GET_RESUME_REQ = "get/resume/req";
 export const GET_RESUME_OK = "get/resume/success";

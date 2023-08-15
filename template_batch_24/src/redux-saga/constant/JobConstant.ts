@@ -9,6 +9,7 @@ export const GET_JOBCATEGORY_FAILED = "get/jobcategory/failed";
 export const CREATE_JOB_REQ = "create/job/req";
 export const CREATE_JOB_OK = "create/job/success";
 export const CREATE_JOB_FAILED = "create/job/failed";
+export const CREATE_JOB_RESET = "create/job/reset";
 
 export const GET_JOB_REQ = "get/job/req";
 export const GET_JOB_OK = "get/job/success";

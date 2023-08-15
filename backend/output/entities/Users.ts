@@ -131,8 +131,8 @@ export class Users {
   )
   salesOrderHeaders: SalesOrderHeader[];
 
-  @OneToOne(() => TalentApply, (talentApply) => talentApply.taapUserEntity)
-  talentApply: TalentApply;
+  @OneToMany(() => TalentApply, (talentApply) => talentApply.taapUserEntity)
+  talentApplies: TalentApply[];
 
   @OneToMany(
     () => TransactionPayment,

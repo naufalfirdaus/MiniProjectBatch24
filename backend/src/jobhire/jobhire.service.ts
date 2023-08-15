@@ -108,7 +108,6 @@ export class JobhireService {
       jobPost.jobPostDesc = newJobDesc;
       jobPost.jobPhotos = newJobPhotos;
 
-      // return jobPost;
       return await this.jobPostRepository.save(jobPost);
     } catch (error) {
       throw new InternalServerErrorException(error.message);

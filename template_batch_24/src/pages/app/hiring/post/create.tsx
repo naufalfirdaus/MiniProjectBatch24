@@ -6,26 +6,28 @@ import {
   GetIndustryReq,
   GetJobTypeReq,
 } from "@/redux-saga/action/MasterAction";
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
   CreateJobReq,
+  CreateJobReset,
   GetJobCategoryReq,
   GetJoponumberReq,
 } from "@/redux-saga/action/JobAction";
-import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { Combobox } from "@headlessui/react";
 import Editor from "@/pages/component/form/Editor";
 import Image from "next/image";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/outline";
 import { Switch } from "@headlessui/react";
 import { useRouter } from "next/router";
+import SubmitAlert from "@/pages/component/form/SubmitAlert";
 
 export default function Create() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { jopoNumber, jobCategory, onCreate } = useSelector(
+  const { jopoNumber, jobCategory, error, createState } = useSelector(
     (state: any) => state.jobState
   );
   const { clients } = useSelector((state: any) => state.clientState);
@@ -103,14 +105,7 @@ export default function Create() {
       );
       formData.set("des", description && JSON.stringify({ item: description }));
 
-      formData.forEach((val, key) => console.log(`${key}: ${val}`));
-
       dispatch(CreateJobReq(formData));
-      setAlert({ open: true, status: "success" });
-      setTimeout(() => {
-        router.push("/app/hiring");
-        setAlert({ ...alert, open: false });
-      }, 2000);
     },
   });
 
@@ -140,6 +135,19 @@ export default function Create() {
     dispatch(GetIndustryReq());
     dispatch(GetEducationReq());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!createState?.pending && createState?.success) {
+      setAlert({ open: true, status: "success" });
+      setTimeout(() => {
+        router.push("/app/hiring");
+        setAlert({ ...alert, open: false });
+      }, 2000);
+      dispatch(CreateJobReset());
+    } else if (!createState?.pending && error) {
+      setAlert({ open: true, status: "failed" });
+    }
+  }, [createState, error]);
 
   return (
     <AppLayout>
@@ -622,60 +630,26 @@ export default function Create() {
         </div>
       </form>
 
-      <Transition appear show={alert.open} as={Fragment}>
-        <Dialog as="div" onClose={() => ""} className="relative z-50">
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
-                  >
-                    Create Data Success
-                  </Dialog.Title>
-                  <Dialog.Description className="mt-2 text-sm text-gray-500">
-                    New job post successfully created
-                  </Dialog.Description>
-
-                  <div className="mt-4">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-green-200 px-4 py-2 text-sm font-medium text-green-950 hover:bg-green-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
-                      onClick={() => {
-                        router.push("/app/hiring");
-                        setAlert({ ...alert, open: false });
-                      }}
-                    >
-                      OK
-                    </button>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
+      <SubmitAlert
+        alert={alert}
+        setAlert={setAlert}
+        title={
+          alert.status === "success"
+            ? `Create Data Success`
+            : `Create data failed`
+        }
+        description={
+          alert.status === "success"
+            ? `New job post successfully created`
+            : `Something went wrong. ${error?.response?.data?.message}`
+        }
+        onClose={() => ""}
+        onClickOk={() => {
+          alert.status === "success" && router.push("/app/hiring");
+          setAlert({ ...alert, open: false });
+          dispatch(CreateJobReset());
+        }}
+      ></SubmitAlert>
     </AppLayout>
   );
 }

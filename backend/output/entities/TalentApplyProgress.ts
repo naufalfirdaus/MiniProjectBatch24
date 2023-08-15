@@ -55,15 +55,7 @@ export class TalentApplyProgress {
   )
   @JoinColumn([
     { name: "taap_user_entity_id", referencedColumnName: "taapUserEntityId" },
-  ])
-  taapUserEntity: TalentApply;
-
-  @ManyToOne(
-    () => TalentApply,
-    (talentApply) => talentApply.talentApplyProgresses2
-  )
-  @JoinColumn([
     { name: "taap_entity_id", referencedColumnName: "taapEntityId" },
   ])
-  taapEntity: TalentApply;
+  talentApply: TalentApply;
 }

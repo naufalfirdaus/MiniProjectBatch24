@@ -1,16 +1,15 @@
 import AppLayout from "@/pages/component/layout/AppLayout";
-import { ChangeEvent, Fragment, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 import { GetUserReq } from "@/redux-saga/action/UserAction";
-import { GetResumeReq, JobApplyReq } from "@/redux-saga/action/JobApplyAction";
+import { GetResumeReq, JobApplyReq, ResetJobApply } from "@/redux-saga/action/JobApplyAction";
 import { getAge } from "@/helpers/calculateAge";
-import { error } from "console";
 import { domain } from "@/pages/config/config";
-import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
+import SubmitAlert from "@/pages/component/form/SubmitAlert";
 
 const validation = Yup.object().shape({
   fullName: Yup.string().trim().required("Full Name is required"),
@@ -26,8 +25,9 @@ export default function Apply() {
   const router = useRouter();
   
   const { user } = useSelector((state: any) => state.userState);
-  const { resume } = useSelector((state: any) => state.jobApplyState)
-  const jopoEntityId = "1";
+  const { resume, createState, error } = useSelector((state: any) => state.jobApplyState);
+  
+  const [jopoEntityId, setJopoEntityId] = useState<string>("");
   const loginUserId = "8";    //diganti kalau udah integrasi ke user
 
   const [age, setAge] = useState<number>();
@@ -64,7 +64,7 @@ export default function Apply() {
     enableReinitialize: true,
     initialValues: initialValues,
     validationSchema: validation,
-    onSubmit: (values: typeof initialValues) => {
+    onSubmit: async (values: typeof initialValues) => {
       if (isFileEmpty()) return;
       
       const formData = new FormData();
@@ -83,15 +83,9 @@ export default function Apply() {
       user?.usersPhones?.length > 0 && formData.set("oldPhone", initialValues.phone);
       
       dispatch(JobApplyReq(formData));
-      setAlert({ open: true, status: "success" });
-      setTimeout(() => {
-        router.push(`/hiring/${jopoEntityId}`);
-        setAlert({ ...alert, open: false });
-      }, 10000);
     },
   });
 
-  
   const handleResumeSelected = (e: ChangeEvent<HTMLInputElement>): void => {
     const files = e.currentTarget.files && e.currentTarget.files[0];
     if (files) {
@@ -122,8 +116,26 @@ export default function Apply() {
   useEffect(() => {
     setResumeName(resume?.usmeFilename);
     setPreviewImg(user?.userPhoto);
-    setAge(getAge(initialValues.birthDate))
-  }, [initialValues.birthDate, resume?.usmeFilename, user?.userPhoto]);
+    setAge(getAge(initialValues.birthDate));
+    setJopoEntityId(router.query.jopoEntityId as string || sessionStorage.getItem("jopoEntityId") as string);
+
+    if(!router.query.jopoEntityId  && !sessionStorage.getItem("jopoEntityId")) {
+      router.push("/app/hiring");
+    }
+  }, [initialValues.birthDate, resume?.usmeFilename, router.query.jopoEntityId, user?.userPhoto]);
+
+  useEffect(() => {
+    if (!createState?.pending && createState?.success) {
+      setAlert({ open: true, status: "success" });
+      setTimeout(() => {
+        router.push(`/hiring/${jopoEntityId}`);
+        setAlert({ ...alert, open: false });
+      }, 10000);
+      dispatch(ResetJobApply());
+    } else if (!createState?.pending && error) {
+      setAlert({ open: true, status: "failed" });
+    }
+  }, [createState, error])
 
   return (
     <AppLayout>
@@ -139,14 +151,20 @@ export default function Apply() {
           <label
             htmlFor="photo"
             className={`border rounded-full w-28 h-28 flex items-center justify-center text-sm md:absolute inset-y-16 xl:right-1/4 lg:right-28 md:right-20 cursor-pointer ${
-              (fileError.photo && "border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-offset-red-500 text-red-500") || "border-slate-500"
+              (fileError.photo &&
+                "border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-offset-red-500 text-red-500") ||
+              "border-slate-500"
             }`}
           >
             {!previewImg && !upload ? (
-              fileError.photo ? "Please upload your photo" : "Upload Photo"
+              fileError.photo ? (
+                "Please upload your photo"
+              ) : (
+                "Upload Photo"
+              )
             ) : (
               <Image
-                loader={({ src }) => src}
+                loader={({ src, width }) => `${src}?w=${width}`}
                 src={`${
                   upload ? previewImg : `${domain}/users/photo/${previewImg}`
                 }`}
@@ -154,10 +172,18 @@ export default function Apply() {
                 width={0}
                 height={0}
                 className="w-28 h-28 rounded-full absolute"
+                priority
               />
             )}
             <div className="w-28 h-28 group hover:bg-gray-200 opacity-60 rounded-full absolute flex justify-center items-center cursor-pointer transition duration-500">
-              <Image className="hidden group-hover:block w-8" loader={({ src }) => src} src="https://www.svgrepo.com/show/33565/upload.svg" alt="" width={0} height={0} />
+              <Image
+                className="hidden group-hover:block w-8"
+                loader={({ src, width }) => `${src}?w=${width}`}
+                src="https://www.svgrepo.com/show/33565/upload.svg"
+                alt=""
+                width={0}
+                height={0}
+              />
             </div>
           </label>
           <input
@@ -311,23 +337,33 @@ export default function Apply() {
             <label
               htmlFor="resume"
               className={`flex justify-between w-full text-sm border cursor-pointer ${
-                fileError.resume && "border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-offset-red-500" || "border-slate-500 "
+                (fileError.resume &&
+                  "border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-offset-red-500") ||
+                "border-slate-500 "
               }`}
             >
               <span className="py-2 ps-2 text-start whitespace-nowrap overflow-hidden text-ellipsis w-3/5">
                 {resumeName || "Resume"}
               </span>
-              <span className={`border-s px-2 py-2 w-2/5 ${fileError.resume && "border-s-red-500" || "border-s-slate-500"}`}>
+              <span
+                className={`border-s px-2 py-2 w-2/5 ${
+                  (fileError.resume && "border-s-red-500") ||
+                  "border-s-slate-500"
+                }`}
+              >
                 Choose File PDF
               </span>
             </label>
-            {fileError.resume && (<small className="text-red-500">resume is required</small>)}
+            {fileError.resume && (
+              <small className="text-red-500">resume is required</small>
+            )}
           </div>
-          
+
           <div className="flex w-full md:w-2/5 xl:w-1/4 justify-between gap-3 text-sm">
             <button
               type="button"
               className="bg-orange-400 px-10 py-2.5 hover:bg-orange-500 focus:bg-orange-500 focus:text-white hover:text-white"
+              onClick={router.back}
             >
               Cancel
             </button>
@@ -341,60 +377,26 @@ export default function Apply() {
         </form>
       </div>
 
-      <Transition appear show={alert.open} as={Fragment}>
-        <Dialog as="div" onClose={() => ""} className="relative z-50">
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
-                  >
-                    Thank you for applying
-                  </Dialog.Title>
-                  <Dialog.Description className="mt-2 text-sm text-gray-600">
-                    We have received your profile and we will review your application. Our Talent Acquisition Team will contact you if your qualifications match our needs for the role.
-                  </Dialog.Description>
-
-                  <div className="mt-4">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-green-200 px-4 py-2 text-sm font-medium text-green-950 hover:bg-green-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
-                      onClick={() => {
-                        router.push(`/hiring/${jopoEntityId}`);
-                        setAlert({ ...alert, open: false });
-                      }}
-                    >
-                      OK
-                    </button>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
+      <SubmitAlert
+        alert={alert}
+        setAlert={setAlert}
+        title={
+          alert.status === "success"
+            ? `Thank you for applying`
+            : `Failed to apply`
+        }
+        description={
+          alert.status === "success"
+            ? "We have received your profile and we will review your application. Our Talent Acquisition Team will contact you if your qualifications match our needs for the role."
+            : error?.response?.data?.message
+        }
+        onClose={() => ""}
+        onClickOk={() => {
+          alert.status === "success" && router.push(`/hiring/${jopoEntityId}`);
+          setAlert({ ...alert, open: false });
+          dispatch(ResetJobApply());
+        }}
+      ></SubmitAlert>
     </AppLayout>
   );
 }

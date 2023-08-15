@@ -32,6 +32,10 @@ export class TalentApplyService {
         taapUserEntityId: userEntityId,
         taapEntityId: jobEntityId,
       },
+      relations: {
+        taapStatus: true,
+        talentApplyProgresses: true,
+      }
     });
   }
 

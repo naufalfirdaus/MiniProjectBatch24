@@ -29,3 +29,7 @@ export const JobApplyFail = (error: any) => ({
   type: JobApplyAction.JOB_APPLY_FAIL,
   error,
 });
+
+export const ResetJobApply = () => ({
+  type: JobApplyAction.JOB_APPLY_RESET,
+});

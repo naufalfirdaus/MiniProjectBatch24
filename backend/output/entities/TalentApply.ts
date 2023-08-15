@@ -5,18 +5,13 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
 } from "typeorm";
 import { JobPost } from "./JobPost";
 import { Status } from "./Status";
 import { Users } from "./Users";
 import { TalentApplyProgress } from "./TalentApplyProgress";
 
-@Index("talent_apply_taap_entity_id_key", ["taapEntityId"], { unique: true })
 @Index("talentapply", ["taapEntityId", "taapUserEntityId"], { unique: true })
-@Index("talent_apply_taap_user_entity_id_key", ["taapUserEntityId"], {
-  unique: true,
-})
 @Entity("talent_apply", { schema: "jobhire" })
 export class TalentApply {
   @Column("integer", { primary: true, name: "taap_user_entity_id" })
@@ -37,7 +32,7 @@ export class TalentApply {
   })
   taapModifiedDate: Date | null;
 
-  @OneToOne(() => JobPost, (jobPost) => jobPost.talentApply)
+  @ManyToOne(() => JobPost, (jobPost) => jobPost.talentApplies)
   @JoinColumn([
     { name: "taap_entity_id", referencedColumnName: "jopoEntityId" },
   ])
@@ -47,7 +42,7 @@ export class TalentApply {
   @JoinColumn([{ name: "taap_status", referencedColumnName: "status" }])
   taapStatus: Status;
 
-  @OneToOne(() => Users, (users) => users.talentApply)
+  @ManyToOne(() => Users, (users) => users.talentApplies)
   @JoinColumn([
     { name: "taap_user_entity_id", referencedColumnName: "userEntityId" },
   ])
@@ -55,13 +50,7 @@ export class TalentApply {
 
   @OneToMany(
     () => TalentApplyProgress,
-    (talentApplyProgress) => talentApplyProgress.taapUserEntity
+    (talentApplyProgress) => talentApplyProgress.talentApply
   )
   talentApplyProgresses: TalentApplyProgress[];
-
-  @OneToMany(
-    () => TalentApplyProgress,
-    (talentApplyProgress) => talentApplyProgress.taapEntity
-  )
-  talentApplyProgresses2: TalentApplyProgress[];
 }

@@ -1,30 +1,36 @@
 import AppLayout from "@/pages/component/layout/AppLayout";
 import {
+  CreateJobReset,
   GetJobByIdReq,
   GetJobCategoryReq,
   UpdateJobReq,
 } from "@/redux-saga/action/JobAction";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 import Editor from "@/pages/component/form/Editor";
 import Image from "next/image";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/outline";
-import { Combobox, Dialog, Switch, Transition } from "@headlessui/react";
+import { Combobox, Switch } from "@headlessui/react";
 import { GetClientReq } from "@/redux-saga/action/ClientAction";
-import { GetAddressReq, GetJobTypeReq } from "@/redux-saga/action/MasterAction";
+import { GetAddressReq, GetEducationReq, GetIndustryReq, GetJobTypeReq } from "@/redux-saga/action/MasterAction";
 import { domain } from "../../../config/config";
+import SubmitAlert from "@/pages/component/form/SubmitAlert";
 
 export default function Update() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { id } = router.query;
 
-  const { job, jobCategory } = useSelector((state: any) => state.jobState);
+  const { job, jobCategory, error, createState } = useSelector(
+    (state: any) => state.jobState
+  );
   const { clients } = useSelector((state: any) => state.clientState);
-  const { jobType, address } = useSelector((state: any) => state.masterState);
+  const { jobType, address, industry, education } = useSelector(
+    (state: any) => state.masterState
+  );
 
   const [queryClient, setQueryClient] = useState("");
   const [selectedClient, setSelectedClient] = useState<any>("");
@@ -108,7 +114,6 @@ export default function Update() {
         if (values[value as keyof typeof initialValues])
           formData.append(value, values[value as keyof typeof initialValues]);
       }
-      console.log(formik.values.photos);
 
       selectedClient.clitId && formData.set("clit_id", selectedClient.clitId);
       selectedAddr.addrId && formData.set("addr_id", selectedAddr.addrId);
@@ -133,7 +138,6 @@ export default function Update() {
         formData.set("oldPhotoData", JSON.stringify(job?.jobPhotos?.[0]));
       }
 
-      formData.forEach((val, key) => console.log(`${key}: ${val}`));
       dispatch(UpdateJobReq({ id, formData }));
       setAlert({ open: true, status: "success" });
       setTimeout(() => {
@@ -167,6 +171,8 @@ export default function Update() {
       dispatch(GetClientReq());
       dispatch(GetJobTypeReq());
       dispatch(GetAddressReq());
+      dispatch(GetIndustryReq());
+      dispatch(GetEducationReq());
     }
   }, [dispatch, router.isReady, id]);
 
@@ -186,6 +192,19 @@ export default function Update() {
     job?.jopoClit,
     job?.jobPhotos,
   ]);
+
+  useEffect(() => {
+    if (!createState?.pending && createState?.success) {
+      setAlert({ open: true, status: "success" });
+      setTimeout(() => {
+        router.push("/app/hiring");
+        setAlert({ ...alert, open: false });
+      }, 2000);
+      dispatch(CreateJobReset());
+    } else if (!createState?.pending && error) {
+      setAlert({ open: true, status: "failed" });
+    }
+  }, [createState, error]);
 
   return (
     <AppLayout>
@@ -322,11 +341,17 @@ export default function Update() {
                   name="indu_code"
                   id="indu_code"
                   className="block mt-1 w-full text-xs p-2"
+                  value={formik.values.indu_code}
                   onChange={formik.handleChange}
                 >
-                  <option value="">Telecomunication</option>
-                  <option value="">Retail</option>
-                  <option value="">Bank</option>
+                  {industry.length > 0 &&
+                    industry.map((indu: any) => {
+                      return (
+                        <option key={indu.indu_code} value={indu.indu_code}>
+                          {indu.indu_name}
+                        </option>
+                      );
+                    })}
                 </select>
               </label>
 
@@ -378,11 +403,17 @@ export default function Update() {
                   name="edu_code"
                   id="edu_code"
                   className="block mt-1 w-full text-xs p-2"
+                  value={formik.values.edu_code}
                   onChange={formik.handleChange}
                 >
-                  <option value="">S1/S2/S3</option>
-                  <option value="">Diploma 3/4</option>
-                  <option value="">SMK</option>
+                  {education.length > 0 &&
+                    education.map((edu: any) => {
+                      return (
+                        <option key={edu.edu_code} value={edu.edu_code}>
+                          {edu.edu_name}
+                        </option>
+                      );
+                    })}
                 </select>
               </label>
             </div>
@@ -680,60 +711,24 @@ export default function Update() {
         </div>
       </form>
 
-      <Transition appear show={alert.open} as={Fragment}>
-        <Dialog as="div" onClose={() => ""} className="relative z-50">
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
-                  >
-                    Update Data Success
-                  </Dialog.Title>
-                  <Dialog.Description className="mt-2 text-sm text-gray-500">
-                    Job post successfully updated
-                  </Dialog.Description>
-
-                  <div className="mt-4">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-green-200 px-4 py-2 text-sm font-medium text-green-950 hover:bg-green-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
-                      onClick={() => {
-                        router.push("/app/hiring");
-                        setAlert({ ...alert, open: false });
-                      }}
-                    >
-                      OK
-                    </button>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
+      <SubmitAlert
+        alert={alert}
+        setAlert={setAlert}
+        title={
+          alert.status === "success" ? "Update Data Success" : "Update failed"
+        }
+        description={
+          alert.status === "success"
+            ? "Job post successfully updated"
+            : error?.response?.data?.message
+        }
+        onClose={() => ""}
+        onClickOk={() => {
+          alert.status === "success" && router.push("/app/hiring");
+          setAlert({ ...alert, open: false });
+          dispatch(CreateJobReset());
+        }}
+      ></SubmitAlert>
     </AppLayout>
   );
 }

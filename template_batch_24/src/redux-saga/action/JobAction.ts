@@ -86,3 +86,7 @@ export const UpdateJobFail = (error: any) => ({
   type: JobAction.UPDATE_JOB_FAILED,
   error,
 });
+
+export const CreateJobReset = () => ({
+  type: JobAction.CREATE_JOB_RESET,
+});

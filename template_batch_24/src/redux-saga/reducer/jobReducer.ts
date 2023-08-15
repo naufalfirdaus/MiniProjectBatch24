@@ -7,6 +7,11 @@ const INIT_STATE = {
   job: {},
 };
 
+const createState = {
+  pending: true,
+  success: undefined,
+};
+
 const JobReducer = (state = INIT_STATE, action: any) => {
   switch (action.type) {
     case ActionType.GET_JOB_REQ:
@@ -34,17 +39,26 @@ const JobReducer = (state = INIT_STATE, action: any) => {
     case ActionType.GET_JOBCATEGORY_FAILED:
       return { ...state, error: action.error };
     case ActionType.CREATE_JOB_REQ:
-      return { ...state };
+      return { ...state, createState };
     case ActionType.CREATE_JOB_OK:
       return CreateJob(state, action);
     case ActionType.CREATE_JOB_FAILED:
-      return { ...state, error: action.error };
+      return {
+        ...state,
+        error: action.error,
+        createState: {
+          pending: false,
+          success: false,
+        },
+      };
     case ActionType.UPDATE_JOB_REQ:
       return { ...state };
     case ActionType.UPDATE_JOB_OK:
       return UpdateJob(state, action);
     case ActionType.UPDATE_JOB_FAILED:
       return { ...state, error: action.error };
+    case ActionType.CREATE_JOB_RESET:
+      return { ...state, error: null, createState };
     default:
       return { ...state };
   }
@@ -54,6 +68,10 @@ const CreateJob = (state: any, action: any) => {
   return {
     ...state,
     jobs: [...state.jobs, action.payload],
+    createState: {
+      pending: false,
+      success: true,
+    },
   };
 };
 
@@ -75,7 +93,7 @@ const GetJobById = (state: any, action: any) => {
 const UpdateJob = (state: any, action: any) => {
   return {
     ...state,
-    job: action.payload, //update state change for job
+    job: { ...state.job, ...action.payload }, //update state change for job
     // jobs: [...state], //update the state for jobs
   };
 };
