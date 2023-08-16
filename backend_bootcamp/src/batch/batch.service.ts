@@ -347,9 +347,17 @@ export class BatchService {
 
   public async updateStats(id: number, stats: string){
     try {
-      const updateStatsBatch = await this.batchProgram.update({batchId : id}, {batchStatus : stats as any});
+      const updateStatsBatch = await this.batchProgram.update(
+        {batchId : id}, 
+        {batchStatus : stats as any}
+      );
+
+      const batchFindTrainee = await this.batchTraineeService.find({where : {batrBatchId : id}})
      
-      const updateStatsTrainee = await this.batchTraineeService.update({batrBatch : id as any}, {batrStatus : stats})
+      const updateStatsTrainee = await this.batchTraineeService.update(
+        {batrBatchId : batchFindTrainee[0].batrBatchId}, 
+        {batrStatus : stats}
+      )
 
       return {updateStatsBatch, updateStatsTrainee};
     } catch (error) {
