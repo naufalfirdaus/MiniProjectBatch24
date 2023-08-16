@@ -16,6 +16,8 @@ import { BatchController } from 'src/batch/batch.controller';
 import { BatchService } from 'src/batch/batch.service';
 import { CandidatesController } from 'src/candidates/candidates.controller';
 import { CandidatesService } from 'src/candidates/candidates.service';
+import { DashboardController } from 'src/dashboard/dashboard.controller';
+import { DashboardService } from 'src/dashboard/dashboard.service';
 
 @Module({
   imports: [
@@ -31,10 +33,10 @@ import { CandidatesService } from 'src/candidates/candidates.service';
       Employee,
       BatchTrainee,
       BatchTraineeEvaluation,
-      ProgramApplyProgress,
+      ProgramApplyProgress
     ]),
   ],
-  providers: [CandidatesService, BatchService],
-  controllers: [CandidatesController, BatchController],
+  providers: [CandidatesService, BatchService, DashboardService],
+  controllers: [CandidatesController, BatchController, DashboardController],
 })
 export class GlobalModule {}

@@ -7,6 +7,7 @@ import {
   Post,
   Body,
   Put,
+  Delete,
 } from '@nestjs/common';
 import { BatchService } from './batch.service';
 
@@ -74,4 +75,15 @@ export class BatchController {
   ) {
     return await this.serBatch.findTraineeEvaluationScoring(userId);
   }
+
+  @Put('update')
+  public async updateStatusBatch(@Query('id') id:number, @Query('status') stats:string){
+    return await this.serBatch.updateStats(id, stats);
+  }
+
+  @Delete('batchid')
+  public async deleteBatch(@Query('id') id:number){
+    return await this.serBatch.deletes(id);
+  }
 }
+

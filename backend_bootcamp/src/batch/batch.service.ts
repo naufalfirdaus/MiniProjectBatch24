@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Batch } from 'output/entities/Batch';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { PaginationDto } from './batc.dto';
 import { RoomI } from './batc.interface';
 import { ProgramEntity } from 'output/entities/ProgramEntity';
@@ -11,6 +11,7 @@ import { BatchTrainee } from 'output/entities/BatchTrainee';
 import { ProgramApply } from 'output/entities/ProgramApply';
 import { ProgramApplyProgress } from 'output/entities/ProgramApplyProgress';
 import { BatchTraineeEvaluation } from 'output/entities/BatchTraineeEvaluation';
+import { Status } from 'output/entities/Status';
 
 @Injectable()
 export class BatchService {
@@ -29,6 +30,8 @@ export class BatchService {
     private candidateApply: Repository<ProgramApply>,
     @InjectRepository(ProgramApplyProgress)
     private candidateApplyProgress: Repository<ProgramApplyProgress>,
+    @InjectRepository(Status)
+    private status: Repository<Status>
   ) {}
 
   public async findAll(options: PaginationDto): Promise<RoomI> {
@@ -342,11 +345,29 @@ export class BatchService {
     });
   }
 
+  public async updateStats(id: number, stats: string){
+    try {
+      const updateStatsBatch = await this.batchProgram.update({batchId : id}, {batchStatus : stats as any});
+     
+      const updateStatsTrainee = await this.batchTraineeService.update({batrBatch : id as any}, {batrStatus : stats})
+
+      return {updateStatsBatch, updateStatsTrainee};
+    } catch (error) {
+      throw new Error(error.message);
+    }
+
+     
+  }
+
   async deleteTrainee(userId: number) {
     await this.batchTraineeService.delete({
       batrTraineeEntity: {
         userEntityId: userId,
       },
     });
+  }
+
+  public async deletes (id: number) {
+    return await this.batchProgram.delete({batchId : id});
   }
 }
