@@ -13,7 +13,3 @@ export const UPDATE_SECTION_FAILED = 'update/section/failed'
 export const DELETE_SECTION_REQUEST = 'delete/section/request'
 export const DELETE_SECTION_SUCCESS = 'delete/section/success'
 export const DELETE_SECTION_FAILED = 'delete/section/failed'
-
-export const EDIT_SECTION_REQUEST = 'edit/section/request'
-export const EDIT_SECTION_SUCCESS = 'edit/section/success'
-export const EDIT_SECTION_FAILED = 'edit/section/failed'
