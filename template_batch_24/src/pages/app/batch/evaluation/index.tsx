@@ -83,6 +83,11 @@ export default function BatchEvaluation(){
         setIsOpenR(false);
     }
 
+    const handleEvaluationButton = (e: any, userId: number) => {
+        e.preventDefault();
+        router.push(`/app/batch/evaluation/${userId}`).then(() => dispatch(changeToIdle('')));
+    }
+
     return (
         <AppLayout>
             <Page title={`Batch#${router.query.batchid} ${Object.keys(batch).length != 0 && batch.batchEntity.progTitle} `} titleButton='Back' onClick={() => router.push('/app/batch').then(() => dispatch(changeToIdle('')))}>
@@ -98,7 +103,7 @@ export default function BatchEvaluation(){
                                         </Menu.Button>
                                         <Menu.Items className='absolute z-10 text-sm w-32 text-gray-600 right-0 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
                                             <Menu.Item>
-                                                <Link href={`/app/batch/evaluation/${student.batrTraineeEntity.userEntityId}`} className="block px-4 py-2 hover:bg-gray-100">Evaluation</Link>
+                                                <Link href='#' onClick={(e) => handleEvaluationButton(e, student.batrTraineeEntity.userEntityId)} className="block px-4 py-2 hover:bg-gray-100">Evaluation</Link>
                                             </Menu.Item>
                                             <Menu.Item>
                                                 <Link href='#' className="block px-4 py-2 hover:bg-gray-100" onClick={(e) => handleReviewClick(e, student.name)}>Review</Link>

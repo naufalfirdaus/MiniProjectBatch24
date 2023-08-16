@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { changeToIdle, getBatchFetch, getByNameAndStatusFetch } from '@/redux/slices/batchSlices';
+import { changeToIdle, getBatchFetch, getByNameAndStatusFetch, updateBatchStatusTry } from '@/redux/slices/batchSlices';
 import { getPassedCandidateBootcampFetch } from '@/redux/slices/candidateSlices';
 
 export default function Batch() {
@@ -44,6 +44,15 @@ export default function Batch() {
   const handleEvaluationButton = (e:any, id: number) => {
     e.preventDefault();
     navigate.push({pathname: `/app/batch/evaluation`, query: {batchid: id}}).then(() => dispatch(changeToIdle('')));
+  }
+
+  const handleStatusButton = (id: number, status: string) => {
+    if(status == 'Running'){
+      dispatch(updateBatchStatusTry({ batchId: id, status:'Running' }))
+    } else {
+      dispatch(updateBatchStatusTry({ batchId: id, status:'Close' }))
+    }
+    dispatch(changeToIdle(''));
   }
   
   return (
@@ -110,9 +119,9 @@ export default function Batch() {
                     {batch.batchEntity.progTitle}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex">
-                      {batch.batchTrainees.map((trainees: any) => 
-                        <img key={trainees.batrId} src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt={trainees.batrTraineeEntity.userPhoto} className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-4"/>
+                    <div className="flex justify-center">
+                      {batch.batchTrainees.length == 0 ? 'No members yet' :  batch.batchTrainees.map((trainees: any) => 
+                        <img key={trainees.batrId} src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt={trainees.batrTraineeEntity.userPhoto} className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow -ml-6"/>
                       )}
                     </div>
                   </td>
@@ -140,10 +149,10 @@ export default function Batch() {
                           <a href="#" className="block px-4 py-2 hover:bg-gray-100">Delete</a>
                       </Menu.Item>
                       <Menu.Item>
-                          <a href="#" className="block px-4 py-2 hover:bg-gray-100">Closed Batch</a>
+                          <a href="#" onClick={() => handleStatusButton(batch.batchId, 'Close')} className="block px-4 py-2 hover:bg-gray-100">Closed Batch</a>
                       </Menu.Item>
                       <Menu.Item>
-                          <a href="#" className="block px-4 py-2 hover:bg-gray-100">Set To Running</a>
+                          <a href="#"  onClick={() => handleStatusButton(batch.batchId, 'Running')} className="block px-4 py-2 hover:bg-gray-100">Set To Running</a>
                       </Menu.Item>
                       <Menu.Item>
                           <Link href='#' onClick={(e) => handleEvaluationButton(e, batch.batchId)} className="block px-4 py-2 hover:bg-gray-100">Evaluation</Link>

@@ -11,6 +11,9 @@ import {
   updateBatchFail,
   getBatchEvaluationSuccess,
   getBatchTraineeEvaluationSuccess,
+  updateTraineeEvalutaionScoreSuccess,
+  updateTraineeEvalutaionScoreFail,
+  updateBatchStatusSuccess,
 } from "../slices/batchSlices";
 import batchAPI from "../../pages/api/batch";
 
@@ -89,6 +92,23 @@ function* workGetBatchTraineeEvaluation(action: any): any {
   yield put(getBatchTraineeEvaluationSuccess(traineeEv));
 }
 
+function* workUpdateTraineeEvaluationScore(action: any): any {
+  const { payload } = action;
+
+  try {
+    yield call(batchAPI.updateTraineeEvaluationScore, payload);
+    yield put(updateTraineeEvalutaionScoreSuccess(''));
+  } catch (error: any) {
+    yield put(updateTraineeEvalutaionScoreFail(error))
+  }
+}
+
+function* workUpdateBatchStatus(action: any): any {
+  const { payload } = action;
+  yield call(batchAPI.updateBatchStatus, payload);
+  yield put(updateBatchStatusSuccess(''));
+}
+
 export {
   workGetBatchFetch,
   workGetByNameAndStatus,
@@ -99,4 +119,6 @@ export {
   workUpdateBatch,
   workGetBatchEvaluation,
   workGetBatchTraineeEvaluation,
+  workUpdateTraineeEvaluationScore,
+  workUpdateBatchStatus,
 };

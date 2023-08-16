@@ -14,6 +14,7 @@ export default function EditBatch(){
     const batch = useSelector((state: any) => state.batchs.batch);
     const batchLoad = useSelector((state: any) => state.batchs.status);
     const technologies = useSelector((state: any) => state.batchs.technologies);
+    const error = useSelector((state: any) => state.batchs.error);
     const instructors = useSelector((state: any) => state.batchs.instructors);
     const candidatesProgram = useSelector((state: any) => state.candidates.programCandidates);
     const [members, setMembers] = useState<object[]>([]);
@@ -50,8 +51,11 @@ export default function EditBatch(){
                 batchEndDate : new Date(values.batchEndDate),
                 trainees: members,
             }
-            
             dispatch(updateBatchTry({id: batch.batchId, data: batchData}));
+
+            if(!error) {
+                router.push('/app/batch').then(() => dispatch(changeToIdle('')));
+            }
         },
     });
 

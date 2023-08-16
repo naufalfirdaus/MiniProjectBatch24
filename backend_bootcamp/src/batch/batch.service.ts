@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Batch } from 'output/entities/Batch';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { PaginationDto } from './batc.dto';
 import { RoomI } from './batc.interface';
 import { ProgramEntity } from 'output/entities/ProgramEntity';
@@ -11,7 +11,6 @@ import { BatchTrainee } from 'output/entities/BatchTrainee';
 import { ProgramApply } from 'output/entities/ProgramApply';
 import { ProgramApplyProgress } from 'output/entities/ProgramApplyProgress';
 import { BatchTraineeEvaluation } from 'output/entities/BatchTraineeEvaluation';
-import { Status } from 'output/entities/Status';
 
 @Injectable()
 export class BatchService {
@@ -30,8 +29,6 @@ export class BatchService {
     private candidateApply: Repository<ProgramApply>,
     @InjectRepository(ProgramApplyProgress)
     private candidateApplyProgress: Repository<ProgramApplyProgress>,
-    @InjectRepository(Status)
-    private status: Repository<Status>
   ) {}
 
   public async findAll(options: PaginationDto): Promise<RoomI> {
@@ -128,7 +125,11 @@ export class BatchService {
     });
 
     for (let i = 0; i < fields.trainees.length; i++) {
-      this.addTrainee(batch.batchId, fields.trainees[i].prapUserEntityId);
+      await this.addTrainee(batch.batchId, fields.trainees[i].prapUserEntityId);
+      this.addBatchTraineeEvaliationSkillSet(
+        batch.batchId,
+        fields.trainees[i].prapUserEntityId,
+      );
     }
 
     const trainer = [
@@ -146,7 +147,7 @@ export class BatchService {
     }
   }
 
-  public async update(id: any, fields: any) {
+  public async updateBatch(id: any, fields: any) {
     // Find previous batch data;
     const oldBatch = await this.findOne(id);
 
@@ -187,7 +188,8 @@ export class BatchService {
       if (addedTrainee.length != 0) {
         for (let i = 0; i < addedTrainee.length; i++) {
           // Insert them to batch_trainee
-          this.addTrainee(id, addedTrainee[i]);
+          await this.addTrainee(id, addedTrainee[i]);
+          await this.addBatchTraineeEvaliationSkillSet(id, addedTrainee[i]);
 
           // update their progress (soon)
         }
@@ -248,6 +250,7 @@ export class BatchService {
         for (let i = 0; i < addedTrainee.length; i++) {
           // Insert them to batch_trainee
           await this.addTrainee(id, addedTrainee[i]);
+          await this.addBatchTraineeEvaliationSkillSet(id, addedTrainee[i]);
 
           // update their progress (soon)
         }
@@ -297,6 +300,7 @@ export class BatchService {
   public async findTraineeEvaluationScoring(userId: number) {
     const traineeEvaluation = await this.batchTraineeEvService.find({
       where: { btevTraineeEntity: { userEntityId: userId } },
+      order: { btevId: 'ASC' },
     });
 
     const user = await this.userRepo.findOne({
@@ -334,7 +338,7 @@ export class BatchService {
 
     await this.batchTraineeService.save({
       batrCertificated: '0',
-      batrStatus: 'running',
+      batrStatus: 'Running',
       batrTotalScore: candidateTotalScore,
       batrTraineeEntity: {
         userEntityId: userId,
@@ -345,26 +349,46 @@ export class BatchService {
     });
   }
 
-  public async updateStats(id: number, stats: string){
+  public async updateBatchStats(id: number, stats: string) {
     try {
       const updateStatsBatch = await this.batchProgram.update(
-        {batchId : id}, 
-        {batchStatus : stats as any}
+        { batchId: id },
+        { batchStatus: stats as any },
       );
 
-      const batchFindTrainee = await this.batchTraineeService.find({where : {batrBatchId : id}})
-     
       const updateStatsTrainee = await this.batchTraineeService.update(
-        {batrBatchId : batchFindTrainee[0].batrBatchId}, 
-        {batrStatus : stats}
-      )
+        { batrBatchId: id },
+        { batrStatus: stats },
+      );
 
-      return {updateStatsBatch, updateStatsTrainee};
+      return { updateStatsBatch, updateStatsTrainee };
     } catch (error) {
       throw new Error(error.message);
     }
+  }
 
-     
+  public async updateEvaluationTraineeScore(userId: number, fields: any) {
+    try {
+      for (const key in fields) {
+        for (let i = 0; i < fields[key].length; i++) {
+          await this.batchTraineeEvService.update(
+            {
+              btevTraineeEntity: { userEntityId: userId },
+              btevType: key,
+              btevSkill: fields[key][i]['btevSkill'],
+            },
+            {
+              btevSkor: fields[key][i]['btevSkor'],
+            },
+          );
+        }
+      }
+    } catch (error) {
+      return {
+        status: 'error',
+        message: error.message,
+      };
+    }
   }
 
   async deleteTrainee(userId: number) {
@@ -373,9 +397,45 @@ export class BatchService {
         userEntityId: userId,
       },
     });
+
+    await this.batchTraineeEvService.delete({
+      btevTraineeEntity: {
+        userEntityId: userId,
+      },
+    });
   }
 
-  public async deletes (id: number) {
-    return await this.batchProgram.delete({batchId : id});
+  public async deleteBatch(id: number) {
+    return await this.batchProgram.delete({ batchId: id });
+  }
+
+  async addBatchTraineeEvaliationSkillSet(batchId: number, userId: number) {
+    const evaluationSkills = [
+      {
+        type: 'hardskill',
+        skill: ['Fundamental', 'OOP', 'Database'],
+      },
+      {
+        type: 'softskill',
+        skill: ['Communication', 'Teamwork', 'Self-Learning'],
+      },
+    ];
+    try {
+      for (let i = 0; i < evaluationSkills.length; i++) {
+        const element = evaluationSkills[i];
+        for (let j = 0; j < element.skill.length; j++) {
+          await this.batchTraineeEvService.save({
+            btevType: element.type,
+            btevSkill: element.skill[j],
+            btevModifiedDate: new Date(),
+            btevSkor: 0,
+            btevTraineeEntity: { userEntityId: userId },
+            btevBatch: { batchId: batchId },
+          });
+        }
+      }
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 }
