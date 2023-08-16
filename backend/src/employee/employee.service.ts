@@ -227,7 +227,7 @@ export class EmployeeService {
     try {
       //insert ke table employee
       const employee = await this.serviceEmp.save({
-        empEntityId: null,
+        empEntityId: fields.empEntityId,
         empEmpNumber: fields.empEmpNumber,
         empNationalId: fields.empNationalId,
         empBirthDate: fields.empBirthDate,
@@ -246,7 +246,7 @@ export class EmployeeService {
 
       //insert table employeepayhistory
       await this.serviceEmpPayHistory.save({
-        ephiEntityId: employee.empEmpEntityId,
+        ephiEntityId: employee.empEntityId,
         ephiRateSalary: fields.ephiRateSalary,
         ephiPayFrequence: fields.ephiPayFrequence,
         ephiModifiedDate: new Date(),
@@ -254,7 +254,7 @@ export class EmployeeService {
 
       //insert table departement History
       await this.serviceEmpDeptHistory.save({
-        edhiId: employee.empEmpEntityId,
+        edhiId: employee.empEntityId,
         edhiStartDate: fields.edhiStartDate,
         edhiEndDate: fields.edhiEndDate,
         edhiModifiedDate: new Date(),
@@ -262,7 +262,7 @@ export class EmployeeService {
       });
 
       const result = await this.serviceEmp.findOne({
-        where: { empEntityId: employee.empEntityId },
+        where: { empEntityId: employee.empEmpEntityId },
         relations: ['employeeDepartmentHistories', 'employeePayHistories'],
       });
 
