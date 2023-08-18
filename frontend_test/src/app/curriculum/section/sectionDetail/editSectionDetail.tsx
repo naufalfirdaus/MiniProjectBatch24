@@ -1,5 +1,5 @@
 import { AddSectionRequest } from "@/redux-saga/action/sectionAction";
-import { AddSectionDetailRequest } from "@/redux-saga/action/sectionDetailAction";
+import { CreateSectionDetailRequest } from "@/redux-saga/action/sectionDetailAction";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -43,7 +43,7 @@ export default function EditSectionDetailPage(props: any) {
             console.log(`Data: ${JSON.stringify(data)}`);
             
 
-            dispatch(AddSectionDetailRequest(data));
+            dispatch(CreateSectionDetailRequest(data));
             props.setRefreshView(true);
             props.setRefreshEdit(true);
             handleChange();

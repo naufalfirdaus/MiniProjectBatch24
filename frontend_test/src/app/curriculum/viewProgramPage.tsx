@@ -1,5 +1,3 @@
-"use client";
-
 import { EditCurriculumReq, GetCurriculumReq, GetOneCurriculumReq, ResetCurriculumState } from "@/redux-saga/action/curriculumAction";
 import Image from "next/image"
 import { useEffect, useState } from "react";

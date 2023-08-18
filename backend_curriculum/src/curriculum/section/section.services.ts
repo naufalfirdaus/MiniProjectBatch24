@@ -49,9 +49,18 @@ export class SectionService {
     }
   }
 
-  public async findOne(sectProgEntityId: number) {
+  public async findAll(sectProgEntityId: number) {
     const section = await this.serviceSec.find({
       where: { sectProgEntityId: sectProgEntityId },
+      relations: ['sectionDetails', 'sectionDetails.sectionDetailMaterials'],
+    });
+
+    return section;
+  }
+
+  public async findOne(sectId: number) {
+    const section = await this.serviceSec.find({
+      where: { sectId: sectId },
       relations: ['sectionDetails', 'sectionDetails.sectionDetailMaterials'],
     });
 
@@ -65,9 +74,6 @@ export class SectionService {
         {
           sectTitle: fields.sectTitle,
           sectDescription: fields.sectDescription,
-          sectTotalSection: fields.sectTotalSection,
-          sectTotalLecture: fields.sectTotalLecture,
-          sectTotalMinute: fields.sectTotalMinute,
         },
       );
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { EditSectionRequest } from "@/redux-saga/action/sectionAction";
+import { UpdateSectionRequest } from "@/redux-saga/action/sectionAction";
 
 
 export default function EditSectionPage(props: any) {
@@ -38,7 +38,7 @@ export default function EditSectionPage(props: any) {
 
     //   console.log(`TES DOANGGGGG ${payload}`)
     // section.updateSection(payload);
-      dispatch(EditSectionRequest(payload));
+      dispatch(UpdateSectionRequest(payload));
       props.setRefreshView(true);
       props.setRefreshEdit(true);
       handleChange();
