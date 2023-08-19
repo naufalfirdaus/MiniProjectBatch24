@@ -110,7 +110,6 @@ export default function Candidate() {
 
   const handleTabClick = (status: String) => {
     setTabFilter(status);
-    dispatch(changeToIdle(''));
     setYear(undefined);
     setMonth(undefined);
   }

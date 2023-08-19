@@ -1,12 +1,13 @@
 import Page from "@/pages/component/commons/Page";
 import AppLayout from "@/pages/component/layout/AppLayout";
-import { changeToIdle, getBatchTraineeEvaluationFetch, updateTraineeEvalutaionScoreTry } from "@/redux/slices/batchSlices";
+import { getBatchTraineeEvaluationFetch, updateTraineeEvalutaionScoreTry } from "@/redux/slices/batchSlices";
 import { Disclosure } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "core-js";
+import Image from "next/image";
 
 export default function BatchStudentEvaluation() {
   const router = useRouter();
@@ -17,18 +18,11 @@ export default function BatchStudentEvaluation() {
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
 
   useEffect(() => {
-    if(status == 'idle' && router.query.id){
+    if(router.query.id){
         dispatch(getBatchTraineeEvaluationFetch(router.query.id));
     }
-    
-    if(Object.keys(traineeEv).length != 0) {
-      const traineeEvGroup = Object.keys(traineeEv).length != 0 && traineeEv.traineeEvaluation.group((trainee: any) => {
-       return trainee.btevType;
-      });
-      setStudentEv(traineeEvGroup);
-    }
-    
-  }, [router, status]);
+    groupDataByType();
+  }, [router, Object.keys(traineeEv).length]);
 
   const handleStudentEvChange = (e: any, type: string, indexSkill: number) => {
     const list = {...studentEv};
@@ -37,25 +31,34 @@ export default function BatchStudentEvaluation() {
     list[type][indexSkill] = skor;
     setStudentEv(list);
   }
+
+  const groupDataByType = () => {
+    const traineeEvGroup = Object.keys(traineeEv).length != 0 && traineeEv.traineeEvaluation.group((trainee: any) => {
+        return trainee.btevType;
+    });
+    setStudentEv(traineeEvGroup);
+  }
+
+  const handleBackButton = () => {
+    router.push({pathname: `/app/batch/evaluation`, query: {batchid: traineeEv.trainee.batrBatch.batchId}});
+  }
   
   const onSave = () => {
     const traineeData = {
         userId: router.query.id,
         data: studentEv,
     }
-    
     dispatch(updateTraineeEvalutaionScoreTry(traineeData));
-    dispatch(changeToIdle(''));
   }
 
   return (
     <AppLayout>
         {Object.keys(traineeEv).length != 0 && 
-            <Page title={`${traineeEv.trainee.batrBatch.batchName} ${traineeEv.trainee.batrBatch.batchEntity.progTitle} Evaluation`} titleButton="Back" titleButton2="Save" onClick={() => {dispatch(changeToIdle('')); router.back();}} onClick2={() => onSave()}>
+            <Page title={`${traineeEv.trainee.batrBatch.batchName} ${traineeEv.trainee.batrBatch.batchEntity.progTitle} Evaluation`} titleButton="Back" titleButton2="Save" onClick={() => handleBackButton()} onClick2={() => onSave()}>
                 <div className="border border-slate-400 p-3 rounded-lg">
                     <div className="grid grid-cols-5 items-center">
                         <div className="flex col-span-2">
-                            <img className="w-20 h-20 rounded-full mr-3" src="/assets/images/candidate.png" alt="User image"/>
+                            <Image height={60} width={60} priority className="w-20 h-20 rounded-full mr-3" src="/assets/images/candidate.png" alt="User image"/>
                             <div>
                                 <h1 className="text-lg font-medium">{traineeEv.user.userFirstName} {traineeEv.user.userLastName}</h1>
                                 <h1 className="text-sm">{traineeEv.trainee.batrBatch.batchEntity.progTitle}, {traineeEv.trainee.batrBatch.batchName}, {traineeEv.trainee.batrStatus}</h1>
@@ -70,7 +73,7 @@ export default function BatchStudentEvaluation() {
                         <h1 className="justify-self-center text-xl font-medium">Score {traineeEv.trainee.batrTotalScore}</h1>
                     </div>
                 </div>
-                {Object.keys(traineeEv).length != 0 && Object.keys(studentEv).map((key: any, ti: any) => 
+                {Object.keys(studentEv).map((key: any, ti: any) => 
                     <Disclosure as='div' key={ti} className={`${ti == 0 && 'mt-3'}`}>
                     {({ open }) => (
                         <>

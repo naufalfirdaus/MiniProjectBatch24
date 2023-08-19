@@ -1,7 +1,7 @@
 import Page from "@/pages/component/commons/Page";
 import AppLayout from "@/pages/component/layout/AppLayout";
-import { changeToIdle, getBatchByIdFetch, getInstructorFetch, getTechnologyFetch, updateBatchTry } from "@/redux/slices/batchSlices";
-import { getCandidateByProgramFetch } from "@/redux/slices/candidateSlices";
+import { getBatchByIdFetch, getInstructorFetch, getTechnologyFetch, updateBatchTry } from "@/redux/slices/batchSlices";
+import { getCandidateByProgramFetch, getPassedCandidateBootcampFetch } from "@/redux/slices/candidateSlices";
 import { Menu } from "@headlessui/react";
 import { useFormik } from "formik";
 import Image from "next/image";
@@ -21,17 +21,19 @@ export default function EditBatch(){
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if(batchLoad == 'idle' && router.query.id){
-            dispatch(getInstructorFetch());
-            dispatch(getTechnologyFetch());
+        if(router.query.id){
             dispatch(getBatchByIdFetch(router.query.id));
         }
+        dispatch(getInstructorFetch());
+        dispatch(getTechnologyFetch());
+        
         if(Object.keys(batch).length != 0){
             dispatch(getCandidateByProgramFetch(batch.batchEntityId));
-            const trainees = batch.batchTrainees.map((trainee: any) => { return { idUser: trainee.batrTraineeEntity.userEntityId, name: `${trainee.batrTraineeEntity.userFirstName} ${trainee.batrTraineeEntity.userLastName}` }})
-            setMembers(trainees);
+            dispatch(getPassedCandidateBootcampFetch(batch.batchEntityId))
+            formattingData();
         }
-    }, [batchLoad, router, batch]);  
+        
+    }, [router, Object.keys(batch).length]);  
 
     const formik = useFormik({
         enableReinitialize: true,
@@ -54,14 +56,20 @@ export default function EditBatch(){
             dispatch(updateBatchTry({id: batch.batchId, data: batchData}));
 
             if(!error) {
-                router.push('/app/batch').then(() => dispatch(changeToIdle('')));
+                router.push('/app/batch');
             }
         },
     });
 
     const handleCancelButton = (e: any) => {
         e.preventDefault();
-        router.push('/app/batch').then(() => dispatch(changeToIdle('')));
+        router.push('/app/batch');
+    }
+
+    const formattingData = () => {
+        const trainees = Object.keys(batch).length != 0 && batch.batchTrainees.map((trainee: any) => { return { idUser: trainee.batrTraineeEntity.userEntityId, name: `${trainee.batrTraineeEntity.userFirstName} ${trainee.batrTraineeEntity.userLastName}` }})
+        // console.log(trainees);
+        setMembers(trainees);
     }
     
     const handleMemberButton = (e: any, id: number, status: string) => {

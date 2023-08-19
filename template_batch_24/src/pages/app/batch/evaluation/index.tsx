@@ -7,35 +7,8 @@ import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-const dummy_student = [
-    {
-        name: 'Student 1',
-        status: 'Running',
-        review: 'good',
-        score: 80
-    },
-    {
-        name: 'Student 2',
-        status: 'Running',
-        review: 'Nice logic',
-        score: 83
-    },
-    {
-        name: 'Student 3',
-        status: 'Running',
-        review: 'Mid',
-        score: 78
-    },
-    {
-        name: 'Student 4',
-        status: 'Running',
-        review: 'good self learning',
-        score: 88
-    },
-]
-
 export default function BatchEvaluation(){
-    const [studentData, setStudentData] = useState(dummy_student);
+    const [studentData, setStudentData] = useState<any>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenR, setIsOpenR] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState<any | null>(null);
@@ -46,51 +19,53 @@ export default function BatchEvaluation(){
     const router = useRouter();
     
     useEffect(() => {
-        if(status == 'idle' && router.query.batchid){
-            dispatch(getBatchEvaluationFetch(router.query.batchid));
+        if(router.query.batchid){
             dispatch(getBatchByIdFetch(router.query.batchid));
+            dispatch(getBatchEvaluationFetch(router.query.batchid));
         }
-    }, [status, router]);
+        if(batchEvaluation.length != 0){
+            setStudentData(batchEvaluation)
+        }
+    }, [router, batchEvaluation.length]);
     
-    const handleReviewClick = (e: any, name: string) => {
-        const findStudent = studentData.find(el => el.name == name);
+    const handleReviewClick = (id: number) => {
+        const findStudent = studentData.find((student: any) => student.batrTraineeEntity.userEntityId == id);
         setSelectedStudent(findStudent);
         setIsOpen(true);
     }
 
-    const handleResignClick = (e: any, name: string) => {
-        const findStudent = studentData.find(el => el.name == name);
+    const handleResignClick = (id: number) => {
+        const findStudent = studentData.find((student: any) => student.batrTraineeEntity.userEntityId == id);
         setSelectedStudent(findStudent);
         setIsOpenR(true);
     }
 
-    const handleReviewChange = (e: any, name: string) => {
-        const findIndex = studentData.findIndex(el => el.name == name);
-        const listStudent = [...studentData];
-        listStudent[findIndex]['review'] = e.target.value;
-        setStudentData(listStudent);
+    const handleReviewChange = (e: any) => {
+        const selectedData = {...selectedStudent};
+        selectedData.batrReview = e.target.value;
+        setSelectedStudent(selectedData);
     }
 
-    const handleSubmitReview = (e: any, name: string) => {
+    const handleSubmitReview = (e: any) => {
         e.preventDefault();
-        console.log(selectedStudent);
+        console.log(selectedStudent.batrReview, selectedStudent.batrTraineeEntity.userEntityId);
         setIsOpen(false);
     }
 
-    const handleSubmitResign = (e: any, name: string) => {
+    const handleSubmitResign = (e: any) => {
         e.preventDefault();
-        console.log(selectedStudent);
+        console.log(selectedStudent.batrReview, selectedStudent.batrTraineeEntity.userEntityId);
         setIsOpenR(false);
     }
 
     const handleEvaluationButton = (e: any, userId: number) => {
         e.preventDefault();
-        router.push(`/app/batch/evaluation/${userId}`).then(() => dispatch(changeToIdle('')));
+        router.push(`/app/batch/evaluation/${userId}`);
     }
-
+    
     return (
         <AppLayout>
-            <Page title={`Batch#${router.query.batchid} ${Object.keys(batch).length != 0 && batch.batchEntity.progTitle} `} titleButton='Back' onClick={() => router.push('/app/batch').then(() => dispatch(changeToIdle('')))}>
+            <Page title={`Batch#${router.query.batchid} ${Object.keys(batch).length != 0 && batch.batchEntity.progTitle} `} titleButton='Back' onClick={() => router.push('/app/batch')}>
                 <div className="border border-slate-300 rounded-lg p-4">
                     <div className="grid grid-cols-4 gap-4">
                         {batchEvaluation.length != 0 && batchEvaluation.map((student: any, i: number) => 
@@ -106,10 +81,10 @@ export default function BatchEvaluation(){
                                                 <Link href='#' onClick={(e) => handleEvaluationButton(e, student.batrTraineeEntity.userEntityId)} className="block px-4 py-2 hover:bg-gray-100">Evaluation</Link>
                                             </Menu.Item>
                                             <Menu.Item>
-                                                <Link href='#' className="block px-4 py-2 hover:bg-gray-100" onClick={(e) => handleReviewClick(e, student.name)}>Review</Link>
+                                                <Link href='#' className="block px-4 py-2 hover:bg-gray-100" onClick={() => handleReviewClick(student.batrTraineeEntity.userEntityId)}>Review</Link>
                                             </Menu.Item>
                                             <Menu.Item>
-                                                <Link href="#" className="block px-4 py-2 hover:bg-gray-100" onClick={(e) => handleResignClick(e, student.name)}>Resign</Link>
+                                                <Link href="#" className="block px-4 py-2 hover:bg-gray-100" onClick={() => handleResignClick(student.batrTraineeEntity.userEntityId)}>Resign</Link>
                                             </Menu.Item>
                                         </Menu.Items>
                                     </Menu>
@@ -125,7 +100,6 @@ export default function BatchEvaluation(){
                     </div>
                     <div className="flex justify-end gap-2 mt-4">
                         <button type="submit" className="bg-green-500 text-white py-1 px-2 rounded-md hover:bg-green-600">Save</button>
-                        <button className="bg-blue-500 text-white py-1 px-2 rounded-md hover:bg-blue-600">Cancel</button>
                     </div>
                 </div>
             </Page>
@@ -161,18 +135,14 @@ export default function BatchEvaluation(){
                                     Review
                                 </Dialog.Title>
                                 <div className="mt-2">
-                                    <p className="text-sm text-gray-600">Kandidat {selectedStudent?.name}</p>
-                                    <textarea name="review" id="review" className="w-full mt-1 rounded-md" rows={4} value={selectedStudent?.review} onChange={(e) => handleReviewChange(e, selectedStudent.name)}  placeholder="Review"></textarea>
-                                    {/* <select name="switch" id="switch" defaultValue='' className='mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5'>
-                                        <option value="" disabled>Select Status</option>
-                                        <option value="Filtering Test">Ready Test</option>
-                                    </select> */}
+                                    <p className="text-sm text-gray-600">Kandidat {selectedStudent?.batrTraineeEntity.userFirstName} {selectedStudent?.batrTraineeEntity.userLastName}</p>
+                                    <textarea name="review" id="review" className="w-full mt-1 rounded-md" rows={4} value={selectedStudent?.batrReview || ''} onChange={(e) => handleReviewChange(e)}  placeholder="Review"></textarea>
                                 </div>
                                 <div className="mt-4 flex justify-end gap-2">
                                     <button type="button" className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" onClick={() => setIsOpen(false)}>
                                         Cancel
                                     </button>
-                                    <button type="button" className="rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" onClick={(e) => handleSubmitReview(e, selectedStudent.name)}>
+                                    <button type="button" className="rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" onClick={(e) => handleSubmitReview(e)}>
                                         Submit
                                     </button>
                                 </div>
@@ -214,20 +184,20 @@ export default function BatchEvaluation(){
                                     Switch Status
                                 </Dialog.Title>
                                 <div className="mt-2">
-                                    <p className="text-sm text-gray-600">Kandidat {selectedStudent?.name}</p>
+                                    <p className="text-sm text-gray-600">Kandidat {selectedStudent?.batrTraineeEntity.userFirstName} {selectedStudent?.batrTraineeEntity.userLastName}</p>
                                     <select name="switch" id="switch" defaultValue='' className='mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5'>
                                         <option value="" disabled>Select Status</option>
                                         <option value="Resign">Resign</option>
                                     </select>
                                 </div>
                                 <div className="mt-2">
-                                    <textarea name="review" id="review" className="w-full mt-1 rounded-md" rows={4} value={selectedStudent?.review} onChange={(e) => handleReviewChange(e, selectedStudent.name)}  placeholder="Review"></textarea>
+                                    <textarea name="review" id="review" className="w-full mt-1 rounded-md" rows={4} value={selectedStudent?.batrReview || ''} onChange={(e) => handleReviewChange(e)}  placeholder="Review"></textarea>
                                 </div>
                                 <div className="mt-4 flex justify-end gap-2">
                                     <button type="button" className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" onClick={() => setIsOpenR(false)}>
                                         Cancel
                                     </button>
-                                    <button type="button" className="rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" onClick={(e) => handleSubmitResign(e, selectedStudent.name)}>
+                                    <button type="button" className="rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" onClick={(e) => handleSubmitResign(e)}>
                                         Submit
                                     </button>
                                 </div>

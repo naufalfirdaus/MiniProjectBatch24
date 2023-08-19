@@ -1,10 +1,10 @@
 import Pagination from '@/pages/component/commons/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCandidateFetch } from '@/redux/slices/candidateSlices';
-import { Dialog, Transition } from '@headlessui/react';
 import Image from 'next/image';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { paginate } from '@/helper/paginate';
+import CandidateModal from '@/pages/component/commons/CandidateModal';
 
 export default function Filtering(props: any){
     const dispatch = useDispatch();
@@ -15,15 +15,13 @@ export default function Filtering(props: any){
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        if (candidateLoad === "idle") {
-          dispatch(getCandidateFetch({status: props.status}));
-        }
+        dispatch(getCandidateFetch({status: props.status}));
         setCurrentPage(candidates.page);
-    }, [candidateLoad, dispatch]);
+    }, [Object.keys(candidates).length]);
 
     const handleStatusChange = (userId: number, progId: number, username: string) => {
-        setIsOpen(true);
         setSelectedData({userId, progId, username});
+        setIsOpen(true);
     }
 
     const onPageChange = (page: number) => {
@@ -35,38 +33,6 @@ export default function Filtering(props: any){
     return (
         <>
             <div className="relative overflow-x-visible border border-t-0">
-                {/* <div className="flex items-center justify-end gap-2 px-3 py-4 bg-white">
-                    <Menu as='div' className='relative'>
-                        <Menu.Button className='inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5'> Filter by month
-                        <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
-                        </svg>
-                        </Menu.Button>
-                        <Menu.Items className='absolute z-10 text-sm w-32 text-gray-600 right-0 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-                            <Menu.Item>
-                                <a href="#" className="block px-4 py-2 hover:bg-gray-100">Bulan1</a>
-                            </Menu.Item>
-                            <Menu.Item>
-                                <a href="#" className="block px-4 py-2 hover:bg-gray-100">Bulan2</a>
-                            </Menu.Item>
-                        </Menu.Items>
-                    </Menu>
-                    <Menu as='div' className='relative'>
-                        <Menu.Button className='inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5'> Year
-                        <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
-                        </svg>
-                        </Menu.Button>
-                        <Menu.Items className='absolute z-50 text-sm text-gray-600 right-0 w-32 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-                        <Menu.Item>
-                            <a href="#" className="block px-4 py-2 hover:bg-gray-100">Tahun1</a>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <a href="#" className="block px-4 py-2 hover:bg-gray-100">Tahun2</a>
-                        </Menu.Item>
-                        </Menu.Items>
-                    </Menu>
-                </div> */}
                 <table className="w-full text-sm text-left text-gray-500">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
@@ -130,56 +96,7 @@ export default function Filtering(props: any){
                 </table>
             </div>
             { Object.keys(candidates).length != 0 && <Pagination items={candidates.data.length} pageSize={candidates.limit} currentPage={currentPage} onPageChange={onPageChange}/> }
-            <Transition appear show={isOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={() => setIsOpen(false)}>
-                    <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                    >
-                        <div className="fixed inset-0 bg-black bg-opacity-25" />
-                    </Transition.Child>
-
-                    <div className="fixed inset-0 overflow-y-auto">
-                        <div className="flex min-h-full items-center justify-center p-4 text-center">
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0 scale-95"
-                            enterTo="opacity-100 scale-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100 scale-100"
-                            leaveTo="opacity-0 scale-95"
-                        >
-                            <Dialog.Panel className="w-full max-w-sm transform overflow-hidden rounded-2xl bg-white py-3 px-4 text-left align-middle shadow-xl transition-all">
-                            <Dialog.Title as="h5" className="text-lg font-medium leading-6 text-gray-900">
-                                Switch Status
-                            </Dialog.Title>
-                            <div className="mt-2">
-                                <p className="text-sm text-gray-500">{selectedData.username}</p>
-                                <select name="switch" id="switch" defaultValue='' className='mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5'>
-                                    <option value="" disabled>Select Status</option>
-                                    <option value="Filtering Test">Ready Test</option>
-                                </select>
-                            </div>
-                            <div className="mt-4 flex justify-end gap-2">
-                                <button type="button" className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" onClick={() => setIsOpen(false)}>
-                                    Cancel
-                                </button>
-                                <button type="button" className="rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" onClick={() => setIsOpen(false)}>
-                                    Submit
-                                </button>
-                            </div>
-                            </Dialog.Panel>
-                        </Transition.Child>
-                        </div>
-                    </div>
-                </Dialog>
-            </Transition>
+            <CandidateModal isOpen={isOpen} setIsOpen={setIsOpen} candidate={selectedData}/>
         </>
     )
 }

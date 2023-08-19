@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { changeToIdle, getBatchFetch, getByNameAndStatusFetch, updateBatchStatusTry } from '@/redux/slices/batchSlices';
+import { getBatchFetch, getByNameAndStatusFetch, updateBatchStatusTry } from '@/redux/slices/batchSlices';
 import { getPassedCandidateBootcampFetch } from '@/redux/slices/candidateSlices';
 
 export default function Batch() {
@@ -16,12 +16,9 @@ export default function Batch() {
   const batchLoad = useSelector((state: any) => state.batchs.status);
 
   useEffect(() => {
-    if(batchLoad == 'idle'){
-      dispatch(getBatchFetch(''));
-    }
+    dispatch(getBatchFetch(''));
     dispatch(getPassedCandidateBootcampFetch(0));
-    
-  }, [batchLoad]);
+  }, []);
 
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
 
@@ -38,12 +35,12 @@ export default function Batch() {
 
   const handleEditButton = (e: any, id:number) => {
     e.preventDefault();
-    navigate.push(`/app/batch/${id}`).then(() => dispatch(changeToIdle('')));
+    navigate.push(`/app/batch/${id}`);
   }
 
   const handleEvaluationButton = (e:any, id: number) => {
     e.preventDefault();
-    navigate.push({pathname: `/app/batch/evaluation`, query: {batchid: id}}).then(() => dispatch(changeToIdle('')));
+    navigate.push({pathname: `/app/batch/evaluation`, query: {batchid: id}});
   }
 
   const handleStatusButton = (id: number, status: string) => {
@@ -52,7 +49,6 @@ export default function Batch() {
     } else {
       dispatch(updateBatchStatusTry({ batchId: id, status:'Close' }))
     }
-    dispatch(changeToIdle(''));
   }
   
   return (

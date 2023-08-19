@@ -51,7 +51,6 @@ export default function CreateBatch() {
             dispatch(changeToIdle('')),
             router.push('/app/batch');
         }
-
     },
   });
 
@@ -190,7 +189,7 @@ export default function CreateBatch() {
                     )}
                 </div>
                 <div className="flex justify-end gap-2 mt-4">
-                    <button type="submit" className="bg-green-500 text-white py-1 px-2 rounded-md hover:bg-green-600">Save</button>
+                    <button type="submit" className={`bg-green-500 text-white py-1 px-2 rounded-md hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed`} disabled={members.length == 0 ? true : false}>Save</button>
                     <button onClick={() => router.back()} className="bg-blue-500 text-white py-1 px-2 rounded-md hover:bg-blue-600">Cancel</button>
                 </div>
             </form>

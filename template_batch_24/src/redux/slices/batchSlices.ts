@@ -40,6 +40,7 @@ const batchSlices = createSlice({
     getBatchSuccess: (state, action) => {
       state.status = "succeeded";
       state.batchs = action.payload;
+      state.batch = {};
     },
     getBatchFail: (state, action: any) => {
       state.status = "failed";
@@ -92,6 +93,7 @@ const batchSlices = createSlice({
     getBatchEvaluationSuccess: (state, action: any) => {
       state.status = 'succeeded';
       state.evaluations = action.payload;
+      state.traineeEvaluation = {};
     },
     getBatchTraineeEvaluationFetch: (state, action: PayloadAction<any>) => {
       state.status = 'loading';
@@ -109,7 +111,8 @@ const batchSlices = createSlice({
     updateTraineeEvalutaionScoreTry: (state, action: PayloadAction<any> ) => {
       state.status = 'loading';
     },
-    updateTraineeEvalutaionScoreSuccess: (state, _ ) => {
+    updateTraineeEvalutaionScoreSuccess: (state, action: any ) => {
+      state.traineeEvaluation = action.payload;
       state.status = 'succeeded';
     },
     updateTraineeEvalutaionScoreFail: (state, action: any ) => {

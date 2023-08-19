@@ -101,7 +101,6 @@ export class BatchService {
       .leftJoinAndSelect('users.usersEducations', 'users_education')
       .where('batch.batchId = :id', { id: id })
       .getOne();
-
     return queryBatch;
   }
 
@@ -287,45 +286,49 @@ export class BatchService {
   }
 
   public async findBatchEvaluation(batchId: number) {
-    const trainees = await this.batchTraineeService.find({
-      relations: {
-        batrTraineeEntity: true,
-      },
-      where: { batrBatchId: batchId },
-    });
-
-    return trainees || [];
+    if (batchId) {
+      const trainees = await this.batchTraineeService.find({
+        relations: {
+          batrTraineeEntity: true,
+        },
+        where: { batrBatchId: batchId },
+      });
+      return trainees || [];
+    }
+    return [];
   }
 
   public async findTraineeEvaluationScoring(userId: number) {
-    const traineeEvaluation = await this.batchTraineeEvService.find({
-      where: { btevTraineeEntity: { userEntityId: userId } },
-      order: { btevId: 'ASC' },
-    });
+    if (userId) {
+      const traineeEvaluation = await this.batchTraineeEvService.find({
+        where: { btevTraineeEntity: { userEntityId: userId } },
+        order: { btevId: 'ASC' },
+      });
 
-    const user = await this.userRepo.findOne({
-      relations: {
-        usersEducations: true,
-      },
-      where: { userEntityId: userId },
-    });
-
-    const trainee = await this.batchTraineeService.findOne({
-      relations: {
-        batrBatch: {
-          batchEntity: true,
+      const user = await this.userRepo.findOne({
+        relations: {
+          usersEducations: true,
         },
-      },
-      where: { batrTraineeEntity: { userEntityId: userId } },
-    });
+        where: { userEntityId: userId },
+      });
 
-    const traineeEvaluationData = {
-      user,
-      trainee,
-      traineeEvaluation,
-    };
+      const trainee = await this.batchTraineeService.findOne({
+        relations: {
+          batrBatch: {
+            batchEntity: true,
+          },
+        },
+        where: { batrTraineeEntity: { userEntityId: userId } },
+      });
 
-    return traineeEvaluationData || null;
+      const traineeEvaluationData = {
+        user,
+        trainee,
+        traineeEvaluation,
+      };
+      return traineeEvaluationData || null;
+    }
+    return {};
   }
 
   async addTrainee(batchId: number, userId: number) {
@@ -383,6 +386,10 @@ export class BatchService {
           );
         }
       }
+      const updatedTraineeScore = await this.findTraineeEvaluationScoring(
+        userId,
+      );
+      return updatedTraineeScore;
     } catch (error) {
       return {
         status: 'error',

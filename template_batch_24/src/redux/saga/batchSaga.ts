@@ -96,8 +96,8 @@ function* workUpdateTraineeEvaluationScore(action: any): any {
   const { payload } = action;
 
   try {
-    yield call(batchAPI.updateTraineeEvaluationScore, payload);
-    yield put(updateTraineeEvalutaionScoreSuccess(''));
+    const updatedScore =  yield call(batchAPI.updateTraineeEvaluationScore, payload);
+    yield put(updateTraineeEvalutaionScoreSuccess(updatedScore));
   } catch (error: any) {
     yield put(updateTraineeEvalutaionScoreFail(error))
   }
