@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { PaginationDto } from 'src/dto/pagination.dto';
 
@@ -41,5 +50,15 @@ export class EmployeeController {
   @Post('create')
   public async create(@Body() fields: any) {
     return this.Services.Insert(fields);
+  }
+
+  @Put('update/:id')
+  public async Update(@Param('id') id: any, @Body() fields?: any) {
+    return this.Services.update(id, fields);
+  }
+
+  @Delete(':id')
+  public async Delete(@Param('id') id: number) {
+    return this.Services.Delete(id);
   }
 }

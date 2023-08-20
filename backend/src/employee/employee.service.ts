@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from 'output/entities/Employee';
 import { EmployeeDepartmentHistory } from 'output/entities/EmployeeDepartmentHistory';
@@ -247,6 +247,7 @@ export class EmployeeService {
       //insert table employeepayhistory
       await this.serviceEmpPayHistory.save({
         ephiEntityId: employee.empEntityId,
+        ephiRateChangeDate: fields.ephiRateChangeDate,
         ephiRateSalary: fields.ephiRateSalary,
         ephiPayFrequence: fields.ephiPayFrequence,
         ephiModifiedDate: new Date(),
@@ -254,21 +255,133 @@ export class EmployeeService {
 
       //insert table departement History
       await this.serviceEmpDeptHistory.save({
-        edhiId: employee.empEntityId,
+        edhiId: fields.edhiId,
+        edhiEntityId: employee.empEntityId,
         edhiStartDate: fields.edhiStartDate,
         edhiEndDate: fields.edhiEndDate,
         edhiModifiedDate: new Date(),
-        edhiDeptId: fields.edhiDeptId,
+        edhiDept: fields.edhiDept,
       });
 
-      const result = await this.serviceEmp.findOne({
-        where: { empEntityId: employee.empEmpEntityId },
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  // public async update(id: any, fields: any) {
+  //   try {
+  //     const updateData = {
+  //       progHeadline: fields.progHeadline,
+  //       progTitle: fields.progTitle,
+  //       progType: fields.progType,
+  //       progLearningType: fields.progLearningType,
+  //       progRating: fields.progRating,
+  //       progTotalTrainee: fields.progTotalTrainee,
+  //       progBestSeller: fields.progBestSeller,
+  //       progPrice: fields.progPrice,
+  //       progLanguage: fields.progLanguage,
+  //       progDuration: fields.progDuration,
+  //       progDurationType: fields.progDurationType,
+  //       progTagSkill: fields.progTagSkill,
+  //       progCityId: fields.progCityId,
+  //       progCateId: fields.progCateId,
+  //       progCreatedById: fields.progCreatedById,
+  //       progStatus: fields.progStatus,
+  //     };
+
+  //     await this.serviceEmp.update(
+  //       id: updateData,
+  //     );
+
+  //     const desc = await this.serviceEmp.findOne({
+  //       where: { empEntityId: id },
+  //     });
+
+  //     if (desc !== null) {
+  //       await this.serviceEmpDeptHistory.update(id, {
+  //         predItemLearning: {
+  //           items: fields.predItemLearning,
+  //         },
+  //         predDescription: {
+  //           items: fields.predDescription,
+  //         },
+  //       });
+  //     } else {
+  //       await this.serviceEmpDeptHistory.save({
+  //         predProgEntityId: id,
+  //         predItemLearning: { items: fields.predItemLearning },
+  //         predDescription: { items: fields.predDescription },
+  //       });
+  //     }
+
+  //     const result = await this.serviceEmp.findOne({
+  //       where: { empEntityId: id },
+  //       relations: ['employeeDepartmentHistories', 'employeePayHistories'],
+  //     });
+
+  //     return result;
+  //   } catch (error) {
+  //     return error.message;
+  //   }
+  // }
+
+  async update(
+    employeeId: number,
+    updateData: Partial<Employee>,
+  ): Promise<Employee> {
+    const employee = await this.serviceEmp.findOne({
+      where: { empEntityId: employeeId },
+      relations: ['employeeDepartmentHistories', 'employeePayHistories'],
+    });
+
+    if (!employee) {
+      throw new NotFoundException(`Employee with ID ${employeeId} not found`);
+    }
+
+    if (updateData.employeeDepartmentHistories) {
+      employee.employeeDepartmentHistories =
+        updateData.employeeDepartmentHistories;
+    }
+
+    if (updateData.employeePayHistories) {
+      employee.employeePayHistories = updateData.employeePayHistories;
+    }
+
+    return this.serviceEmp.save(employee);
+  }
+
+  public async Delete(id: number) {
+    try {
+      const employee = await this.serviceEmp.findOne({
+        where: { empEntityId: id },
         relations: ['employeeDepartmentHistories', 'employeePayHistories'],
       });
 
-      return result;
+      if (!employee) {
+        throw new NotFoundException(`Employee with ID ${id} not found`);
+      }
+
+      const payHistories = employee.employeePayHistories;
+
+      if (employee.employeeDepartmentHistories) {
+        const historyEmployee = employee.employeeDepartmentHistories[0]; // Ambil elemen pertama dari array
+        const { edhiEntityId } = historyEmployee;
+        await this.serviceEmpDeptHistory.delete({ edhiEntityId });
+      }
+
+      if (payHistories && payHistories.length > 0) {
+        for (const payHistory of payHistories) {
+          const { ephiEntityId } = payHistory;
+          await this.serviceEmpPayHistory.delete({ ephiEntityId });
+        }
+      }
+
+      await this.serviceEmp.remove(employee);
+
+      return { success: true };
     } catch (error) {
-      return error.message;
+      return { success: false, error: error.message };
     }
   }
 }

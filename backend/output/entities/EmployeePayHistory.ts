@@ -30,4 +30,5 @@ export class EmployeePayHistory {
   @ManyToOne(() => Employee, (employee) => employee.employeePayHistories)
   @JoinColumn([{ name: "ephi_entity_id", referencedColumnName: "empEntityId" }])
   ephiEntity: Employee;
+  static ephiEntityId: any;
 }

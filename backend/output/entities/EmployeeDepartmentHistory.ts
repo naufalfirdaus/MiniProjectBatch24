@@ -48,4 +48,6 @@ export class EmployeeDepartmentHistory {
   @ManyToOne(() => Employee, (employee) => employee.employeeDepartmentHistories)
   @JoinColumn([{ name: "edhi_entity_id", referencedColumnName: "empEntityId" }])
   edhiEntity: Employee;
+  static edhiId: any;
+  static edhiEntityId: any;
 }

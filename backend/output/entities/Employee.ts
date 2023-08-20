@@ -116,7 +116,8 @@ export class Employee {
 
   @OneToMany(
     () => EmployeeDepartmentHistory,
-    (employeeDepartmentHistory) => employeeDepartmentHistory.edhiEntity
+    (employeeDepartmentHistory) => employeeDepartmentHistory.edhiEntity,
+    // { cascade: true },
   )
   employeeDepartmentHistories: EmployeeDepartmentHistory[];
 
