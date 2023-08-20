@@ -104,7 +104,7 @@ export class BatchService {
     return queryBatch;
   }
 
-  public async create(fields: any) {
+  public async createBatch(fields: any) {
     const findProgEntity = await this.progEntity.findOne({
       where: {
         progEntityId: fields.batchEntityId,
@@ -395,6 +395,29 @@ export class BatchService {
         status: 'error',
         message: error.message,
       };
+    }
+  }
+
+  public async updateEvaluationTraineeReview(userId: number, fields: any) {
+    if (fields.status) {
+      this.batchTraineeService.update(
+        {
+          batrTraineeEntity: { userEntityId: userId },
+        },
+        {
+          batrReview: fields.review,
+          batrStatus: fields.status,
+        },
+      );
+    } else {
+      this.batchTraineeService.update(
+        {
+          batrTraineeEntity: { userEntityId: userId },
+        },
+        {
+          batrReview: fields.review,
+        },
+      );
     }
   }
 

@@ -115,6 +115,13 @@ const batchSlices = createSlice({
       state.traineeEvaluation = action.payload;
       state.status = 'succeeded';
     },
+    updateTraineeEvalutaionReviewTry: (state, action: PayloadAction<any> ) => {
+      state.status = 'loading';
+    },
+    updateTraineeEvalutaionReviewSuccess: (state, action: any ) => {
+      // state.traineeEvaluation = action.payload;
+      state.status = 'succeeded';
+    },
     updateTraineeEvalutaionScoreFail: (state, action: any ) => {
       state.status = "failed";
       state.error = action.error.message;
@@ -149,6 +156,8 @@ export const {
   updateTraineeEvalutaionScoreTry,
   updateTraineeEvalutaionScoreSuccess,
   updateTraineeEvalutaionScoreFail,
+  updateTraineeEvalutaionReviewTry,
+  updateTraineeEvalutaionReviewSuccess
 } = batchSlices.actions;
 
 export default batchSlices.reducer;

@@ -91,6 +91,15 @@ const updateTraineeEvaluationScore = async (payload: any) => {
   }
 }
 
+const updateTraineeEvaluationReview = async (payload: any) => {
+  try {
+    const result = await axios.put(`${config.domain}/api/bootcamp/batch/evaluation/review?userentityid=${payload.userId}`, payload.data);
+    return result.data;
+  } catch (error) {
+    return error;
+  }
+}
+
 const updateBatchStatus = async (payload: any) => {
   try {
     const result = await axios.put(`${config.domain}/api/bootcamp/batch/update/statusbatch?id=${payload.batchId}&status=${payload.status}`);
@@ -100,4 +109,4 @@ const updateBatchStatus = async (payload: any) => {
   }
 }
 
-export default { getAll, getByNameAndStatus, createBatch, getTechnology, getInstructors, getById, updateBatch, getBatchEvaluation, getBatchTraineeEvaluation, updateTraineeEvaluationScore, updateBatchStatus };
+export default { getAll, getByNameAndStatus, createBatch, getTechnology, getInstructors, getById, updateBatch, getBatchEvaluation, getBatchTraineeEvaluation, updateTraineeEvaluationScore, updateBatchStatus, updateTraineeEvaluationReview };

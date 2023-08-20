@@ -1,7 +1,7 @@
 import Page from "@/pages/component/commons/Page";
 import AppLayout from "@/pages/component/layout/AppLayout";
 import { getBatchByIdFetch, getInstructorFetch, getTechnologyFetch, updateBatchTry } from "@/redux/slices/batchSlices";
-import { getCandidateByProgramFetch, getPassedCandidateBootcampFetch } from "@/redux/slices/candidateSlices";
+import { getCandidateByProgramFetch } from "@/redux/slices/candidateSlices";
 import { Menu } from "@headlessui/react";
 import { useFormik } from "formik";
 import Image from "next/image";
@@ -29,7 +29,6 @@ export default function EditBatch(){
         
         if(Object.keys(batch).length != 0){
             dispatch(getCandidateByProgramFetch(batch.batchEntityId));
-            dispatch(getPassedCandidateBootcampFetch(batch.batchEntityId))
             formattingData();
         }
         
@@ -68,7 +67,6 @@ export default function EditBatch(){
 
     const formattingData = () => {
         const trainees = Object.keys(batch).length != 0 && batch.batchTrainees.map((trainee: any) => { return { idUser: trainee.batrTraineeEntity.userEntityId, name: `${trainee.batrTraineeEntity.userFirstName} ${trainee.batrTraineeEntity.userLastName}` }})
-        // console.log(trainees);
         setMembers(trainees);
     }
     

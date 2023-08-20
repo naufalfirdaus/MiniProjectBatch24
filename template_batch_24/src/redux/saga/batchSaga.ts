@@ -14,6 +14,7 @@ import {
   updateTraineeEvalutaionScoreSuccess,
   updateTraineeEvalutaionScoreFail,
   updateBatchStatusSuccess,
+  updateTraineeEvalutaionReviewSuccess,
 } from "../slices/batchSlices";
 import batchAPI from "../../pages/api/batch";
 
@@ -103,6 +104,12 @@ function* workUpdateTraineeEvaluationScore(action: any): any {
   }
 }
 
+function* workUpdateTraineeEvaluationReview(action: any): any {
+  const { payload } = action;
+    const updatedScore =  yield call(batchAPI.updateTraineeEvaluationReview, payload);
+    yield put(updateTraineeEvalutaionReviewSuccess(updatedScore));
+}
+
 function* workUpdateBatchStatus(action: any): any {
   const { payload } = action;
   yield call(batchAPI.updateBatchStatus, payload);
@@ -121,4 +128,5 @@ export {
   workGetBatchTraineeEvaluation,
   workUpdateTraineeEvaluationScore,
   workUpdateBatchStatus,
+  workUpdateTraineeEvaluationReview
 };

@@ -1,6 +1,6 @@
 import Page from "@/pages/component/commons/Page";
 import AppLayout from "@/pages/component/layout/AppLayout";
-import { changeToIdle, getBatchByIdFetch, getBatchEvaluationFetch } from "@/redux/slices/batchSlices";
+import { getBatchByIdFetch, getBatchEvaluationFetch, updateTraineeEvalutaionReviewTry } from "@/redux/slices/batchSlices";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -11,6 +11,7 @@ export default function BatchEvaluation(){
     const [studentData, setStudentData] = useState<any>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenR, setIsOpenR] = useState(false);
+    const [resign, setResign] = useState('');
     const [selectedStudent, setSelectedStudent] = useState<any | null>(null);
     const status = useSelector((state: any) => state.batchs.status);
     const batch = useSelector((state: any) => state.batchs.batch);
@@ -19,14 +20,19 @@ export default function BatchEvaluation(){
     const router = useRouter();
     
     useEffect(() => {
-        if(router.query.batchid){
-            dispatch(getBatchByIdFetch(router.query.batchid));
-            dispatch(getBatchEvaluationFetch(router.query.batchid));
-        }
+        dispatch(getBatchByIdFetch(router.query.batchid));
+        dispatch(getBatchEvaluationFetch(router.query.batchid));
+
         if(batchEvaluation.length != 0){
             setStudentData(batchEvaluation)
         }
-    }, [router, batchEvaluation.length]);
+    }, [router, batchEvaluation.length, isOpenR]);
+
+    useEffect(() => {
+        if(!isOpen || !isOpenR){
+            setResign('');
+        }
+    },[isOpen, isOpenR]);
     
     const handleReviewClick = (id: number) => {
         const findStudent = studentData.find((student: any) => student.batrTraineeEntity.userEntityId == id);
@@ -48,13 +54,13 @@ export default function BatchEvaluation(){
 
     const handleSubmitReview = (e: any) => {
         e.preventDefault();
-        console.log(selectedStudent.batrReview, selectedStudent.batrTraineeEntity.userEntityId);
+        dispatch(updateTraineeEvalutaionReviewTry({userId: selectedStudent.batrTraineeEntity.userEntityId, data: { review:selectedStudent.batrReview }}));
         setIsOpen(false);
     }
 
     const handleSubmitResign = (e: any) => {
         e.preventDefault();
-        console.log(selectedStudent.batrReview, selectedStudent.batrTraineeEntity.userEntityId);
+        dispatch(updateTraineeEvalutaionReviewTry({userId: selectedStudent.batrTraineeEntity.userEntityId, data: { review: selectedStudent.batrReview, status: 'Resign' }}))
         setIsOpenR(false);
     }
 
@@ -92,14 +98,11 @@ export default function BatchEvaluation(){
                                 <div className="flex flex-col items-center pb-5">
                                     <img className="w-32 h-32 mb-3 rounded-full" src="/assets/images/candidate.png" alt="User image"/>
                                     <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">{student.batrTraineeEntity.userFirstName} {student.batrTraineeEntity.userLastName}</h5>
-                                    <span className="text-sm text-white bg-green-500 px-2 py-1 rounded-lg">{student.batrStatus}</span>
+                                    <span className={`text-sm text-white px-2 py-1 rounded-lg ${student.batrStatus == 'Running' ? 'bg-green-400' : student.batrStatus == 'Resign' ? 'bg-red-400' : 'bg-black'}`}>{student.batrStatus}</span>
                                     <h1 className="mt-3 text-md font-medium">Total Score: {student.batrTotalScore}</h1>
                                 </div>
                             </div>
                         )}
-                    </div>
-                    <div className="flex justify-end gap-2 mt-4">
-                        <button type="submit" className="bg-green-500 text-white py-1 px-2 rounded-md hover:bg-green-600">Save</button>
                     </div>
                 </div>
             </Page>
@@ -185,7 +188,7 @@ export default function BatchEvaluation(){
                                 </Dialog.Title>
                                 <div className="mt-2">
                                     <p className="text-sm text-gray-600">Kandidat {selectedStudent?.batrTraineeEntity.userFirstName} {selectedStudent?.batrTraineeEntity.userLastName}</p>
-                                    <select name="switch" id="switch" defaultValue='' className='mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5'>
+                                    <select name="switch" id="switch" defaultValue='' onChange={(e) => setResign(e.target.value)} className='mt-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5'>
                                         <option value="" disabled>Select Status</option>
                                         <option value="Resign">Resign</option>
                                     </select>
@@ -197,7 +200,7 @@ export default function BatchEvaluation(){
                                     <button type="button" className="rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" onClick={() => setIsOpenR(false)}>
                                         Cancel
                                     </button>
-                                    <button type="button" className="rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" onClick={(e) => handleSubmitResign(e)}>
+                                    <button type="button" className="rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled={resign == '' ? true : false} onClick={(e) => handleSubmitResign(e)}>
                                         Submit
                                     </button>
                                 </div>

@@ -56,7 +56,7 @@ export class BatchController {
 
   @Post('create')
   public async createBatch(@Body() fields: any) {
-    return this.serBatch.create(fields);
+    return this.serBatch.createBatch(fields);
   }
 
   @Put('update/batchid')
@@ -76,16 +76,16 @@ export class BatchController {
     return await this.serBatch.findTraineeEvaluationScoring(userId);
   }
 
-  @Put('update/statusbatch')
-  public async updateStatusBatch(
-    @Query('id') id: number,
-    @Query('status') stats: string,
+  @Put('evaluation/review')
+  public async updateBatchEvalutaionReview(
+    @Query('userentityid') userId: number,
+    @Body() fields: any,
   ) {
-    return await this.serBatch.updateBatchStats(id, stats);
+    return await this.serBatch.updateEvaluationTraineeReview(userId, fields);
   }
 
   @Put('evaluation/scoring/update')
-  public async udpateBatchEvalutaionScoring(
+  public async updateBatchEvalutaionScoring(
     @Query('userentityid') userId: number,
     @Body() fields: any,
   ) {
@@ -95,5 +95,13 @@ export class BatchController {
   @Delete('batchid')
   public async deleteBatch(@Query('id') id: number) {
     return await this.serBatch.deleteBatch(id);
+  }
+
+  @Put('update/statusbatch')
+  public async updateStatusBatch(
+    @Query('id') id: number,
+    @Query('status') stats: string,
+  ) {
+    return await this.serBatch.updateBatchStats(id, stats);
   }
 }

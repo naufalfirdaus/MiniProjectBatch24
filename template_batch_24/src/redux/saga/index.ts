@@ -1,6 +1,6 @@
 import { takeEvery, all } from "redux-saga/effects";
 import { workGetCandidateByProgram, workGetCandidateFetch, workGetPassedCandidateBootcamp } from "./candidateSaga";
-import { workCreateBatch, workGetBatchByIdFetch, workGetBatchEvaluation, workGetBatchFetch, workGetBatchTraineeEvaluation, workGetByNameAndStatus, workGetTechnologyFetch, workInstructorFetch, workUpdateBatch, workUpdateBatchStatus, workUpdateTraineeEvaluationScore } from "./batchSaga";
+import { workCreateBatch, workGetBatchByIdFetch, workGetBatchEvaluation, workGetBatchFetch, workGetBatchTraineeEvaluation, workGetByNameAndStatus, workGetTechnologyFetch, workInstructorFetch, workUpdateBatch, workUpdateBatchStatus, workUpdateTraineeEvaluationReview, workUpdateTraineeEvaluationScore } from "./batchSaga";
 
 function* watchAll() {
   yield all([
@@ -17,6 +17,7 @@ function* watchAll() {
     takeEvery('batch/getBatchEvaluationFetch', workGetBatchEvaluation),
     takeEvery('batch/getBatchTraineeEvaluationFetch', workGetBatchTraineeEvaluation),
     takeEvery('batch/updateTraineeEvalutaionScoreTry', workUpdateTraineeEvaluationScore),
+    takeEvery('batch/updateTraineeEvalutaionReviewTry', workUpdateTraineeEvaluationReview),
     takeEvery('batch/updateBatchStatusTry', workUpdateBatchStatus),
   ]);
 }
