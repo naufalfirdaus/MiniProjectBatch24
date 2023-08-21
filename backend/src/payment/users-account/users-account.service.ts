@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersAccount } from 'output/entities/UsersAccount';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import {
   IPaginationOptions,
   Pagination,
@@ -32,6 +32,19 @@ export class UsersAccountService {
       return await this.serviceUsersAccount.findOne({
         where: { usacUserEntityId: id },
       });
+    } catch (error) {
+      return error.message;
+    }
+  }
+
+  public async findOneByUserIdAndBankFintech(bankFintech: number, req: any) {
+    try {
+      return await this.serviceUsersAccount.find({
+        where: {
+          usacUserEntityId: req.user.UserId,
+          usacBankEntityId: bankFintech
+        }
+      })
     } catch (error) {
       return error.message;
     }

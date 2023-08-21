@@ -36,6 +36,10 @@ export class TransactionsService {
         });
         let typeTransactions: string;
 
+        if (amount < 10000) {
+            throw new ForbiddenException('Minimal amount for Topup is 10000')
+        }
+
         // VerifyAccount
         const sourceAccount = await this.verifyAccount(sourceCode, user);
         const targetAccount = await this.verifyAccount(targetCode, user);
@@ -206,6 +210,7 @@ export class TransactionsService {
                     trpaType: paymentType,
                     users: { userEntityId: req.user.UserId }
                 }],
+                order: { trpaId: 'DESC' }
             })
 
             totalPages = Math.ceil(totalCount / options.limit);
@@ -241,6 +246,7 @@ export class TransactionsService {
                     trpaTargetId: Like(`%${search}%`),
                     users: { userEntityId: req.user.UserId }
                 }],
+                order: { trpaId: 'DESC' }
             })
 
             totalPages = Math.ceil(totalCount / options.limit);
@@ -262,6 +268,7 @@ export class TransactionsService {
                 where: { trpaType: paymentType, users: { userEntityId: req.user.UserId } },
                 take: options.limit,
                 skip: skippedItems,
+                order: { trpaId: 'DESC' }
             })
 
             totalPages = Math.ceil(totalCount / options.limit);
@@ -282,6 +289,7 @@ export class TransactionsService {
                 where: { users: { userEntityId: req.user.UserId } },
                 take: options.limit,
                 skip: skippedItems,
+                order: { trpaId: 'DESC' }
             })
 
             totalPages = Math.ceil(totalCount / options.limit);

@@ -9,13 +9,16 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UsersAccountService } from './users-account.service';
 import { UsersDto } from './dto/users.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api/fintech')
 export class UsersAccountController {
-  constructor(private Services: UsersAccountService) {}
+  constructor(private Services: UsersAccountService) { }
 
   @Get('accounts')
   public async getAll(
@@ -31,6 +34,15 @@ export class UsersAccountController {
   @Get('account/debitSaldo')
   public async getOne(@Param('id') id: number) {
     return this.Services.findOne(id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('account/search')
+  public async getOneByAccountId(
+    @Query('bankFintech') bankFintech: number,
+    @Req() req: any
+  ) {
+    return this.Services.findOneByUserIdAndBankFintech(bankFintech, req);
   }
 
   @Post('account/debitSaldo')
