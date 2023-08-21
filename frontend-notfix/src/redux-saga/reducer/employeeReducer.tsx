@@ -4,6 +4,10 @@ const INIT_STATE = {
     employee: [],
 }
 
+const GET_ONE_STATE = {
+    program: [],
+}
+
 const EmployeeReducer = (state = INIT_STATE, action: any) => {
     switch (action.type) {
         case ActionType.GET_DATA_REQ:
@@ -31,7 +35,27 @@ const EmployeeReducer = (state = INIT_STATE, action: any) => {
     }
 }
 
+const getOneEmployeeReducer = (state = GET_ONE_STATE, action: any) => {
+    switch (action.type) {
+        case ActionType.GET_ONE_DATA_REQ:
+            return { ...state };
+        case ActionType.GET_ONE_DATA_SUCCESS:
+            return GetOneEmployee(state, action);
+        case 'RESET_EMPLOYEE_STATE':
+            return GET_ONE_STATE;
+        default:
+            return { ...state };
+    }
+}
+
 function GetEmployee(state: any, action: any) {
+    return {
+        ...state,
+        employee: action.payload,
+    };
+};
+
+function GetOneEmployee(state: any, action: any) {
     return {
         ...state,
         employee: action.payload,
@@ -67,4 +91,4 @@ function DeleteEmployee(action: any) {
     };
 }
 
-export {EmployeeReducer}
+export {EmployeeReducer, getOneEmployeeReducer}
