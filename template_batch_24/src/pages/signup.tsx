@@ -52,7 +52,7 @@ export default function signup() {
         pmailAddress: values.email,
         usroRoleId: values.RoleId,
       };
-      dispatch();
+      // dispatch();
       router.push("/signin");
     },
   });
@@ -178,7 +178,7 @@ export default function signup() {
               <select
                 id="PontyCode"
                 name="PontyCode"
-                type="select"
+                // type="select"
                 value={formik.values.PontyCode}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -231,7 +231,7 @@ export default function signup() {
               <select
                 id="RoleId"
                 name="RoleId"
-                type="select"
+                // type="select"
                 value={formik.values.RoleId}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -301,7 +301,7 @@ export default function signup() {
             </div>
             <div className="w-full md:w-full px-3 mb-6">
               <button
-                onClick={formik.handleSubmit}
+                // onClick={formik.handleSubmit}
                 className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
               >
                 Sign Up

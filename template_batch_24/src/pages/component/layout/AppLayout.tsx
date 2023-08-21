@@ -29,75 +29,29 @@ import {
 } from "@heroicons/react/solid";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import {
+  UserDataRequest,
+  UserSignoutRequest,
+} from "@/redux-saga/action/UserAction";
+import config from "@/config/config";
+import Image from "next/image";
 
 const navigation = [
   {
     name: "Home",
-    href: "/app",
+    href: "/app/programs",
     icon: HomeIcon,
     current: true,
-    roles: ["Administrator", "Recuirter", "Sales", "Instructor"],
   },
   {
-    name: "Candidat",
-    href: "/app/candidat",
+    name: "Dashboard",
+    href: "/app/programs/dashboard",
     icon: AcademicCapIcon,
     current: false,
-    roles: ["Administrator", "Recuirter", "Instructor"],
-  },
-  {
-    name: "Batch",
-    href: "/app/batch",
-    icon: ViewGridAddIcon,
-    current: false,
-    roles: ["Administrator", "Recuirter", "Instructor"],
-  },
-  {
-    name: "Talent",
-    href: "/app/talent",
-    icon: UserGroupIcon,
-    current: false,
-    roles: ["Administrator", "Recuirter", "Instructor", "Sales"],
-  },
-  {
-    name: "Placement",
-    href: "/app/placement",
-    icon: UserGroupIcon,
-    current: false,
-    roles: ["Administrator", "Recuirter", "Sales"],
-  },
-  {
-    name: "Curriculum",
-    href: "/app/curriculum",
-    icon: BookOpenIcon,
-    current: false,
-    roles: ["Administrator", "Instructor"],
-  },
-  {
-    name: "Hiring",
-    href: "/app/hiring",
-    icon: PhoneOutgoingIcon,
-    current: false,
-    roles: ["Administrator", "Recuirter", "Sales"],
-  },
-  {
-    name: "Setting",
-    href: "/app/setting",
-    icon: CogIcon,
-    current: false,
-    roles: [
-      "Administrator",
-      "Recuirter",
-      "Sales",
-      "Instructor",
-      "Candidat",
-      "Talent",
-      "Outsource",
-    ],
   },
 ];
 
-function classNames(...classes : any[]) {
+function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
@@ -107,15 +61,16 @@ export default function AppLayout(props: any) {
   const { children } = props;
 
   const dispatch = useDispatch();
-  const { UserProfile } = useSelector((state : any) => state.usrStated);
-  const [user, setUser] = useState({});
+  const { UserProfile } = useSelector((state: any) => state.userState);
+  const UserData = useSelector((state: any) => state.userState.data);
+
   useEffect(() => {
-    setUser(UserProfile);
+    dispatch(UserDataRequest(UserProfile.UserId));
   }, []);
-  
+
   const onLogout = () => {
-    dispatch();
-    router.push("/");
+    dispatch(UserSignoutRequest());
+    router.push("/signin");
   };
 
   return (
@@ -132,10 +87,10 @@ export default function AppLayout(props: any) {
             as={Fragment}
             enter="transition-opacity ease-linear duration-300"
             enterFrom="opacity-0"
-            enterhref="opacity-100"
+            // enterhref="opacity-100"
             leave="transition-opacity ease-linear duration-300"
             leaveFrom="opacity-100"
-            leavehref="opacity-0"
+            // leavehref="opacity-0"
           >
             <Dialog.Overlay className="fixed inset-0 bg-gray-600 bg-opacity-75" />
           </Transition.Child>
@@ -143,20 +98,20 @@ export default function AppLayout(props: any) {
             as={Fragment}
             enter="transition ease-in-out duration-300 transform"
             enterFrom="-translate-x-full"
-            enterhref="translate-x-0"
+            // enterhref="translate-x-0"
             leave="transition ease-in-out duration-300 transform"
             leaveFrom="translate-x-0"
-            leavehref="-translate-x-full"
+            // leavehref="-translate-x-full"
           >
             <div className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-white">
               <Transition.Child
                 as={Fragment}
                 enter="ease-in-out duration-300"
                 enterFrom="opacity-0"
-                enterhref="opacity-100"
+                // enterhref="opacity-100"
                 leave="ease-in-out duration-300"
                 leaveFrom="opacity-100"
-                leavehref="opacity-0"
+                // leavehref="opacity-0"
               >
                 <div className="absolute top-0 right-0 -mr-12 pt-2">
                   <button
@@ -169,43 +124,41 @@ export default function AppLayout(props: any) {
                 </div>
               </Transition.Child>
               <div className="flex-shrink-0 flex items-center px-4">
-                <img
+                <Image
                   className="h-10 w-auto"
-                  src="../assets/images/codeid.png"
+                  src="/static/images/code-colored.jpg"
+                  width={100}
+                  height={100}
                   alt="codeid"
                 />
               </div>
               <div className="mt-5 flex-1 h-0 overflow-y-auto">
                 <nav className="px-2">
                   <div className="space-y-1">
-                    {navigation
-                      .filter((item) =>
-                        item.roles.includes(user.roles || UserProfile.roles)
-                      )
-                      .map((item) => (
-                        <Link
-                          key={item.name}
-                          href={item.href}
+                    {navigation.map((item) => (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className={classNames(
+                          item.current
+                            ? "bg-gray-100 text-gray-900"
+                            : "text-gray-600 hover:text-gray-900 hover:bg-gray-50",
+                          "group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md"
+                        )}
+                        aria-current={item.current ? "page" : undefined}
+                      >
+                        <item.icon
                           className={classNames(
                             item.current
-                              ? "bg-gray-100 text-gray-900"
-                              : "text-gray-600 hover:text-gray-900 hover:bg-gray-50",
-                            "group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md"
+                              ? "text-gray-500"
+                              : "text-gray-400 group-hover:text-gray-500",
+                            "mr-3 flex-shrink-0 h-6 w-6"
                           )}
-                          aria-current={item.current ? "page" : undefined}
-                        >
-                          <item.icon
-                            className={classNames(
-                              item.current
-                                ? "text-gray-500"
-                                : "text-gray-400 group-hover:text-gray-500",
-                              "mr-3 flex-shrink-0 h-6 w-6"
-                            )}
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </Link>
-                      ))}
+                          aria-hidden="true"
+                        />
+                        {item.name}
+                      </Link>
+                    ))}
                   </div>
                 </nav>
               </div>
@@ -220,11 +173,13 @@ export default function AppLayout(props: any) {
       {/* Static sidebar for desktop */}
       <div className="hidden lg:flex lg:flex-shrink-0">
         <div className="flex flex-col w-64 border-r border-gray-200 pt-5 pb-4 bg-gray-100">
-          <div className="flex items-center flex-shrink-0 px-6">
-            <Link href="/">
-              <img
+          <div className="flex flex-col items-center flex-shrink-0 px-6">
+            <Link href="/app/programs">
+              <Image
                 className="h-10 w-auto"
-                src="../assets/images/codeid.png"
+                src="/static/images/code-colored.jpg"
+                width={100}
+                height={100}
                 alt="codeid"
               />
             </Link>
@@ -242,17 +197,29 @@ export default function AppLayout(props: any) {
                     <Menu.Button className="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-purple-500">
                       <span className="flex w-full justify-between items-center">
                         <span className="flex min-w-0 items-center justify-between space-x-3">
-                          <img
-                            className="w-10 h-10 bg-gray-300 object-cover rounded-full flex-shrink-0"
-                            src="../assets/images/yuri.jpg"
-                            alt=""
-                          />
+                          {UserData?.userPhoto ? (
+                            <Image
+                              className="w-10 h-10 bg-gray-300 object-cover rounded-full flex-shrink-0"
+                              src={`${config.domain}/programs/image/${UserData?.userPhoto}`}
+                              width={100}
+                              height={100}
+                              alt="User Image"
+                            />
+                          ) : (
+                            <Image
+                              className="w-10 h-10 bg-gray-300 object-cover rounded-full flex-shrink-0"
+                              src={`/static/images/user-image-not-found.jpg`}
+                              width={100}
+                              height={100}
+                              alt="User Image"
+                            />
+                          )}
                           <span className="flex-1 flex flex-col min-w-0">
                             <span className="text-gray-900 text-sm font-medium truncate">
-                              {user.username || UserProfile.username}
+                              {UserData?.userName}
                             </span>
                             <span className="text-gray-500 text-sm truncate">
-                              {user.email || UserProfile.email}
+                              {UserProfile?.email}
                             </span>
                           </span>
                         </span>
@@ -268,94 +235,15 @@ export default function AppLayout(props: any) {
                     as={Fragment}
                     enter="transition ease-out duration-100"
                     enterFrom="transform opacity-0 scale-95"
-                    enterhref="transform opacity-100 scale-100"
+                    // enterhref="transform opacity-100 scale-100"
                     leave="transition ease-in duration-75"
                     leaveFrom="transform opacity-100 scale-100"
-                    leavehref="transform opacity-0 scale-95"
+                    // leavehref="transform opacity-0 scale-95"
                   >
                     <Menu.Items
                       static
                       className="z-10 mx-3 origin-top absolute right-0 left-0 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none"
                     >
-                      <div className="py-1">
-                        <Menu.Item>
-                          {({ active }) => (
-                            <Link
-                              href="#"
-                              className={classNames(
-                                active
-                                  ? "bg-gray-100 text-gray-900"
-                                  : "text-gray-700",
-                                "block px-4 py-2 text-sm"
-                              )}
-                            >
-                              View profile
-                            </Link>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <Link
-                              href="#"
-                              className={classNames(
-                                active
-                                  ? "bg-gray-100 text-gray-900"
-                                  : "text-gray-700",
-                                "block px-4 py-2 text-sm"
-                              )}
-                            >
-                              Settings
-                            </Link>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <Link
-                              href="#"
-                              className={classNames(
-                                active
-                                  ? "bg-gray-100 text-gray-900"
-                                  : "text-gray-700",
-                                "block px-4 py-2 text-sm"
-                              )}
-                            >
-                              Notifications
-                            </Link>
-                          )}
-                        </Menu.Item>
-                      </div>
-                      <div className="py-1">
-                        <Menu.Item>
-                          {({ active }) => (
-                            <Link
-                              href="#"
-                              className={classNames(
-                                active
-                                  ? "bg-gray-100 text-gray-900"
-                                  : "text-gray-700",
-                                "block px-4 py-2 text-sm"
-                              )}
-                            >
-                              Get desktop app
-                            </Link>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <Link
-                              href="#"
-                              className={classNames(
-                                active
-                                  ? "bg-gray-100 text-gray-900"
-                                  : "text-gray-700",
-                                "block px-4 py-2 text-sm"
-                              )}
-                            >
-                              Support
-                            </Link>
-                          )}
-                        </Menu.Item>
-                      </div>
                       <div className="py-1">
                         <Menu.Item>
                           {({ active }) => (
@@ -383,34 +271,30 @@ export default function AppLayout(props: any) {
             {/* Navigation */}
             <nav className="px-3 mt-6">
               <div className="space-y-1">
-                {navigation
-                  .filter((item) =>
-                    item.roles.includes(user.roles || UserProfile.roles)
-                  )
-                  .map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={classNames(
+                      item.current
+                        ? "bg-gray-200 text-gray-900"
+                        : "text-gray-700 hover:text-gray-900 hover:bg-gray-50",
+                      "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+                    )}
+                    aria-current={item.current ? "page" : undefined}
+                  >
+                    <item.icon
                       className={classNames(
                         item.current
-                          ? "bg-gray-200 text-gray-900"
-                          : "text-gray-700 hover:text-gray-900 hover:bg-gray-50",
-                        "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+                          ? "text-gray-500"
+                          : "text-gray-400 group-hover:text-gray-500",
+                        "mr-3 flex-shrink-0 h-6 w-6"
                       )}
-                      aria-current={item.current ? "page" : undefined}
-                    >
-                      <item.icon
-                        className={classNames(
-                          item.current
-                            ? "text-gray-500"
-                            : "text-gray-400 group-hover:text-gray-500",
-                          "mr-3 flex-shrink-0 h-6 w-6"
-                        )}
-                        aria-hidden="true"
-                      />
-                      {item.name}
-                    </Link>
-                  ))}
+                      aria-hidden="true"
+                    />
+                    {item.name}
+                  </Link>
+                ))}
               </div>
             </nav>
           </div>
@@ -455,11 +339,23 @@ export default function AppLayout(props: any) {
                     <div>
                       <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         <span className="sr-only">Open user menu</span>
-                        <img
-                          className="w-10 h-10 bg-gray-300 object-cover rounded-full flex-shrink-0"
-                          src="../assets/images/yuri.jpg"
-                          alt=""
-                        />
+                        {UserData?.userPhoto ? (
+                          <Image
+                            className="w-10 h-10 bg-gray-300 object-cover rounded-full flex-shrink-0"
+                            src={`${config.domain}/programs/image/${UserData?.userPhoto}`}
+                            width={100}
+                            height={100}
+                            alt="User Image"
+                          />
+                        ) : (
+                          <Image
+                            className="w-10 h-10 bg-gray-300 object-cover rounded-full flex-shrink-0"
+                            src={`/static/images/user-image-not-found.jpg`}
+                            width={100}
+                            height={100}
+                            alt="User Image"
+                          />
+                        )}
                       </Menu.Button>
                     </div>
                     <Transition
@@ -467,94 +363,15 @@ export default function AppLayout(props: any) {
                       as={Fragment}
                       enter="transition ease-out duration-100"
                       enterFrom="transform opacity-0 scale-95"
-                      enterhref="transform opacity-100 scale-100"
+                      // enterhref="transform opacity-100 scale-100"
                       leave="transition ease-in duration-75"
                       leaveFrom="transform opacity-100 scale-100"
-                      leavehref="transform opacity-0 scale-95"
+                      // leavehref="transform opacity-0 scale-95"
                     >
                       <Menu.Items
                         static
                         className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none"
                       >
-                        <div className="py-1">
-                          <Menu.Item>
-                            {({ active }) => (
-                              <Link
-                                href="#"
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}
-                              >
-                                View profile
-                              </Link>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <Link
-                                href="#"
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}
-                              >
-                                Settings
-                              </Link>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <Link
-                                href="#"
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}
-                              >
-                                Notifications
-                              </Link>
-                            )}
-                          </Menu.Item>
-                        </div>
-                        <div className="py-1">
-                          <Menu.Item>
-                            {({ active }) => (
-                              <Link
-                                href="#"
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}
-                              >
-                                Get desktop app
-                              </Link>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <Link
-                                href="#"
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}
-                              >
-                                Support
-                              </Link>
-                            )}
-                          </Menu.Item>
-                        </div>
                         <div className="py-1">
                           <Menu.Item>
                             {({ active }) => (

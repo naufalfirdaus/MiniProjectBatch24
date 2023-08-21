@@ -24,7 +24,7 @@ import {
 } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid';
 import { useSelector, useDispatch } from 'react-redux';
-import { doPushSignoutRequest } from '../../redux-saga/Action/UsrAction'
+// import { doPushSignoutRequest } from '../../redux-saga/Action/UsrAction'
 
 const solutions = [
     {
@@ -50,23 +50,25 @@ const solutions = [
 
 
 
-function classNames(...classes) {
+function classNames(...classes: any) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function LandingPage(props) {
+export default function LandingPage(props: any) {
     const { children } = props
     const dispatch = useDispatch();
     const router = useRouter()
-    const [user, setUser] = useState({})
-    const { UserProfile } = useSelector(state => state.usrStated)
+    const [user, setUser] = useState({
+        username: "erica"
+    })
+    // const { UserProfile } = useSelector(state => state.usrStated)
 
     const onSignout = () => {
-        dispatch(doPushSignoutRequest());
-        router.reload()
+        // dispatch(doPushSignoutRequest());
+        // router.reload()
     }
     useEffect(() => {
-        setUser(UserProfile)
+        // setUser(UserProfile)
     },[])
     console.log(user);
     return (
@@ -117,10 +119,10 @@ export default function LandingPage(props) {
                                                     as={Fragment}
                                                     enter="transition ease-out duration-200"
                                                     enterFrom="opacity-0 translate-y-1"
-                                                    enterhref="opacity-100 translate-y-0"
+                                                    // enterhref="opacity-100 translate-y-0"
                                                     leave="transition ease-in duration-150"
                                                     leaveFrom="opacity-100 translate-y-0"
-                                                    leavehref="opacity-0 translate-y-1"
+                                                    // leavehref="opacity-0 translate-y-1"
                                                 >
                                                     <Popover.Panel
                                                         static
@@ -179,10 +181,10 @@ export default function LandingPage(props) {
                                                     as={Fragment}
                                                     enter="transition ease-out duration-100"
                                                     enterFrom="transform opacity-0 scale-95"
-                                                    enterhref="transform opacity-100 scale-100"
+                                                    // enterhref="transform opacity-100 scale-100"
                                                     leave="transition ease-in duration-75"
                                                     leaveFrom="transform opacity-100 scale-100"
-                                                    leavehref="transform opacity-0 scale-95"
+                                                    // leavehref="transform opacity-0 scale-95"
                                                 >
                                                     <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                                                         <div className="py-1">
@@ -261,10 +263,10 @@ export default function LandingPage(props) {
                                 as={Fragment}
                                 enter="duration-200 ease-out"
                                 enterFrom="opacity-0 scale-95"
-                                enterhref="opacity-100 scale-100"
+                                // enterhref="opacity-100 scale-100"
                                 leave="duration-100 ease-in"
                                 leaveFrom="opacity-100 scale-100"
-                                leavehref="opacity-0 scale-95"
+                                // leavehref="opacity-0 scale-95"
                             >
                                 <Popover.Panel
                                     focus

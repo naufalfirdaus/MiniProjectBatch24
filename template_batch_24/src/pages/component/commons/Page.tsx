@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Page(props) {
+export default function Page(props: any) {
     const { title,children,titleButton, ...others } = props
     return <>
         <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
