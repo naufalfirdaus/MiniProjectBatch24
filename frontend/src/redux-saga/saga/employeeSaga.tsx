@@ -3,9 +3,9 @@ import { AddEmployeeFailed, AddEmployeeSuccess, DeleteEmployeeSuccess, EditEmplo
 import employee from "@/pages/api/employee";
 
 function* handleGetEmployee(action: any): any {
-    const { payload } = action;
+    // const { payload } = action;
     try {
-        const result = yield call(employee.getEmployee, payload)
+        const result = yield call(employee.GetData)
         yield put(GetEmployeeSuccess(result.data))
     } catch (error) {
         yield put(GetEmployeeFailed(error))

@@ -1,4 +1,4 @@
-import * as UserAction from "../constant/userConstant";
+import * as UserAction from "../constant/UserConstant";
 
 export const GetUserReq = (payload: any) => ({
   type: UserAction.GET_USER_REQ,

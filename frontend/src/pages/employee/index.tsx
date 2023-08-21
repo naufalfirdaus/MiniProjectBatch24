@@ -6,35 +6,34 @@ import Link from 'next/link';
 import employee from '../api/employee';
 
 export default function Employee(props: any) {
+    const [employeeValue, setEmployeeValue] = useState([]);
+    const [searchValue, setSearchValue] = useState('');
+    const [page, setPage] = useState([]);
+    const [searchDisplay, setSearchDisplay] = useState(false);
+    const [refresh, setRefresh] = useState(true);
     const dispatch = useDispatch();
-    const [display, setDisplay] = useState<any>(false);
-    const [refrash, setRefrash] = useState<any>(false);
-    const { employee } = useSelector((state: any) => state.employeeState);
+
+    // Fetch employee
+    const { employees } = useSelector((state: any) => state.employeeState);
+    console.log("Employee : ", employees);
+
+    const empEntityId = 1;
 
     useEffect(() => {
-        dispatch(GetEmployeeReq(''));
-    }, [refrash]);
-
-    const onClick =(page: number)=> {
-        const payload = {
-            page: page,
-            name: name,
-            status: status,
-        };
-        dispatch(GetEmployeeReq(payload))
-    }
-
-    let pageNumber: any[] = [];
-    let totalPages: number = employee?.meta?.totalPages;
-    let currentPage: number = employee?.meta?.currentPage;
-
-    for (let i: number = currentPage - 3; i <= currentPage + 3; i++) { 
-        if (i < 1) continue; if (i> totalPages)
-            break;
-        pageNumber.push(i);
-    }
+        dispatch(GetEmployeeReq(empEntityId));
+    }, [dispatch, empEntityId]);
 
     const [active, setActive] = React.useState(1);
+
+    let totalPages: number = Math.ceil(employees?.totalCount / employees?.pagesize);
+    console.log("totalPages : ", totalPages);
+    
+    const getCurrentPageData = () => {
+        const startIndex = (active - 1) * employees?.pagesize;
+        const endIndex = startIndex + employees?.pagesize;
+        return employees?.items.slice(startIndex, endIndex);
+    };
+
     return (
         <Layout>
             <div className="grid grid-flow-col">
@@ -117,25 +116,26 @@ export default function Employee(props: any) {
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
+                            {employees.data && employees.data.map((employee: any) =>
                                 <>
                                     <tr>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-900">sss</div>
+                                            <div className="text-sm text-gray-900">{employee.empEntityId}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-900">ss</div>
+                                            <div className="text-sm text-gray-900">{employee.empNationalId}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-900">sss</div>
+                                            <div className="text-sm text-gray-900">{employee.empEntity.userFirstName}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-900">sss</div>
+                                            <div className="text-sm text-gray-900">{employee.BirthDate}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-900">sss</div>
+                                            <div className="text-sm text-gray-900">{employee.HireDate}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-900">dd</div>
+                                            <div className="text-sm text-gray-900">{employee.employeeClientContracts.eccoStatus}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                         <Link href="/employee/editPage">
@@ -146,19 +146,11 @@ export default function Employee(props: any) {
                                         </td>
                                     </tr>
                                 </>
+                                )};
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
-            <div className='join flex justify-center py-5'>
-                {pageNumber.map((page, index) => (
-                <Link key={index} className={page===currentPage ? 'join-item btn btn-active' : 'join-item btn' }
-                    href={`/employee`} onClick={()=> onClick(page)}
-                >
-                {page}
-                </Link>
-                ))}
             </div>
         </Layout>
     );

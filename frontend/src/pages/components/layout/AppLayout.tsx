@@ -26,74 +26,59 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const navigation = [
-  // {
-  //   name: "Dashboard",
-  //   href: "/",
-  //   icon: HomeIcon,
-  //   current: true,
-  //   roles: ["Administrator", "Recruiter", "Sales", "Instructor"],
-  // },
-  // {
-  //   name: "Candidates",
-  //   href: "/app/candidat",
-  //   icon: AcademicCapIcon,
-  //   current: false,
-  //   roles: ["Administrator", "Recruiter", "Instructor"],
-  // },
-  // {
-  //   name: "Batch",
-  //   href: "/app/batch",
-  //   icon: ViewGridAddIcon,
-  //   current: false,
-  //   roles: ["Administrator", "Recruiter", "Instructor"],
-  // },
-  // {
-  //   name: "Talent",
-  //   href: "/app/talent",
-  //   icon: UserGroupIcon,
-  //   current: false,
-  //   roles: ["Administrator", "Recruiter", "Instructor", "Sales"],
-  // },
-  // {
-  //   name: "Placement",
-  //   href: "/app/placement",
-  //   icon: UserGroupIcon,
-  //   current: false,
-  //   roles: ["Administrator", "Recruiter", "Sales"],
-  // },
-  // {
-  //   name: "Curriculum",
-  //   href: "/app/curriculum",
-  //   icon: BookOpenIcon,
-  //   current: false,
-  //   roles: ["Administrator", "Instructor"],
-  // },
-  // {
-  //   name: "Hiring",
-  //   href: "/app/hiring",
-  //   icon: PhoneOutgoingIcon,
-  //   current: false,
-  //   roles: ["Administrator", "Recruiter", "Sales"],
-  // },
-  // {
-  //   name: "Settings",
-  //   href: "/app/setting",
-  //   icon: CogIcon,
-  //   current: false,
-  //   roles: [
-  //     "Administrator",
-  //     "Recruiter",
-  //     "Sales",
-  //     "Instructor",
-  //     "Candidates",
-  //     "Talent",
-  //     "Outsource",
-  //   ],
-  // },
   {
-    name: "Department",
-    href: "/department",
+    name: "Dashboard",
+    href: "/",
+    icon: HomeIcon,
+    current: true,
+    roles: ["Administrator", "Recruiter", "Sales", "Instructor"],
+  },
+  {
+    name: "Candidates",
+    href: "/candidates",
     icon: AcademicCapIcon,
+    current: false,
+    roles: ["Administrator", "Recruiter", "Instructor"],
+  },
+  {
+    name: "Batch",
+    href: "/batch",
+    icon: ViewGridAddIcon,
+    current: false,
+    roles: ["Administrator", "Recruiter", "Instructor"],
+  },
+  {
+    name: "Talent",
+    href: "/talent",
+    icon: UserGroupIcon,
+    current: false,
+    roles: ["Administrator", "Recruiter", "Instructor", "Sales"],
+  },
+  {
+    name: "Placement",
+    href: "/placement",
+    icon: UserGroupIcon,
+    current: false,
+    roles: ["Administrator", "Recruiter", "Sales"],
+  },
+  {
+    name: "Curriculum",
+    href: "/curriculum",
+    icon: BookOpenIcon,
+    current: false,
+    roles: ["Administrator", "Instructor"],
+  },
+  {
+    name: "Hiring",
+    href: "/hiring",
+    icon: PhoneOutgoingIcon,
+    current: false,
+    roles: ["Administrator", "Recruiter", "Sales"],
+  },
+  {
+    name: "Settings",
+    href: "/settings",
+    icon: CogIcon,
     current: false,
     roles: [
       "Administrator",
@@ -105,21 +90,6 @@ const navigation = [
       "Outsource",
     ],
   },
-  {
-    name: "Employee",
-    href: "/employee",
-    icon: AcademicCapIcon,
-    current: false,
-    roles: [
-      "Administrator",
-      "Recruiter",
-      "Sales",
-      "Instructor",
-      "Candidates",
-      "Talent",
-      "Outsource",
-    ],
-  }
 ];
 
 function classNames(...classes : any[]) {

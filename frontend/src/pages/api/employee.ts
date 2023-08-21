@@ -1,9 +1,18 @@
 import axios from "axios";
 import config from "@/config/config";
 
-const getEmployee = async (payload: any) => {
+export const GetData = async () => {
     try {
-        // const { pageno = 1, pagesize = 10} = payload;
+      const result = await axios.get(`${config.domain}/hr/employee`);
+      return result.data;
+    } catch (error) {
+      return error;
+    }
+  };
+
+const GetEmployee = async (payload: any) => {
+    try {
+        const { pageno = 1, pagesize = 10} = payload;
         const result = await axios.get(`${config.domain}/hr/employee`);
         return result.data;
     } catch (error) {
@@ -49,7 +58,8 @@ const getDepartmentHistory = async (payload: any) => {
 }
 
 export default {
-    getEmployee, 
+    GetData,
+    GetEmployee, 
     searchEmployee, 
     findOneEmployee, 
     getSalary, 
