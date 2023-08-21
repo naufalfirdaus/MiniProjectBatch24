@@ -190,21 +190,119 @@ export class CandidatesService {
     }
   }
 
-  public async findPassedCandidateWithoutBootcamp(program: number) {
+  public async findPassedCandidateWithoutBootcamp(
+    program: number,
+    month: number,
+    year: number,
+  ) {
+    let candidates = [];
     if (program) {
-      const candidates = await this.serviceProgram.find({
-        relations: {
-          prapUserEntity: {
-            usersEducations: true,
+      if (!month && !year) {
+        candidates = await this.serviceProgram.find({
+          relations: {
+            prapUserEntity: {
+              usersEducations: true,
+            },
+            prapStatus: true,
+            prapProgEntity: true,
           },
-          prapStatus: true,
-          prapProgEntity: true,
-        },
-        where: {
-          prapProgEntity: { progEntityId: program },
-          prapStatus: { status: 'Passed' },
-        },
-      });
+          where: {
+            prapProgEntity: { progEntityId: program },
+            prapStatus: [{ status: 'Passed' }, { status: 'Recommendation' }],
+          },
+        });
+      } else if (!year) {
+        candidates = await this.serviceProgram
+          .createQueryBuilder('program_apply')
+          .leftJoinAndSelect('program_apply.prapUserEntity', 'users')
+          .leftJoinAndSelect('users.usersEducations', 'users_education')
+          .leftJoinAndSelect('program_apply.prapProgEntity', 'program_entity')
+          .leftJoinAndSelect('program_apply.prapStatus', 'status')
+          .where(
+            new Brackets((qb) =>
+              qb
+                .where('program_entity.progEntityId = :program', {
+                  program,
+                })
+                .andWhere(
+                  'EXTRACT(month FROM program_apply.prap_modified_date) = :month',
+                  { month: month },
+                ),
+            ),
+          )
+          .andWhere(
+            new Brackets((qb) =>
+              qb
+                .where('status.status = :pass', { pass: 'Passed' })
+                .orWhere('status.status = :rec', {
+                  rec: 'Recommendation',
+                }),
+            ),
+          )
+          .getMany();
+      } else if (!month) {
+        candidates = await this.serviceProgram
+          .createQueryBuilder('program_apply')
+          .leftJoinAndSelect('program_apply.prapUserEntity', 'users')
+          .leftJoinAndSelect('users.usersEducations', 'users_education')
+          .leftJoinAndSelect('program_apply.prapProgEntity', 'program_entity')
+          .leftJoinAndSelect('program_apply.prapStatus', 'status')
+          .where(
+            new Brackets((qb) =>
+              qb
+                .where('program_entity.progEntityId = :program', {
+                  program,
+                })
+                .andWhere(
+                  'EXTRACT(year FROM program_apply.prap_modified_date) = :year',
+                  { year: year },
+                ),
+            ),
+          )
+          .andWhere(
+            new Brackets((qb) =>
+              qb
+                .where('status.status = :pass', { pass: 'Passed' })
+                .orWhere('status.status = :rec', {
+                  rec: 'Recommendation',
+                }),
+            ),
+          )
+          .getMany();
+      } else {
+        candidates = await this.serviceProgram
+          .createQueryBuilder('program_apply')
+          .leftJoinAndSelect('program_apply.prapUserEntity', 'users')
+          .leftJoinAndSelect('users.usersEducations', 'users_education')
+          .leftJoinAndSelect('program_apply.prapProgEntity', 'program_entity')
+          .leftJoinAndSelect('program_apply.prapStatus', 'status')
+          .where(
+            new Brackets((qb) =>
+              qb
+                .where('program_entity.progEntityId = :program', {
+                  program,
+                })
+                .andWhere(
+                  'EXTRACT(month FROM program_apply.prap_modified_date) = :month',
+                  { month: month },
+                )
+                .andWhere(
+                  'EXTRACT(year FROM program_apply.prap_modified_date) = :year',
+                  { year: year },
+                ),
+            ),
+          )
+          .andWhere(
+            new Brackets((qb) =>
+              qb
+                .where('status.status = :pass', { pass: 'Passed' })
+                .orWhere('status.status = :rec', {
+                  rec: 'Recommendation',
+                }),
+            ),
+          )
+          .getMany();
+      }
 
       const trainees = await this.batchTrainee.find({
         select: {

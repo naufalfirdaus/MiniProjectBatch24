@@ -32,7 +32,7 @@ export const candidateSlices = createSlice({
       state.status = "failed";
       state.error = action.error.message;
     },
-    getPassedCandidateBootcampFetch: (state, payload: PayloadAction<number>) => {
+    getPassedCandidateBootcampFetch: (state, payload: PayloadAction<any>) => {
       state.status = "loading";
     },
     getPassedCandidateBootcampSuccess: (state, action) => {

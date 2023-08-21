@@ -5,13 +5,14 @@ import Apply from './apply';
 import Page from '@/pages/component/commons/Page';
 import Filtering from './filtering';
 import { useDispatch } from 'react-redux';
-import { changeToIdle, getCandidateFetch } from '@/redux/slices/candidateSlices';
+import { getCandidateFetch } from '@/redux/slices/candidateSlices';
 import Contract from './contract';
 import Disqualified from './disqualified';
 import NotResponding from './notResponding';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import Link from 'next/link';
+import monthData from '@/helper/month';
 
 const tabs = [
   {
@@ -40,57 +41,6 @@ const tabs = [
     active: false,
   },
 ];
-
-const month_data = [
-  {
-    name: 'Januari',
-    value: 1,
-  },
-  {
-    name: 'Februari',
-    value: 2,
-  },
-  {
-    name: 'Maret',
-    value: 3,
-  },
-  {
-    name: 'April',
-    value: 4,
-  },
-  {
-    name: 'Mei',
-    value: 5,
-  },
-  {
-    name: 'Juni',
-    value: 6,
-  },
-  {
-    name: 'Juli',
-    value: 7,
-  },
-  {
-    name: 'Agustus',
-    value: 8,
-  },
-  {
-    name: 'September',
-    value: 9,
-  },
-  {
-    name: 'Oktber',
-    value: 10,
-  },
-  {
-    name: 'November',
-    value: 11,
-  },
-  {
-    name: 'Desember',
-    value: 12,
-  },
-]
 
 export default function Candidate() {
   const [tabFilter, setTabFilter] = useState<String>('Apply');
@@ -136,10 +86,10 @@ export default function Candidate() {
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
                 </svg>
                 </Menu.Button>
-                <Menu.Items className='absolute z-10 text-sm w-32 text-gray-600 right-0 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-                  {month_data.map((month: any) => 
+                <Menu.Items className='absolute grid grid-cols-3 z-10 text-sm w-36 text-gray-600 right-0 mt-2 origin-top-right bg-white divide-y divide-x divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+                  {monthData.map((month: any) => 
                     <Menu.Item key={month.value}>
-                        <Link href='#' onClick={() => setMonth(month.value)} className="block px-4 py-2 hover:bg-gray-100">{month.name}</Link>
+                        <Link href='#' onClick={() => setMonth(month.value)} className="block p-2 text-center hover:bg-gray-100">{month.name}</Link>
                     </Menu.Item>
                   )}
                 </Menu.Items>

@@ -40,8 +40,14 @@ export class CandidatesController {
   @Get('forbootcamp')
   public async getPassedCandidateWithoutBootcamp(
     @Query('program') program: number,
+    @Query('month') month: number,
+    @Query('year') year: number,
   ) {
-    return await this.Service.findPassedCandidateWithoutBootcamp(program);
+    return await this.Service.findPassedCandidateWithoutBootcamp(
+      program,
+      month,
+      year,
+    );
   }
 
   @Get('program')

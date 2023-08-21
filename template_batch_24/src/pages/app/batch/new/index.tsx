@@ -8,6 +8,10 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import Link from "next/link";
+import monthData from '@/helper/month';
 
 export default function CreateBatch() {
   const dispatch = useDispatch();
@@ -19,6 +23,8 @@ export default function CreateBatch() {
   const instructors = useSelector((state: any) => state.batchs.instructors);
   const [selectedTech, setSelectedTech] = useState<any>('');
   const [members, setMembers] = useState<object[]>([]);
+  const [month, setMonth] = useState<any>();
+  const [year, setYear] = useState<any>();
 
   useEffect(() => {
     if(technologies.length == 0 || instructors.length == 0){
@@ -26,6 +32,16 @@ export default function CreateBatch() {
         dispatch(getInstructorFetch());
     }
   }, []);
+
+  useEffect(() => {
+    if(year && month){
+      dispatch(getPassedCandidateBootcampFetch({program: selectedTech, month: month, year: year.getFullYear()}));
+    } else if(month){
+      dispatch(getPassedCandidateBootcampFetch({program: selectedTech, month: month}));
+    } else if(year){
+      dispatch(getPassedCandidateBootcampFetch({program: selectedTech, year: year.getFullYear()}));
+    }
+  }, [year, month]);
   
   const formik = useFormik({
     initialValues: {
@@ -48,7 +64,6 @@ export default function CreateBatch() {
         dispatch(createBatchTry(batchData));
 
         if(!error){
-            dispatch(changeToIdle('')),
             router.push('/app/batch');
         }
     },
@@ -56,7 +71,7 @@ export default function CreateBatch() {
 
   const onSelectTechChange = (e: any) => {
     setSelectedTech(e.target.value);
-    dispatch(getPassedCandidateBootcampFetch(e.target.value))
+    dispatch(getPassedCandidateBootcampFetch({program: e.target.value}))
     if(candidates.length > 0) {
         setMembers([]);
     }
@@ -75,6 +90,11 @@ export default function CreateBatch() {
         const removedMember = members.filter((member: any) => member.prapUserEntityId !== selectedCandidate.prapUserEntityId);
         setMembers(removedMember);
     }
+  }
+
+  const handleFilterYear = (date: Date, e: any) => {
+    e.preventDefault();
+    setYear(date);
   }
 
   return (
@@ -134,36 +154,27 @@ export default function CreateBatch() {
                 <h1 className="uppercase font-medium mt-4">Recommended Bootcamp Member</h1>
                 <div className="flex justify-center gap-3 mt-5">
                     <Menu as='div' className='relative'>
-                        <Menu.Button className='inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5'> Filter by month
-                        <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
-                        </svg>
+                        <Menu.Button className='inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5'> Month
+                            <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
+                            </svg>
                         </Menu.Button>
-                        <Menu.Items className='absolute z-10 text-sm w-32 text-gray-600 right-0 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-                            <Menu.Item>
-                                <a href="#" className="block px-4 py-2 hover:bg-gray-100">Bulan1</a>
+                        <Menu.Items className='absolute grid grid-cols-3 z-10 text-sm w-36 text-gray-600 right-0 mt-2 origin-top-right bg-white divide-y divide-x divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+                        {monthData.map((month: any) => 
+                            <Menu.Item key={month.value}>
+                                <Link href='#' onClick={() => setMonth(month.value)} className="block p-2 text-center hover:bg-gray-100">{month.name}</Link>
                             </Menu.Item>
-                            <Menu.Item>
-                                <a href="#" className="block px-4 py-2 hover:bg-gray-100">Bulan2</a>
-                            </Menu.Item>
+                        )}
                         </Menu.Items>
                     </Menu>
-                    <Menu as='div' className='relative'>
-                        <Menu.Button className='inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5'> Year
-                        <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
-                        </svg>
-                        </Menu.Button>
-                        <Menu.Items className='absolute z-50 text-sm text-gray-600 right-0 w-32 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-                            <Menu.Item>
-                                <a href="#" className="block px-4 py-2 hover:bg-gray-100">Tahun1</a>
-                            </Menu.Item>
-                            <Menu.Item>
-                                <a href="#" className="block px-4 py-2 hover:bg-gray-100">Tahun2</a>
-                            </Menu.Item>
-                        </Menu.Items>
-                    </Menu>
-                    <button className="bg-blue-500 text-white py-1 px-2 rounded-md hover:bg-blue-600">Search Candidate</button>
+                    <DatePicker
+                        className='ml-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 font-medium rounded-lg text-sm py-1.5 w-16 text-center'
+                        selected={year}
+                        placeholderText="Year"
+                        onChange={(date: Date, e) => handleFilterYear(date, e)}
+                        dateFormat="yyyy"
+                        showYearPicker
+                    />
                 </div>
                 <div className="grid md:grid-cols-3 mt-7 gap-3">
                     {candidates.length == 0 ? <h1 className="text-center">Tidak ada kandidat</h1> : candidates.map((candidate: any) =>
