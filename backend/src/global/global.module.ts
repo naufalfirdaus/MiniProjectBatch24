@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JobhireController } from '../jobhire/jobhire.controller';
 import { JobhireService } from '../jobhire/jobhire.service';
-import { Address } from 'output/entities/Address';
 import { Client } from 'output/entities/Client';
 import { EmployeeRange } from 'output/entities/EmployeeRange';
 import { JobPost } from 'output/entities/JobPost';
@@ -24,14 +23,31 @@ import { MasterController } from 'src/master/master.controller';
 import { MasterService } from 'src/master/master.service';
 import { Industry } from 'output/entities/Industry';
 import { Education } from 'output/entities/Education';
-import { Users } from 'output/entities/Users';
-import { UsersController } from 'src/users/users.controller';
-import { UsersService } from 'src/users/users.service';
 import { TalentApplyService } from 'src/jobhire/talent-apply/talent-apply.service';
 import { UsersMedia } from 'output/entities/UsersMedia';
 import { TalentApplyController } from 'src/jobhire/talent-apply/talent-apply.controller';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { MulterModule } from '@nestjs/platform-express';
+import { UsersService } from 'src/users/users.service';
+import { UsersController } from 'src/users/users.controller';
+import { Users } from 'output/entities/Users';
+import { BusinessEntity } from 'output/entities/BusinessEntity';
 import { UsersEducation } from 'output/entities/UsersEducation';
+import { UsersEmail } from 'output/entities/UsersEmail';
 import { UsersPhones } from 'output/entities/UsersPhones';
+import { UsersRoles } from 'output/entities/UsersRoles';
+import { Roles } from 'output/entities/Roles';
+import { UsersAddress } from 'output/entities/UsersAddress';
+import { Address } from 'output/entities/Address';
+import { AddressType } from 'output/entities/AddressType';
+import { City } from 'output/entities/City';
+import { UsersExperiences } from 'output/entities/UsersExperiences';
+import { UsersSkill } from 'output/entities/UsersSkill';
+import { SkillType } from 'output/entities/SkillType';
+import { LocalGuard } from 'src/auth/local/local.guard';
+import { JwtGuard } from 'src/auth/jwt/jwt.guard';
+import { UploadMulter } from 'src/multer/multer';
 
 @Module({
   imports: [
@@ -51,10 +67,25 @@ import { UsersPhones } from 'output/entities/UsersPhones';
       Industry,
       Education,
       Users,
-      UsersMedia,
+      BusinessEntity,
       UsersEducation,
+      UsersEmail,
       UsersPhones,
+      UsersMedia,
+      UsersRoles,
+      UsersAddress,
+      Roles,
+      Address,
+      AddressType,
+      City,
+      UsersEducation,
+      UsersExperiences,
+      UsersSkill,
+      SkillType,
     ]),
+    MulterModule.register(UploadMulter.MulterOption()),
+    PassportModule,
+    JwtModule.register({ secret: 'miniproject' }),
   ],
   controllers: [
     JobhireController,
@@ -63,7 +94,7 @@ import { UsersPhones } from 'output/entities/UsersPhones';
     EmployeeRangeController,
     TalentApplyController,
     MasterController, // this will change after integrated with master module
-    UsersController, // probably will change after integrated with users module
+    UsersController,
   ],
   providers: [
     JobhireService,
@@ -72,7 +103,10 @@ import { UsersPhones } from 'output/entities/UsersPhones';
     EmployeeRangeService,
     TalentApplyService,
     MasterService, // this will change after integrated with master module
-    UsersService, // probably will change after integrated with users module
+    UsersService,
+    LocalGuard,
+    JwtGuard,
   ],
+  exports: [UsersService],
 })
 export class GlobalModule {}
