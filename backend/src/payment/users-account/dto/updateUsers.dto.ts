@@ -18,7 +18,4 @@ export class updateUsersDto {
 
   @IsNotEmpty()
   public usac_end_date: Date;
-
-  @IsNotEmpty()
-  public usac_status: string;
 }

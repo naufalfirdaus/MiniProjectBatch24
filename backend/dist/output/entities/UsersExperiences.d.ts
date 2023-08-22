@@ -1,6 +1,5 @@
-import { City } from "./City";
-import { Users } from "./Users";
-import { UsersSkill } from "./UsersSkill";
+import { Users } from './Users';
+import { UsersSkill } from './UsersSkill';
 export declare class UsersExperiences {
     usexId: number;
     usexEntityId: number;
@@ -14,7 +13,7 @@ export declare class UsersExperiences {
     usexIndustry: string | null;
     usexDescription: string | null;
     usexExperienceType: string | null;
-    usexCity: City;
+    usexCityId: number | null;
     usexEntity: Users;
     usersSkills: UsersSkill[];
 }

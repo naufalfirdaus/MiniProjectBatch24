@@ -9,20 +9,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const global_module_1 = require("./global/global.module");
-const dist_1 = require("@nestjs/typeorm/dist");
+const typeorm_1 = require("@nestjs/typeorm");
 let AppModule = exports.AppModule = class AppModule {
 };
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            dist_1.TypeOrmModule.forRoot({
+            typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
                 host: 'localhost',
                 port: 5432,
                 username: 'postgres',
-                password: 'alam',
+                password: 'aldi12345',
                 database: 'revampdb',
-                entities: ['dist/output/entitites/*.js'],
+                entities: ['dist/output/entities/*.js'],
                 autoLoadEntities: true,
             }),
             global_module_1.GlobalModule,

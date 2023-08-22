@@ -21,13 +21,18 @@ export class FintechController {
   @Get('search')
   public async getAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @Query('name', new DefaultValuePipe(null)) search: string,
   ) {
     return this.Services.findAll(search, {
       page: page,
       limit: limit,
     });
+  }
+
+  @Get('all')
+  public async getForSelect() {
+    return this.Services.getAll();
   }
 
   @Get(':id')

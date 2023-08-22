@@ -21,13 +21,18 @@ export class BankController {
   @Get('search')
   public async getAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(5), ParseIntPipe) limit: number,
-    @Query('name', new DefaultValuePipe(null)) search: string,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('name', new DefaultValuePipe(null)) search: string
   ) {
     return this.Services.findAll(search, {
       page: page,
       limit: limit,
     });
+  }
+
+  @Get('all')
+  public async getForSelect() {
+    return this.Services.getAll();
   }
 
   @Get(':id')
@@ -44,7 +49,7 @@ export class BankController {
   public async update(
     @Param('id') id: number,
     @Body('bank_code') bank_code: string,
-    @Body('bank_name') bank_name: string,
+    @Body('bank_name') bank_name: string
   ) {
     return this.Services.Update(id, bank_code, bank_name);
   }

@@ -47,6 +47,14 @@ export class FintechService {
     }
   }
 
+  public async getAll() {
+    try {
+      return await this.serviceFintech.find();
+    } catch (error) {
+      return error.message;
+    }
+  }
+
   public async Insert(body: any) {
     try {
       const businessEntity = new BusinessEntity();

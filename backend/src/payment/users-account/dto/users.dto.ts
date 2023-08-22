@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsNumber, Min } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsNumberString,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class UsersDto {
   @IsNotEmpty()
@@ -8,18 +14,12 @@ export class UsersDto {
   public user_id: number;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   public usac_account_number: number;
 
-  @Min(0, {
-    message: 'Minimal 0 untuk saldo akun',
-  })
   @IsNotEmpty()
-  public usac_saldo: number;
+  public usac_saldo: string;
 
   @IsNotEmpty()
   public usac_type: string;
-
-  @IsNotEmpty()
-  public usac_status: string;
 }

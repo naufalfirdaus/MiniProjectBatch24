@@ -15,12 +15,12 @@ export class BankService {
     @InjectRepository(Bank) private serviceBank: Repository<Bank>,
 
     @InjectRepository(BusinessEntity)
-    private serviceBusinessEntity: Repository<BusinessEntity>,
+    private serviceBusinessEntity: Repository<BusinessEntity>
   ) {}
 
   public async findAll(
     search: string,
-    options: IPaginationOptions,
+    options: IPaginationOptions
   ): Promise<Pagination<Bank>> {
     if (!search) {
       const bank = await this.serviceBank.createQueryBuilder('bank');
@@ -32,6 +32,14 @@ export class BankService {
           name: `%${search}%`,
         });
       return paginate(bank, options);
+    }
+  }
+
+  public async getAll() {
+    try {
+      return await this.serviceBank.find();
+    } catch (error) {
+      return error.message;
     }
   }
 
@@ -52,7 +60,7 @@ export class BankService {
       const businessEntity = new BusinessEntity();
 
       const savedBusinessEntity = await this.serviceBusinessEntity.save(
-        businessEntity,
+        businessEntity
       );
 
       const entity_id = savedBusinessEntity.entityId;

@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { GlobalModule } from './global/global.module';
-import { TypeOrmModule } from '@nestjs/typeorm/dist';
+import { UsersController } from './users/users.controller';
+import { UsersService } from './users/users.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -9,9 +13,9 @@ import { TypeOrmModule } from '@nestjs/typeorm/dist';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'alam',
+      password: 'aldi12345',
       database: 'revampdb',
-      entities: ['dist/output/entitites/*.js'],
+      entities: ['dist/output/entities/*.js'],
       autoLoadEntities: true,
     }),
     GlobalModule,
@@ -19,4 +23,4 @@ import { TypeOrmModule } from '@nestjs/typeorm/dist';
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}
