@@ -20,6 +20,16 @@ export class EmployeeController {
     return this.Services.findAll();
   }
 
+  @Get('dept')
+  public async getAllDepartmet() {
+    return this.Services.findAllDepartment();
+  }
+
+  @Get('joro')
+  public async getAllJobRole() {
+    return this.Services.findAllJobRole();
+  }
+
   @Get('search')
   public async search(@Query() options: PaginationDto) {
     const room = this.Services.searchBy(options);

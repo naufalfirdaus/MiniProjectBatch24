@@ -5,6 +5,8 @@ import { EmployeeDepartmentHistory } from 'output/entities/EmployeeDepartmentHis
 import { EmployeePayHistory } from 'output/entities/EmployeePayHistory';
 import { Like, Repository } from 'typeorm';
 import { EmployeeInterface } from './employee.interface';
+import { JobRole } from 'output/entities/JobRole';
+import { Department } from 'output/entities/Department';
 
 @Injectable()
 export class EmployeeService {
@@ -14,10 +16,21 @@ export class EmployeeService {
     private serviceEmpPayHistory: Repository<EmployeePayHistory>,
     @InjectRepository(EmployeeDepartmentHistory)
     private serviceEmpDeptHistory: Repository<EmployeeDepartmentHistory>,
+    @InjectRepository(JobRole) private serviceJoro: Repository<JobRole>,
+    @InjectRepository(Department)
+    private serviceDepartment: Repository<Department>,
   ) {}
 
+  public async findAllDepartment() {
+    return await this.serviceDepartment.find({});
+  }
+
+  public async findAllJobRole() {
+    return await this.serviceJoro.find({});
+  }
+
   public async findAll() {
-    return await this.serviceEmp.find({
+    return await this.serviceDepartment.find({
       relations: [
         'empEntity',
         'employeeClientContracts',
@@ -25,6 +38,7 @@ export class EmployeeService {
         'employeeDepartmentHistories',
         'employeeDepartmentHistories.edhiDept',
         'employeePayHistories',
+        'empJoro',
       ],
     });
   }
@@ -217,6 +231,7 @@ export class EmployeeService {
         'employeeDepartmentHistories',
         'employeeDepartmentHistories.edhiDept',
         'employeePayHistories',
+        'empJoro',
       ],
     });
 
@@ -239,8 +254,8 @@ export class EmployeeService {
         empSickleaveHours: fields.empSickleaveHours,
         empCurrentFlag: fields.empCurrentFlag,
         empModifiedDate: new Date(),
+        empJoro: fields.empJoro,
         empType: fields.empType,
-        empJoroId: fields.empJoroId,
         empEmpEntityId: fields.empEmpEntityId,
       });
 

@@ -4,6 +4,7 @@ import { Department } from 'output/entities/Department';
 import { Employee } from 'output/entities/Employee';
 import { EmployeeDepartmentHistory } from 'output/entities/EmployeeDepartmentHistory';
 import { EmployeePayHistory } from 'output/entities/EmployeePayHistory';
+import { JobRole } from 'output/entities/JobRole';
 import { EmployeeController } from 'src/employee/employee.controller';
 import { EmployeeService } from 'src/employee/employee.service';
 
@@ -14,6 +15,7 @@ import { EmployeeService } from 'src/employee/employee.service';
       EmployeePayHistory,
       EmployeeDepartmentHistory,
       Department,
+      JobRole,
     ]),
   ],
   providers: [EmployeeService],

@@ -6,6 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { FiCalendar } from 'react-icons/fi';
 import { GetEmployeeReq } from "@/redux-saga/action/employeeAction";
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Create(props: any) {
 const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -22,7 +23,20 @@ const [selectedDate, setSelectedDate] = useState<Date | null>(null);
                     className="flex flex-col p-5 bg-white border-b border-gray-200 rounded-t-lg md:rounded-t-none md:rounded-tl-lg md:border-r dark:bg-gray-800 dark:border-gray-700">
                     <h2 className="mb-2 font-bold text-gray-900 dark:text-white pb-5">General</h2>
                     <form>
-                        <div className='grid grid-cols-3 gap-4'>
+                    <div className="grid xl:grid-cols-3 gap-4">
+                            <div className=" xl:order-last">
+                                <div className="items-center justify-center">
+                                    <Image src="" alt="Preview" className="mt-2 w-full h-auto" />
+                                    <input
+                                    type="file"
+                                    id="image"
+                                    name="image"
+                                    accept="image/*"
+                                    
+                                    className="w-full bg-white border border-gray-300 py-2 px-3 rounded-lg focus:outline-none focus:border-blue-500"
+                                    />
+                                </div>
+                            </div>
                             <div className="mb-3">
                                 <label htmlFor="nationalId"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">National
@@ -191,7 +205,7 @@ const [selectedDate, setSelectedDate] = useState<Date | null>(null);
                     <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-200">
                         Cancel
                     </button>
-                    <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-200">
+                    <button onClick={() => props.setDisplay(false)} className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-200">
                         Save
                     </button>
                 </div>
