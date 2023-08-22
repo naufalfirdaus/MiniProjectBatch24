@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import Layout from '../components/layout/Layout';
-import { GetEmployeeReq } from "@/redux-saga/action/employeeAction";
+import { GetEmployeeReq, SearchEmployeeReq } from "@/redux-saga/action/employeeAction";
 import Link from 'next/link';
-import { IconButton, Typography } from "@material-tailwind/react";
+import { Menu, Dialog, Transition } from '@headlessui/react';
 import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/outline";
+import { IconButton, Typography } from "@material-tailwind/react";
 import employee from '../api/employee';
+import CreatePage from './createPage';
 
 export default function Employee(props: any) {
-    const [searchValue, setSearchValue] = useState('');
     const dispatch = useDispatch();
 
     // Fetch Employee
@@ -16,7 +17,8 @@ export default function Employee(props: any) {
     console.log("Employee : ", employees);
 
     useEffect(() => {
-        dispatch(GetEmployeeReq(1));
+        dispatch(SearchEmployeeReq({}));
+        dispatch(GetEmployeeReq({}));
     }, [dispatch]);
 
     const [active, setActive] = React.useState(1);
@@ -42,16 +44,56 @@ export default function Employee(props: any) {
         }
     };
 
+    // set display create
+    const [createDisplay, setCreateDisplay] = useState(false);
+
+    // Display Search
+    const [searchDisplay, setSearchDisplay] = useState(false);
+
+    const [searchValue, setSearchValue] = useState('');
+    const [status, setStatus] = useState('');
+    const [statusLabel, setStatusLabel] = useState('Pilih Status');
+    const [dropdownStatusOpen, setDropdownStatusOpen] = useState(false);
+
+    const onSearch = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const payload = {
+          name: searchValue,
+          status: status,
+        };
+        dispatch(SearchEmployeeReq(payload));
+        setSearchDisplay(true);
+    };
+
+    const onClick = (page: number) => {
+        const payload = {
+          page: page,
+          name: searchValue,
+          status: status,
+        };
+        if (searchDisplay) {
+          dispatch(SearchEmployeeReq(payload));
+        } else {
+          dispatch(GetEmployeeReq(payload));
+        }
+    };
+
     return (
         <Layout>
+            <>
+            {createDisplay ? (
+            <CreatePage
+              setDisplay={setCreateDisplay}
+            />
+          ) : (
+            <>
             <div className="grid grid-flow-col">
                 <div className="col-span-8">
-                    <form className="border-b-2 border-gray-300 pb-2">
+                    <form onSubmit={onSearch} className="border-b-2 border-gray-300 pb-2">
                         <div className="flex h-20 p-4 justify-center me-20">
                             <div className="p-4 text-sm sm:text-md">
                                 <p>Search</p>
                             </div>
-
                             <div className="m-1">
                                 <div
                                     className="border border-gray-300 relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg bg-white overflow-hidden">
@@ -65,20 +107,43 @@ export default function Employee(props: any) {
 
                                     <input
                                         className="peer h-full w-full outline-none text-sm text-gray-700 pr-2 bg-gray-50"
-                                        type="text" id="search" placeholder="employee name.." value={searchValue}
+                                        type="text" id='searchInput' placeholder="employee name.." value={searchValue}
                                         onChange={(e) => setSearchValue(e.target.value)}/>
                                 </div>
                             </div>
-
-                            <div className="ms-5 pt-1">
-                                <select id="search"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                    <option value="">Active</option>
-                                    <option value="">Inactive</option>
-                                </select>
+                            <div className="relative inline-block text-left m-2">
+                                <button
+                                    onClick={() => setDropdownStatusOpen(!dropdownStatusOpen)}
+                                    className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                    aria-haspopup="true"
+                                >
+                                     {statusLabel}
+                                </button>
+                                {dropdownStatusOpen && (
+                                    <div className="origin-top-right absolute right-0 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                                        <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                                            <ul tabIndex={0} className='dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52'>
+                                            <li>
+                                            <button type='button' onClick={() => { setStatus('Semua'); setStatusLabel('Semua'); }}>
+                                                Contract
+                                            </button>
+                                            </li>
+                                            <li>
+                                            <button type='button' onClick={() => { setStatus('active'); setStatusLabel('Active'); }}>
+                                                Active
+                                            </button>
+                                            </li>
+                                            <li>
+                                            <button type='button' onClick={() => { setStatus('inactive'); setStatusLabel('Inactive'); }}>
+                                                Inactive
+                                            </button>
+                                            </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-
-                            <div className="ms-5 pt-1.5">
+                            <div className="pt-1.5">
                                 <button type="submit"
                                     className="p-4 text-white bg-gray-700 hover:bg-gray-800 font-medium rounded-lg px-5 py-2.5 mr-2 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Search</button>
                             </div>
@@ -114,46 +179,98 @@ export default function Employee(props: any) {
                                     </th>
                                     <th scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <Link href="/employee/createPage">
-                                            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200">
+                                        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200" onClick={() => setCreateDisplay(true)}>
                                             Add
-                                            </button>
-                                        </Link>
+                                        </button>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                            { employees&&employees?.data?.map((employee: any) => 
+                            {/* { employees&&employees?.data?.map((employee: any) =>  */}
                                 <>
                                     <tr>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            {employee.empEntityId}fff
+                                            {/* {employee.empEntityId} */}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            {employee.empNationalId}
+                                            {/* {employee.empNationalId} */}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            {employee.empEntity.userFirstName}
+                                            {/* {employee.empEntity.userFirstName}&nbsp;{employee.empEntity.userLastName} */}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {employee.BirthDate}
+                                            {/* {employee.BirthDate} */}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            {employee.HireDate}
+                                            {/* {employee.HireDate} */}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            {employee.employeeClientContracts.eccoStatus}
+                                            {/* {employee.employeeClientContracts.eccoStatus} */}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                        <Link href="/employee/editPage">
-                                            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200">
-                                            Edit
-                                            </button>
-                                        </Link>
+                                            <Menu as="div">
+                                                <Menu.Button className="dropdots inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:bg-gray-200" type="button"> 
+                                                    <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 4 15">
+                                                        <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
+                                                    </svg>
+                                                </Menu.Button>
+                                
+                                                <Transition
+                                                    as={Fragment}
+                                                    enter="transition ease-out duration-100"
+                                                    enterFrom="transform opacity-0 scale-95"
+                                                    enterTo="transform opacity-100 scale-100"
+                                                    leave="transition ease-in duration-75"
+                                                    leaveFrom="transform opacity-100 scale-100"
+                                                    leaveTo="transform opacity-0 scale-95"
+                                                >
+                                                    <Menu.Items className="z-50 absolute mt-4 -ms-48 w-56 origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                        <div className="px-1 py-1">
+                                                            <Menu.Item>
+                                                                {({ active }) => (
+                                                                    <Link href={`/employee/editPage/`}>
+                                                                        <button
+                                                                            className={`${
+                                                                            active ? 'bg-gray-600 text-white' : 'text-gray-900'
+                                                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                        >
+                                                                            Edit
+                                                                        </button>
+                                                                    </Link>
+                                                                )}
+                                                            </Menu.Item>
+
+                                                            <Menu.Item>
+                                                                {({ active }) => (
+                                                                    <Link href={``}>
+                                                                            <button
+                                                                                className={`${active ? 'bg-gray-600 text-white' : 'text-gray-900'} group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                            >
+                                                                                Salary History
+                                                                            </button>
+                                                                    </Link>
+                                                                )}
+                                                            </Menu.Item>
+
+                                                            <Menu.Item>
+                                                                {({ active }) => (
+                                                                    <Link href={``}>
+                                                                            <button
+                                                                                className={`${active ? 'bg-gray-600 text-white' : 'text-gray-900'} group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                                                            >
+                                                                                Department History
+                                                                            </button>
+                                                                    </Link>
+                                                                )}
+                                                            </Menu.Item>
+                                                        </div>
+                                                    </Menu.Items>  
+                                                 </Transition>
+                                            </Menu>
                                         </td>
                                     </tr>
                                 </>
-                                )}
+                                {/* )} */}
                             </tbody>
                         </table>
                     </div>
@@ -181,6 +298,9 @@ export default function Employee(props: any) {
                     <ArrowRightIcon strokeWidth={2} className="-mt-2 -ms-2 h-4 w-4" />
                 </IconButton>
             </div>
+            </>
+            )}
+            </>
         </Layout>
     );
 }
