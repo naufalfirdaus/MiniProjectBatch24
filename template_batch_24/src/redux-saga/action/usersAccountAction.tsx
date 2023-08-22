@@ -58,3 +58,35 @@ export const UpdateUsersFailed = (payload: any) => ({
   type: ActionUsers.UPDATE_USERS_FAILED,
   payload,
 });
+
+export const GetUserAccountSourceReq = (payload: any) => ({
+  type: ActionUsers.GET_BY_USAC_SOURCE_REQ,
+  payload
+})
+
+
+export const GetUserAccountSourceSuccess = (payload: any) => ({
+  type: ActionUsers.GET_BY_USAC_SOURCE_OK,
+  payload
+})
+
+export const GetUserAccountSourceFailed = (payload: any) => ({
+  type: ActionUsers.GET_BY_USAC_SOURCE_FAILED,
+  payload
+})
+
+export const GetUserAccountTargetReq = (payload: any) => ({
+  type: ActionUsers.GET_BY_USAC_TARGET_REQ,
+  payload
+})
+
+
+export const GetUserAccountTargetSuccess = (payload: any) => ({
+  type: ActionUsers.GET_BY_USAC_TARGET_OK,
+  payload
+})
+
+export const GetUserAccountTargetFailed = (payload: any) => ({
+  type: ActionUsers.GET_BY_USAC_TARGET_FAILED,
+  payload
+})

@@ -10,9 +10,13 @@ import {
   UpdateUsersSuccess,
   GetUsersSelectSuccess,
   GetUsersSelectFailed,
+  GetUserAccountSourceSuccess,
+  GetUserAccountSourceFailed,
+  GetUserAccountTargetSuccess,
+  GetUserAccountTargetFailed,
 } from '../action/usersAccountAction';
 
-function* handleGetUsersAcc(action: any) {
+function* handleGetUsersAcc(action: any): any {
   const { page, accNumber } = action.payload;
 
   try {
@@ -23,7 +27,7 @@ function* handleGetUsersAcc(action: any) {
   }
 }
 
-function* handleGetUsersSelect() {
+function* handleGetUsersSelect(): any {
   try {
     const result = yield call(usersAcc.getSelect);
     yield put(GetUsersSelectSuccess(result));
@@ -58,9 +62,31 @@ function* handleUpdateUsersAcc(action: any): any {
   }
 }
 
+function* handleGetUsacSource(action: any): any {
+  const { payload } = action;
+  try {
+      const result = yield call(usersAcc.getUserAccountByAuthAndBankFintech, payload);
+      yield put(GetUserAccountSourceSuccess(result.data));
+  } catch (error) {
+      yield put(GetUserAccountSourceFailed(error));
+  }
+}
+
+function* handleGetUsacTarget(action: any): any {
+  const { payload } = action;
+  try {
+      const result = yield call(usersAcc.getUserAccountByAuthAndBankFintech, payload);
+      yield put(GetUserAccountTargetSuccess(result.data));
+  } catch (error) {
+      yield put(GetUserAccountTargetFailed(error));
+  }
+}
+
 export {
   handleGetUsersAcc,
   handleCreateUsersAcc,
   handleUpdateUsersAcc,
   handleGetUsersSelect,
+  handleGetUsacSource,
+  handleGetUsacTarget
 };

@@ -5,6 +5,7 @@ import loginReducer from './loginReducer';
 import BankReducer from './bankReducer';
 import FintechReducer from './fintechReducer';
 import UsersAccountReducer from './usersAccountReducer';
+import TransactionReducer from './trpaReducer';
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   bankState: BankReducer,
   fintechState: FintechReducer,
   usersAccState: UsersAccountReducer,
+  trpaState: TransactionReducer,
 });
 
 export default rootReducer;

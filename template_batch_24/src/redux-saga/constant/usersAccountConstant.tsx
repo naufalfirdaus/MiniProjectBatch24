@@ -13,3 +13,11 @@ export const ADD_USERS_FAILED = 'users-acc/add/failed';
 export const UPDATE_USERS_REQUEST = 'users-acc/update/request';
 export const UPDATE_USERS_SUCCESS = 'users-acc/update/success';
 export const UPDATE_USERS_FAILED = 'users-acc/update/failed';
+
+export const GET_BY_USAC_SOURCE_REQ = 'get/source/usac-number/request';
+export const GET_BY_USAC_SOURCE_OK = 'get/source/usac-number/success';
+export const GET_BY_USAC_SOURCE_FAILED = 'get/source/usac-number/failed';
+
+export const GET_BY_USAC_TARGET_REQ = 'get/target/usac-number/request';
+export const GET_BY_USAC_TARGET_OK = 'get/target/usac-number/success';
+export const GET_BY_USAC_TARGET_FAILED = 'get/target/usac-number/failed';

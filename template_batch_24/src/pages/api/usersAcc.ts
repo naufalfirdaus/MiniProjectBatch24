@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from '../config/config';
+import { getCookie } from 'cookies-next';
 
 const getData = async (page: any = 1, accNumber?: any = '') => {
   try {
@@ -48,11 +49,25 @@ const updateUsers = async (payload: any, id: string) => {
   }
 };
 
+const getUserAccountByAuthAndBankFintech = async (payload: any) => {
+  try {
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${getCookie('access_token')}` }
+    const result = await axios.get(`${config.domain}/api/fintech/account/search?bankFintech=${payload.bankFintech}`);
+
+
+
+    return result;
+  } catch (error) {
+    return error;
+  }
+}
+
 const exportFunc = {
   getData,
   createUsers,
   updateUsers,
   getSelect,
+  getUserAccountByAuthAndBankFintech
 };
 
 export default exportFunc;

@@ -6,6 +6,7 @@ import { loginSaga } from './loginSaga';
 import * as ActionBank from '../constant/bankConstant';
 import * as ActionFintech from '../constant/fintechConstant';
 import * as ActionUsersAcc from '../constant/usersAccountConstant';
+import * as ActionTrpa from '../constant/trpaConstant';
 import {
   handleCreateBank,
   handleGetBank,
@@ -23,7 +24,11 @@ import {
   handleGetUsersAcc,
   handleUpdateUsersAcc,
   handleGetUsersSelect,
+  handleGetUsacSource,
+  handleGetUsacTarget,
 } from './usersAccSaga';
+import { handleCreateTopup, handleGetTransaction } from './trpaSaga';
+
 
 function* watchAll() {
   yield all([
@@ -45,6 +50,10 @@ function* watchAll() {
     takeEvery(ActionUsersAcc.ADD_USERS_REQUEST, handleCreateUsersAcc),
     takeEvery(ActionUsersAcc.UPDATE_USERS_REQUEST, handleUpdateUsersAcc),
     takeEvery(ActionUsersAcc.GET_USERS_SELECT_REQ, handleGetUsersSelect),
+    takeEvery(ActionUsersAcc.GET_BY_USAC_SOURCE_REQ, handleGetUsacSource),
+    takeEvery(ActionUsersAcc.GET_BY_USAC_TARGET_REQ, handleGetUsacTarget),
+    takeEvery(ActionTrpa.GET_TRANSACTION_REQ, handleGetTransaction),
+    takeEvery(ActionTrpa.CREATE_TOPUP_REQ, handleCreateTopup),
   ]);
 }
 

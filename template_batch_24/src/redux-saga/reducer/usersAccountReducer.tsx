@@ -3,6 +3,8 @@ const INIT_STATE = {
   users_acc: {
     items: [],
   },
+  sourceAccount: [],
+  targetAccount: []
 };
 
 const UsersAccountReducer = (state = INIT_STATE, action: any) => {
@@ -24,6 +26,18 @@ const UsersAccountReducer = (state = INIT_STATE, action: any) => {
 
     case ActionType.UPDATE_USERS_SUCCESS:
       return UpdateUsersSuccessfully(state, action);
+
+    case ActionType.GET_BY_USAC_SOURCE_REQ:
+      return { ...state };
+
+    case ActionType.GET_BY_USAC_SOURCE_OK:
+      return GetUserAccountSource(state, action);
+
+    case ActionType.GET_BY_USAC_TARGET_REQ:
+      return { ...state };
+
+    case ActionType.GET_BY_USAC_TARGET_OK:
+      return GetUserAccountTarget(state, action)
 
     default:
       return { ...state };
@@ -50,5 +64,19 @@ const UpdateUsersSuccessfully = (state: any, action: any) => {
     items: [...state.users_acc.items, action.payload],
   };
 };
+
+const GetUserAccountSource = (state: any, action: any) => {
+  return {
+    ...state,
+    sourceAccount: action.payload,
+  }
+}
+
+const GetUserAccountTarget = (state: any, action: any) => {
+  return {
+    ...state,
+    targetAccount: action.payload,
+  }
+}
 
 export default UsersAccountReducer;
