@@ -107,14 +107,14 @@ export default function AppLayout(props: any) {
   const { children } = props;
 
   const dispatch = useDispatch();
-  const { UserProfile } = useSelector((state : any) => state.usrStated);
+  const { UserProfile } = useSelector((state : any) => state.userReducer);
   const [user, setUser] = useState({});
   useEffect(() => {
     setUser(UserProfile);
   }, []);
   
   const onLogout = () => {
-    dispatch();
+    // dispatch();
     router.push("/");
   };
 

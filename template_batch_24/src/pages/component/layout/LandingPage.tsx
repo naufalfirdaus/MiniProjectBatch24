@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import Link from 'next/link';
-// import Image from 'next/image';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { Popover, Dialog, Menu, Transition } from '@headlessui/react';
 import {
@@ -24,7 +24,7 @@ import {
 } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid';
 import { useSelector, useDispatch } from 'react-redux';
-import { doPushSignoutRequest } from '../../redux-saga/Action/UsrAction'
+// import { doPushSignoutRequest } from '../../redux-saga/Action/UsrAction'
 
 const solutions = [
     {
@@ -50,24 +50,25 @@ const solutions = [
 
 
 
-function classNames(...classes) {
+function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function LandingPage(props) {
+export default function LandingPage(props: { children: any; }) {
     const { children } = props
     const dispatch = useDispatch();
     const router = useRouter()
     const [user, setUser] = useState({})
-    const { UserProfile } = useSelector(state => state.usrStated)
+    const { UserProfile } = useSelector((state:any) => state.userReducer)
 
     const onSignout = () => {
-        dispatch(doPushSignoutRequest());
-        router.reload()
+        // dispatch(doPushSignoutRequest());
+        // router.reload()
     }
     useEffect(() => {
         setUser(UserProfile)
     },[])
+    
     console.log(user);
     return (
         <div className='bg-white'>
@@ -86,6 +87,7 @@ export default function LandingPage(props) {
                                         />
                                     </Link>
                                 </div>
+                                
                                 <div className="-mr-2 -my-2 md:hidden">
                                     <Popover.Button className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
                                         <span className="sr-only">Open menu</span>

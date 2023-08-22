@@ -4,7 +4,8 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  await app.listen(3001, () => console.log(`Server Listening on Port ` + 3001));
+  app.enableCors();
+  // app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  await app.listen(5000, () => console.log(`Server Listening on Port ` + 5000));
 }
 bootstrap();

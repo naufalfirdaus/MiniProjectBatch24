@@ -1,6 +1,4 @@
-import {
-    CheckIcon
-} from '@heroicons/react/solid'
+import {CheckIcon} from '@heroicons/react/solid'
 export default function Header(props : any) {
     return (
         <div className="lg:flex lg:items-center lg:justify-between">
