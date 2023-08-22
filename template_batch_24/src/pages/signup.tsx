@@ -2,7 +2,8 @@
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
-import { LockClosedIcon } from "@heroicons/react/solid";
+import { userSignupReq } from "@/redux-saga/action/userAction";
+import { LockClosedIcon } from "@heroicons/react/24/solid";
 import * as Yup from "yup";
 import Link from "next/link";
 
@@ -38,7 +39,7 @@ export default function signup() {
       Number: "",
       PontyCode: "",
       confirmPassword: "",
-      RoleId: 1,
+      Apply:1,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -50,9 +51,12 @@ export default function signup() {
         uspoNumber: values.Number,
         uspoPontyCode: values.PontyCode,
         pmailAddress: values.email,
-        usroRoleId: values.RoleId,
+        apply: values.Apply * 1, // Mengonversi string ke angka
+        confirmPassword: values.confirmPassword
       };
-      dispatch();
+      dispatch(userSignupReq(payload));
+      console.log("data payload", payload)
+      
       router.push("/signin");
     },
   });
@@ -78,7 +82,7 @@ export default function signup() {
         </span>
       </div>
       <div className="flex justify-center my-2 mx-4 md:mx-0">
-        <form className="w-full max-w-xl bg-white rounded-lg shadow-md p-6">
+        <form className="w-full max-w-xl bg-white rounded-lg shadow-md p-6" onSubmit={formik.handleSubmit}>
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full md:w-full px-3 mb-6">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
@@ -178,7 +182,6 @@ export default function signup() {
               <select
                 id="PontyCode"
                 name="PontyCode"
-                type="select"
                 value={formik.values.PontyCode}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -226,25 +229,24 @@ export default function signup() {
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="Password"
               >
-                Role Type
+                Apply For
               </label>
               <select
-                id="RoleId"
-                name="RoleId"
-                type="select"
-                value={formik.values.RoleId}
+                id="Apply"
+                name="Apply"
+                value={formik.values.Apply}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                autoComplete="RoleId"
+                autoComplete="Apply"
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
-                placeholder="Role Type"
+                placeholder="Apply For"
               >
-                <option value="1">Candidat</option>
-                <option value="11">Outsource</option>
+                <option value={1}>Bootcamp</option>
+                <option value={2}>Jobs</option>
               </select>
-              {formik.touched.RoleId && formik.errors.RoleId ? (
+              {formik.touched.Apply && formik.errors.Apply ? (
                 <span className="mt-2 text-sm text-red-600">
-                  {formik.errors.RoleId}
+                  {formik.errors.Apply}
                 </span>
               ) : null}
             </div>
@@ -301,11 +303,14 @@ export default function signup() {
             </div>
             <div className="w-full md:w-full px-3 mb-6">
               <button
-                onClick={formik.handleSubmit}
+              type="submit"
                 className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
               >
                 Sign Up
               </button>
+              <div className="flex justify-center mt-3">
+                <p className="text-black">If you are an employee, click <Link href="/signupEmployee"><span className="font-semibold">here</span></Link></p>
+              </div>
             </div>
           </div>
         </form>

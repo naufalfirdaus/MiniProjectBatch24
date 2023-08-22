@@ -1,3 +1,5 @@
-module.exports = {
-    domain: 'domain isi disini',
-}
+const config = {
+  domain: 'http://localhost:3001',
+};
+
+export default config;
