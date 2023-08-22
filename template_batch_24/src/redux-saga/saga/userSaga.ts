@@ -5,7 +5,7 @@ import { GetUserFail, GetUserSuccess } from "../action/UserAction";
 function* handleGetUser(action: any): any {
   try {
     const { payload } = action;
-    const result = yield call(user.GetUser, payload);
+    const result = yield call(user.GetUserApply, payload);
     yield put(GetUserSuccess(result));
   } catch (error) {
     yield put(GetUserFail(error));

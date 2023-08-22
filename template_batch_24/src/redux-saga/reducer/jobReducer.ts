@@ -56,7 +56,14 @@ const JobReducer = (state = INIT_STATE, action: any) => {
     case ActionType.UPDATE_JOB_OK:
       return UpdateJob(state, action);
     case ActionType.UPDATE_JOB_FAILED:
-      return { ...state, error: action.error };
+      return {
+        ...state,
+        error: action.error,
+        createState: {
+          pending: false,
+          success: false,
+        },
+      };
     case ActionType.CREATE_JOB_RESET:
       return { ...state, error: null, createState };
     default:
@@ -95,6 +102,10 @@ const UpdateJob = (state: any, action: any) => {
     ...state,
     job: { ...state.job, ...action.payload }, //update state change for job
     // jobs: [...state], //update the state for jobs
+    createState: {
+      pending: false,
+      success: true,
+    },
   };
 };
 

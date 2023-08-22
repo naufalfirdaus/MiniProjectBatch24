@@ -88,7 +88,6 @@ export default function Create() {
     }),
     onSubmit: async (values: typeof initialValues) => {
       const formData = new FormData();
-      formData.append("emp_id", "7");
       toggleData.closehiring && (values.end_date = new Date().toISOString());
 
       for (let value in values) {

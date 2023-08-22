@@ -68,7 +68,6 @@ export default function Apply() {
       if (isFileEmpty()) return;
       
       const formData = new FormData();
-      formData.set("userEntityId", user.userEntityId);
       formData.set("jobEntityId", jopoEntityId);
 
       for (let value in values) {
@@ -390,7 +389,7 @@ export default function Apply() {
             ? "We have received your profile and we will review your application. Our Talent Acquisition Team will contact you if your qualifications match our needs for the role."
             : error?.response?.data?.message
         }
-        onClose={() => ""}
+        onClose={() => alert.status === "success" ? "": setAlert({ ...alert, open: false })}
         onClickOk={() => {
           alert.status === "success" && router.push(`/hiring/${jopoEntityId}`);
           setAlert({ ...alert, open: false });

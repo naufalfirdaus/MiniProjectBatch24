@@ -1,9 +1,9 @@
 import axios from "axios";
 import { domain } from "../config/config";
 
-const GetUser = async (userId: number) => {
+const GetUserApply = async (userId: number) => {
   try {
-    const result = await axios.get(`${domain}/users/${userId}`);
+    const result = await axios.get(`${domain}/users/${userId}/apply`);
     return result.data;
   } catch (error) {
     throw error;
@@ -20,6 +20,6 @@ const GetUserResume = async (userId: number) => {
 };
 
 export default {
-  GetUser,
+  GetUserApply,
   GetUserResume,
 };

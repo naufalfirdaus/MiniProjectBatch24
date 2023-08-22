@@ -15,7 +15,12 @@ import Image from "next/image";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/outline";
 import { Combobox, Switch } from "@headlessui/react";
 import { GetClientReq } from "@/redux-saga/action/ClientAction";
-import { GetAddressReq, GetEducationReq, GetIndustryReq, GetJobTypeReq } from "@/redux-saga/action/MasterAction";
+import {
+  GetAddressReq,
+  GetEducationReq,
+  GetIndustryReq,
+  GetJobTypeReq,
+} from "@/redux-saga/action/MasterAction";
 import { domain } from "../../../config/config";
 import SubmitAlert from "@/pages/component/form/SubmitAlert";
 
@@ -139,11 +144,6 @@ export default function Update() {
       }
 
       dispatch(UpdateJobReq({ id, formData }));
-      setAlert({ open: true, status: "success" });
-      setTimeout(() => {
-        router.push("/app/hiring");
-        setAlert({ ...alert, open: false });
-      }, 2000);
     },
   });
 

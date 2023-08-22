@@ -1,6 +1,9 @@
 import axios from "axios";
 import { domain } from "../config/config";
 
+const token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjksInVzZXJuYW1lIjoiYW5kaGlrYSIsImZpcnN0bmFtZSI6ImFuZGhpa2EiLCJsYXN0bmFtZSI6InByYXRhbWEiLCJyb2xlaWQiOjIsImlhdCI6MTY5MjY3OTYxOH0.bq0lnj4GanckSCe3BBvIAj66fFd3fmB0urc63-DRFKg";
+
 const GetJobs = async () => {
   try {
     const result = await axios.get(`${domain}/jobs`);
@@ -30,7 +33,11 @@ const GetJobCategory = async () => {
 
 const CreateJobPost = async (payload: any) => {
   try {
-    const result = await axios.post(`${domain}/jobs/posting/create`, payload);
+    const result = await axios.post(`${domain}/jobs/posting/create`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return result.data;
   } catch (error) {
     throw error;
@@ -52,7 +59,8 @@ const UpdateJobPost = async (id: string, payload: any) => {
   try {
     const result = await axios.put(
       `${domain}/jobs/posting/update/${id}`,
-      payload
+      payload,
+      { headers: { Authorization: `Bearer ${token}` } }
     );
     return result.data;
   } catch (error) {
@@ -64,7 +72,8 @@ const CreateJobApply = async (payload: any) => {
   try {
     const result = await axios.post(
       `${domain}/jobs/applyProfessional`,
-      payload
+      payload,
+      { headers: { Authorization: `Bearer ${token}` } }
     );
     return result.data;
   } catch (error) {
