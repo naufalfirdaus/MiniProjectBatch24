@@ -23,12 +23,12 @@ export default function CreateSectionPage(props: any) {
               data: {
                 sectTitle: values.sectTitle,
                 sectDescription: values.sectDescription,
-              }
             }
-            
-            dispatch(AddSectionRequest(data));
-            handleChange();
-            props.setAlertInfo({ showAlert: true, alertText: 'Add Section Success!', alertType: 'success'});
+        }
+        
+        dispatch(AddSectionRequest(data));
+        handleChange();
+        props.setRefresh(true);
         },
     });
 
@@ -51,12 +51,12 @@ export default function CreateSectionPage(props: any) {
                         <div className="border-t border-gray-300 my-3"></div>
                         <div>
                             <div className="flex flex-col mb-3">
-                                <label htmlFor="sectTitle" className="my-2 mr-5">Section Name</label>
-                                <input type="text" id="sectTitle" placeholder="section name" defaultValue={formik.values.sectTitle} onChange={formik.handleChange} className="input input-bordered w-full text-base"/>
+                                <label htmlFor="sectTitle" className="mb-2 font-medium">Section Name</label>
+                                <input type="text" id="sectTitle" placeholder="section name" defaultValue={formik.values.sectTitle} onChange={formik.handleChange} className="input input-bordered w-full capitalize"/>
                             </div>
                             <div className="flex flex-col mb-3">
-                                <label htmlFor="sectDescription" className="my-2 mr-5">Section Description</label>
-                                <textarea id="sectDescription" placeholder="section description" defaultValue={formik.values.sectDescription} onChange={formik.handleChange} className="textarea textarea-bordered h-24 w-full text-base"/>
+                                <label htmlFor="sectDescription" className="mb-2 font-medium">Section Description</label>
+                                <textarea id="sectDescription" placeholder="section description" defaultValue={formik.values.sectDescription} onChange={formik.handleChange} className="textarea textarea-bordered h-24"/>
                             </div>
                             <div className="modal-action">
                                 <button type="button" className="btn btn-primary btn-sm" onClick={()=> formik.handleSubmit()}>

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import CustomAlert from "@/ui/alert";
+import CustomAlert from "@/app/ui/alert";
 import { useFormik } from "formik";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { EditCurriculumReq } from "@/redux-saga/action/curriculumAction";
+
 
 // View
 import CreateSectionPage from "./section/createSectionPage";
@@ -12,6 +13,7 @@ import DeleteSection from "./section/deleteSectionPage";
 import CreateSectionDetailPage from "./section/sectionDetail/createSectionDetailPage";
 import ViewSecDet from "./section/sectionDetail/viewSectionDetailModal";
 import config from "@/config/config";
+import CustomSelect from "@/app/ui/customSelect";
 
 export default function EditForm(props: any) {
     const dispatch = useDispatch();
@@ -97,6 +99,11 @@ export default function EditForm(props: any) {
     const handleImageError = () => {
         setImageExists(false);
     };
+
+    const instructorOptions = instructor.map((item: any) => ({
+        value: item.userEntityId,
+        label: `${item.userFirstName} ${item.userLastName}`,
+    }))
 
     if (!program || program.length === 0) {
         return <div>Loading...</div>;
@@ -205,12 +212,13 @@ export default function EditForm(props: any) {
                                 </div>
                                 <div className="flex flex-col justify-center xl:col-span-2 mb-3">
                                     <label htmlFor="progCreatedBy" className="mb-2 font-medium">Instructor</label>
-                                    <select id="progCreatedById" className="select input-bordered w-full capitalize font-normal" defaultValue={formik.values.progCreatedById} onChange={formik.handleChange}>
+                                    {/* <select id="progCreatedById" className="select input-bordered w-full capitalize font-normal" defaultValue={formik.values.progCreatedById} onChange={formik.handleChange}>
                                     <option value={-1} disabled>Instructor</option>
                                     {instructor.map((emp: any) => (
                                         <option key={emp.userEntityId} value={emp.userEntityId}>{`${emp.userFirstName} ${emp.userLastName}`}</option>
                                     ))}
-                                    </select>
+                                    </select> */}
+                                    <CustomSelect options={instructorOptions} defaultValue={instructorOptions.find((option: any) => option.value === formik.values.progCreatedById)} onChange={formik.setFieldValue}/>
                                 </div>
                             </div>
                             <div className="flex flex-col mb-3">

@@ -2,8 +2,8 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Providers from '@/redux-saga/provider'
-import Navbar from '@/ui/navbar'
-import Sidebar from '@/ui/sidebar'
+import Navbar from '@/app/ui/navbar'
+import Sidebar from '@/app/ui/sidebar'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,12 +19,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-theme="light">
-      <body>
-        <Navbar/>
-          <div className='grid xl:grid-cols-6 min-h-screen'>
-            <div className='col-span-1'><Sidebar/></div>
-            <div className='xl:col-span-5'><Providers>{children}</Providers></div>
+      <body className='bg-gray-100'>
+        <div className='flex flex-col gap-3'>
+          <div className='flex-none'>
+            <Navbar/>
           </div>
+          <div className='flex flex-1'>
+            <div className='min-h-full flex-none'>
+              <Sidebar/>
+            </div>
+            <div className='min-h-full md:px-3 flex-1'>
+              <Providers>{children}</Providers>
+            </div>
+          </div>
+        </div>
       </body>
     </html>
   )

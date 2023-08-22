@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { useFormik } from "formik";
 
-import CustomAlert from "@/ui/alert";
+import CustomAlert from "@/app/ui/alert";
 import EditForm from "./form/form";
 import LogoForm from "./form/formLogo";
 
@@ -40,9 +40,10 @@ export default function Edit(props: any) {
   console.log(`ProgramEntityID: ${progEntityId}`);
   
 
+  // return <div>Loading...</div>;
   if (!program || program.length === 0) {
     // return <div>Loading...</div>;
-    return <CustomAlert alertInfo={{ showAlert: true, alertText: 'Waiting...', alertType: 'error' }} setAlert={setAlertInfo} setRefresh={setRefresh}/>
+    return <CustomAlert alertInfo={{ showAlert: true, alertText: 'Waiting...', alertType: 'success' }} setAlert={setAlertInfo} setRefresh={setRefresh}/>
   } else if (program.progEntityId && props.progEntityId) {
     return (
       <>

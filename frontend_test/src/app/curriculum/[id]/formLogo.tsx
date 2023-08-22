@@ -36,8 +36,8 @@ export default function LogoForm(props: any) {
       setPreviewImg('');
       setChangeImage(false);
       setUpload(false);
+      props.setRefresh(true);
       props.setOnUpload(false);
-      props.setAlertInfo({ showAlert: true, alertText: 'Changed Image Successfully!', alertType: 'success'});
     }
   });
 
