@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { EmployeeRangeService } from './employee-range.service';
 import { CreateEmraDto } from './dto/create-emra.dto';
 
-@Controller('employee-range')
+@Controller('api/employee-range')
 export class EmployeeRangeController {
   constructor(private Services: EmployeeRangeService) {}
 

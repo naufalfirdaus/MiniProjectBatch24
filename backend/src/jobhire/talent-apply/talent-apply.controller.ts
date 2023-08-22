@@ -1,7 +1,7 @@
 import { Controller, Get, Param, UsePipes, ValidationPipe } from '@nestjs/common';
 import { TalentApplyService } from './talent-apply.service';
 
-@Controller('talent-apply')
+@Controller('api/talent-apply')
 @UsePipes(
   new ValidationPipe({
     whitelist: true,

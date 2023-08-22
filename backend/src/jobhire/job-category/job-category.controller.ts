@@ -12,7 +12,7 @@ import { JobCategoryService } from './job-category.service';
 import { CreateJobCategoryDto } from './dto/create-jobcategory.dto';
 import { UpdateJobCategoryDto } from './dto/update-jobcategory.dto';
 
-@Controller('job-category')
+@Controller('api/job-category')
 export class JobCategoryController {
   constructor(private readonly jobCategoryService: JobCategoryService) {}
 

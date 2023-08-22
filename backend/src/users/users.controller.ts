@@ -222,7 +222,7 @@ export class UsersController {
     return this.authService.addskill(id, search_skill);
   }
 
-  @Get('photo/:name')
+  @Get('users/photo/:name')
   @Header('Content-Type', `image/${'png' || 'jpg' || 'jpeg'}`)
   @Header('Content-Disposition', 'attachment')
   getStaticPhoto(@Param('name') name: string): StreamableFile {
@@ -232,12 +232,12 @@ export class UsersController {
     return new StreamableFile(file);
   }
 
-  @Get(':id')
-  async GetOne(@Param('id') id: number) {
-    return this.authService.FindOne(id);
+  @Get('users/:id/apply')
+  async GetOneUserApply(@Param('id') id: number) {
+    return this.authService.FindOneUserApply(id);
   }
 
-  @Get(':id/resume')
+  @Get('users/:id/resume')
   async GetUserResume(@Param('id') id: number) {
     return this.authService.FindResume(id);
   }

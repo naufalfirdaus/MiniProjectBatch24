@@ -11,6 +11,6 @@ export class SkillType {
   @OneToMany(() => SkillTemplate, (skillTemplate) => skillTemplate.sktyName)
   skillTemplates: SkillTemplate[];
 
-  @OneToOne(() => UsersSkill, (usersSkill) => usersSkill.uskiSktyName2)
+  @OneToOne(() => UsersSkill, (usersSkill) => usersSkill.uskiSktyName)
   usersSkill: UsersSkill;
 }

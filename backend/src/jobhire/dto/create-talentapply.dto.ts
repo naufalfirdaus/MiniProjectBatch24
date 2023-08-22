@@ -5,11 +5,6 @@ export class CreateTalentApplyDto {
   @IsNotEmpty()
   @Type(() => Number)
   @IsNumber()
-  userEntityId: number;
-
-  @IsNotEmpty()
-  @Type(() => Number)
-  @IsNumber()
   jobEntityId: number;
 
   @Allow()

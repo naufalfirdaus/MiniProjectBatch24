@@ -2,14 +2,17 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Header,
   Param,
   Post,
   Put,
   Query,
+  Request,
   StreamableFile,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -27,8 +30,9 @@ import { CreateTalentApplyDto } from './dto/create-talentapply.dto';
 import { JobPhotoMulter } from 'src/multer/jobphoto-multer';
 import { TalentApplyService } from './talent-apply/talent-apply.service';
 import { UserMediaMulter } from 'src/multer/usermedia-multer';
+import { AuthGuard } from '@nestjs/passport';
 
-@Controller('jobs')
+@Controller('api/jobs')
 @UsePipes(
   new ValidationPipe({
     whitelist: true,
@@ -71,32 +75,46 @@ export class JobhireController {
     return this.services.FindOne(id);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('posting/create')
   @UseInterceptors(
     FilesInterceptor('photos', 10, JobPhotoMulter.MulterOption()),
   )
   async Create(
+    @Request() req: any,
     @UploadedFiles() photos: Array<Express.Multer.File>,
     @Body() createJobPostDto: CreateJobPostDto,
   ) {
-    return this.services.Create(photos, createJobPostDto);
+    if (!req.user.roleId.toString().match(/(10|3)$/))
+      throw new ForbiddenException();
+    return this.services.Create(photos, createJobPostDto, req.user.UserId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Put('posting/update/:id')
   @UseInterceptors(FilesInterceptor('photos'))
   async Update(
+    @Request() req: any,
     @Param('id') id: number,
     @UploadedFiles() photos: Array<Express.Multer.File>,
     @Body() updateJobPostDto: UpdateJobPostDto,
   ) {
+    if (!req.user.roleId.toString().match(/(10|3)$/))
+      throw new ForbiddenException();
+
     return this.services.Update(id, updateJobPostDto, photos);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
-  async Delete(@Param('id') id: number) {
+  async Delete(@Request() req: any, @Param('id') id: number) {
+    if (!req.user.roleId.toString().match(/(10|3)$/))
+      throw new ForbiddenException();
+
     return this.services.Delete(id);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('applyProfessional')
   @UseInterceptors(
     FileFieldsInterceptor(
@@ -108,10 +126,18 @@ export class JobhireController {
     ),
   )
   async CreateTalentApply(
+    @Request() req: any,
     @Body() taapData: CreateTalentApplyDto,
     @UploadedFiles()
     files: { resume?: Express.Multer.File; photo?: Express.Multer.File },
   ) {
-    return this.talentApplyService.Create(taapData, files.resume, files.photo);
+    console.log(req);
+    return;
+    return this.talentApplyService.Create(
+      req.user.UserId,
+      taapData,
+      files.resume,
+      files.photo,
+    );
   }
 }

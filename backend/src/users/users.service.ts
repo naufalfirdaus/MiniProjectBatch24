@@ -68,7 +68,7 @@ export class UsersService {
     });
   }
 
-  async FindOne(userEntityId: number) {
+  async FindOneUserApply(userEntityId: number) {
     return await this.userRepo.findOne({
       where: { userEntityId },
       relations: {
@@ -87,6 +87,7 @@ export class UsersService {
   }
 
   async UpdateUserApply(
+    userEntityId: number,
     updateData: UpdateTalentApplyDto,
     resume: Express.Multer.File,
     photo: Express.Multer.File,
@@ -94,7 +95,7 @@ export class UsersService {
     try {
       const indexofspace = updateData.fullName?.indexOf(' ');
       const updateUser = this.userRepo.create({
-        userEntityId: updateData.userEntityId,
+        userEntityId: userEntityId,
         userFirstName: updateData.fullName?.slice(0, indexofspace),
         userLastName: updateData.fullName?.slice(indexofspace + 1),
         userBirthDate: updateData.birthDate,
@@ -103,7 +104,7 @@ export class UsersService {
 
       const updateEducation = this.UsduRepository.create({
         usduId: updateData.usduId,
-        usduEntityId: updateData.userEntityId,
+        usduEntityId: userEntityId,
         usduDegree: updateData.degree,
         usduSchool: updateData.school,
         usduFieldStudy: updateData.fieldStudy,
@@ -112,14 +113,14 @@ export class UsersService {
       let updatePhone: any;
       if (updateData.phone) {
         updatePhone = await this.UsersPhonesRepository.save({
-          uspoEntityId: updateData.userEntityId,
+          uspoEntityId: userEntityId,
           uspoNumber: updateData.phone,
           uspoPontyCode: { pontyCode: 'Cell' },
         });
       } else if (updateData.phone && updateData.oldPhone) {
         updatePhone = await this.UsersPhonesRepository.update(
           {
-            uspoEntityId: updateData.userEntityId,
+            uspoEntityId: userEntityId,
             uspoNumber: updateData.oldPhone,
           },
           {
@@ -130,10 +131,10 @@ export class UsersService {
 
       let updateResume: UsersMedia, saveUserMedia: UsersMedia;
       if (resume) {
-        const userMedia = await this.FindResume(updateData.userEntityId);
+        const userMedia = await this.FindResume(userEntityId);
         updateResume = this.userMediaRepo.create({
           usmeId: userMedia?.usmeId,
-          usmeEntityId: userMedia?.usmeEntityId || updateData.userEntityId,
+          usmeEntityId: userMedia?.usmeEntityId || userEntityId,
           usmeFilename: resume[0].filename,
           usmeFilesize: resume[0].size,
           usmeFiletype: extname(resume[0].filename).replace('.', ''),
@@ -683,7 +684,7 @@ export class UsersService {
       const useraddressadty = await this.UsersAddressRepository.update(
         { etadAddrId: addrid },
         {
-          etadAdty: { adtyId: adtyId },
+          etadAdtyId: adtyId,
           etadModifiedDate: new Date(),
         },
       );
@@ -1237,7 +1238,7 @@ export class UsersService {
           usexTitle: fields.tittle,
           usexProfileHeadline: fields.headline,
           usexCompanyName: fields.company,
-          usexCity: { cityId: cityId },
+          usexCityId: cityId,
           usexStartDate: usexStartDate,
           usexEndDate: usexEndDate,
           usexIndustry: fields.industry,

@@ -64,7 +64,11 @@ export class JobhireService {
     return jobPost;
   }
 
-  async Create(photos: Array<Express.Multer.File>, new_post: CreateJobPostDto) {
+  async Create(
+    photos: Array<Express.Multer.File>,
+    new_post: CreateJobPostDto,
+    empId: number,
+  ) {
     try {
       const jobPost = this.jobPostRepository.create({
         jopoNumber: new_post.jopo_number,
@@ -78,7 +82,7 @@ export class JobhireService {
         jopoStartDate: new_post.start_date || null,
         jopoEndDate: new_post.end_date || null,
         jopoPublishDate: new_post.status === 'Publish' ? new Date() : null,
-        jopoEmpEntity: { empEntityId: new_post.emp_id },
+        jopoEmpEntity: { empEntityId: empId },
         jopoClit: { clitId: new_post.clit_id || null },
         jopoJoro: { joroId: new_post.joro_id || null },
         jopoJoty: { jotyId: new_post.joty_id || null },
@@ -120,6 +124,9 @@ export class JobhireService {
     photos: Array<Express.Multer.File>,
   ) {
     try {
+      const jobExist = await this.FindOne(jopoEntityId);
+      if (!jobExist) throw new NotFoundException();
+
       const jobPost = this.jobPostRepository.create({
         jopoEntityId,
         jopoTitle: updatedPost.title,
@@ -149,6 +156,11 @@ export class JobhireService {
         jopoModifiedDate: new Date(),
       });
 
+      if (jobExist.jopoStatus.status !== 'Publish') {
+        jobPost.jopoPublishDate =
+          updatedPost.status === 'Publish' && new Date();
+      }
+
       const updateJobDesc = this.jobPostDescRepository.create({
         jopoDescription: updatedPost.des,
         jopoResponsibility: updatedPost.resp,
@@ -176,6 +188,8 @@ export class JobhireService {
 
       return await this.jobPostRepository.save(jobPost);
     } catch (error) {
+      if (error instanceof NotFoundException)
+        throw new NotFoundException('job not exist');
       throw new InternalServerErrorException(error.message);
     }
   }

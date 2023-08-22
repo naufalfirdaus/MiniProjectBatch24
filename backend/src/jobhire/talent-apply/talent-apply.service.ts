@@ -35,35 +35,34 @@ export class TalentApplyService {
       relations: {
         taapStatus: true,
         talentApplyProgresses: true,
-      }
+      },
     });
   }
 
   async Create(
+    userEntityId: number,
     newApply: CreateTalentApplyDto,
     resume: Express.Multer.File,
     photo: Express.Multer.File,
   ) {
     try {
-      const isExist = await this.FindOne(
-        newApply.userEntityId,
-        newApply.jobEntityId,
-      );
+      const isExist = await this.FindOne(userEntityId, newApply.jobEntityId);
 
       if (isExist)
         throw new BadRequestException('you already apply to this job');
 
       const userApply = await this.userService.UpdateUserApply(
+        userEntityId,
         newApply,
         resume,
         photo,
       );
       const talentApply = await this.talentApplyRepo.save({
-        taapUserEntityId: newApply.userEntityId,
+        taapUserEntityId: userEntityId,
         taapEntityId: newApply.jobEntityId,
       });
       const applyProgress = await this.applyProgressRepo.save({
-        taapUserEntityId: newApply.userEntityId,
+        taapUserEntityId: userEntityId,
         taapEntityId: newApply.jobEntityId,
         taprProgressName: 'Apply Application',
         taprStatus: 'waiting',

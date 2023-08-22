@@ -52,11 +52,6 @@ export class CreateJobPostDto {
   @IsOptional()
   secondary_skill: string;
 
-  @IsNotEmpty()
-  @Type(() => Number)
-  @IsNumber()
-  emp_id: number;
-
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
