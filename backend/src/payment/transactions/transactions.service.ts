@@ -18,7 +18,7 @@ export class TransactionsService {
     @InjectRepository(UsersAccount)
     private serviceUsac: Repository<UsersAccount>,
     @InjectRepository(Users) private serviceUser: Repository<Users>,
-  ) {}
+  ) { }
 
   async verifyTransaction(accountNumber: string, req: any, fintech: any) {
     const { user } = req;
@@ -69,36 +69,12 @@ export class TransactionsService {
       );
 
       if (
-        sourceAccount.accountUser.usacType === 'bank' &&
-        targetAccount.accountUser.usacType === 'fintech'
+        (sourceAccount.accountUser.usacType === 'bank' &&
+          targetAccount.accountUser.usacType === 'fintech') ||
+        (sourceAccount.accountUser.usacType === 'fintech' &&
+          targetAccount.accountUser.usacType === 'bank')
       ) {
-        typeTransactions = 'Topup';
-
-        // Debit
-        await this.createTransactionPayment(
-          queryRunner,
-          sourceCode,
-          targetCode,
-          amount,
-          0,
-          user,
-          'TP',
-          'Top-up',
-          parsedOrderId,
-        );
-
-        // Credit
-        await this.createTransactionPayment(
-          queryRunner,
-          targetCode,
-          sourceCode,
-          0,
-          amount,
-          user,
-          'TP',
-          'Received Top-up',
-          parsedOrderId,
-        );
+        typeTransactions = 'Top-up';
       } else if (
         (sourceAccount.accountUser.usacType === 'fintech' &&
           targetAccount.accountUser.usacType === 'fintech') ||
@@ -106,33 +82,34 @@ export class TransactionsService {
           targetAccount.accountUser.usacType === 'bank')
       ) {
         typeTransactions = 'Transfer';
-
-        // Debit
-        await this.createTransactionPayment(
-          queryRunner,
-          sourceCode,
-          targetCode,
-          amount,
-          0,
-          user,
-          'TR',
-          'Transfer',
-          parsedOrderId,
-        );
-
-        // Credit
-        await this.createTransactionPayment(
-          queryRunner,
-          targetCode,
-          sourceCode,
-          0,
-          amount,
-          user,
-          'TR',
-          'Received Transfer',
-          parsedOrderId,
-        );
       }
+
+      // Debit
+      await this.createTransactionPayment(
+        queryRunner,
+        sourceCode,
+        targetCode,
+        amount,
+        0,
+        user,
+        typeTransactions === 'Top-up' ? 'TP' : 'TR',
+        typeTransactions,
+        parsedOrderId,
+      );
+
+      // Credit
+      await this.createTransactionPayment(
+        queryRunner,
+        targetCode,
+        sourceCode,
+        0,
+        amount,
+        user,
+        typeTransactions === 'Top-up' ? 'TP' : 'TR',
+        `Received ${typeTransactions}`,
+        parsedOrderId,
+      );
+
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
