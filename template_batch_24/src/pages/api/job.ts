@@ -1,9 +1,6 @@
 import axios from "axios";
 import { domain } from "../config/config";
 
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjksInVzZXJuYW1lIjoiYW5kaGlrYSIsImZpcnN0bmFtZSI6ImFuZGhpa2EiLCJsYXN0bmFtZSI6InByYXRhbWEiLCJyb2xlaWQiOjIsImlhdCI6MTY5MjY3OTYxOH0.bq0lnj4GanckSCe3BBvIAj66fFd3fmB0urc63-DRFKg";
-
 const GetJobs = async () => {
   try {
     const result = await axios.get(`${domain}/jobs`);
@@ -31,7 +28,7 @@ const GetJobCategory = async () => {
   }
 };
 
-const CreateJobPost = async (payload: any) => {
+const CreateJobPost = async (payload: any, token: string) => {
   try {
     const result = await axios.post(`${domain}/jobs/posting/create`, payload, {
       headers: {
@@ -55,7 +52,7 @@ const GetJobPostById = async (id: string) => {
   }
 };
 
-const UpdateJobPost = async (id: string, payload: any) => {
+const UpdateJobPost = async (id: string, payload: any, token: string) => {
   try {
     const result = await axios.put(
       `${domain}/jobs/posting/update/${id}`,
@@ -68,7 +65,7 @@ const UpdateJobPost = async (id: string, payload: any) => {
   }
 };
 
-const CreateJobApply = async (payload: any) => {
+const CreateJobApply = async (payload: any, token: string) => {
   try {
     const result = await axios.post(
       `${domain}/jobs/applyProfessional`,

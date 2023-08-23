@@ -1,18 +1,22 @@
 import axios from "axios";
 import { domain } from "../config/config";
 
-const GetUserApply = async (userId: number) => {
+const GetUserApply = async (token: string) => {
   try {
-    const result = await axios.get(`${domain}/users/${userId}/apply`);
+    const result = await axios.get(`${domain}/users/apply`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return result.data;
   } catch (error) {
     throw error;
   }
 };
 
-const GetUserResume = async (userId: number) => {
+const GetUserResume = async (token: string) => {
   try {
-    const result = await axios.get(`${domain}/users/${userId}/resume`);
+    const result = await axios.get(`${domain}/users/resume`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return result.data;
   } catch (error) {
     throw error;

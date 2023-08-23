@@ -10,6 +10,7 @@ import {
   Put,
   UseInterceptors,
   UploadedFile,
+  NotFoundException,
   DefaultValuePipe,
   Header,
   StreamableFile,
@@ -32,22 +33,26 @@ export class UsersController {
     return this.authService.findAll();
   }
 
+  @Get('users/employees')
+  public async getAllEmployees() {
+    return this.authService.findAllEmployee(); // Panggil findAllEmployee
+    // console.log(this.authService.findAllEmployee());
+  }
+
   @Delete('users/:id')
   public async Delete(@Param('id') id: number) {
     return this.authService.delete(id);
   }
 
-  /// Penambahan DTO pada api signup dengan nama "SignUpDto"
   @Post('signup')
   @UseInterceptors(FileInterceptor('fields'))
-  public async signUp(@Body() fields: SignUpDto) {
+  public async signUp(@Body() fields: any) {
     return this.authService.signup(fields);
   }
 
-  /// Penambahan DTO pada api signupEmployee dengan nama "SignUpEmployeeDto"
   @Post('signupEmployee')
   @UseInterceptors(FileInterceptor('fields'))
-  public async signUpEmployee(@Body() fields: SignUpEmployeeDto) {
+  public async signUpEmployee(@Body() fields: any) {
     return this.authService.signupasemployee(fields);
   }
 
@@ -67,7 +72,6 @@ export class UsersController {
     return this.authService.login(req.user);
   }
 
-  //////    Penambahan route siginEmployee
   @UseGuards(AuthGuard('local'))
   @Post('signinEmployee')
   public async signInEmployee(@Request() req) {
@@ -80,9 +84,34 @@ export class UsersController {
     return req.user;
   }
 
+  // @Get(':id')
+  // public async getOne(@Param('id') id: number) {
+  //   return this.authService.findOne(id);
+  // }
   @Get(':id')
   public async getOne(@Param('id') id: number) {
-    return this.authService.findOne(id);
+    const user = await this.authService.findOne(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    // const userEmails = user.usersEmails.map((email) => email.pmailAddress);
+    const userEmails = user.usersEmails.map((email) => ({
+      id: email.pmailId, // Assuming email has a 'pmailid' property for ID
+      email: email.pmailAddress,
+    }));
+    // const userPhoneNumbers = user.usersPhones.map((phone) => phone.uspoNumber);
+    const userPhoneNumbers = user.usersPhones.map((phone) => ({
+      phone: phone.uspoNumber,
+      pontycode: phone.uspoPontyCode,
+    }));
+    return {
+      userEntityId: user.userEntityId,
+      userName: user.userName,
+      userFirstName: user.userFirstName,
+      userLastName: user.userLastName,
+      userEmail: userEmails,
+      userPhoneNumber: userPhoneNumbers,
+    };
   }
 
   @Put('users/profile/edit/:id')
@@ -121,19 +150,17 @@ export class UsersController {
     return this.authService.deleteemail(pmailid);
   }
 
-  // Penambahan DTO pada api users/profile/phone/:id dengan nama "PhoneDto"
   @Post('users/profile/phone/:id')
   @UseInterceptors(FileInterceptor('fields'))
-  public async addPhone(@Param('id') id: number, @Body() fields: PhoneDto) {
+  public async addPhone(@Param('id') id: number, @Body() fields: any) {
     return this.authService.addphone(id, fields);
   }
 
-  // Penambahan DTO pada api users/profile/phone/:usponumber dengan nama "PhoneDto"
   @Put('users/profile/phone/:usponumber')
   @UseInterceptors(FileInterceptor('fields'))
   public async editPhone(
     @Param('usponumber') usponumber: string,
-    @Body() fields: PhoneDto,
+    @Body() fields: any,
   ) {
     return this.authService.editphone(usponumber, fields);
   }
@@ -232,13 +259,15 @@ export class UsersController {
     return new StreamableFile(file);
   }
 
-  @Get('users/:id/apply')
-  async GetOneUserApply(@Param('id') id: number) {
-    return this.authService.FindOneUserApply(id);
+  @UseGuards(AuthGuard('jwt'))
+  @Get('users/apply')
+  async GetOneUserApply(@Request() req: any) {
+    return this.authService.FindOneUserApply(req.user.UserId);
   }
 
-  @Get('users/:id/resume')
-  async GetUserResume(@Param('id') id: number) {
-    return this.authService.FindResume(id);
+  @UseGuards(AuthGuard('jwt'))
+  @Get('users/resume')
+  async GetUserResume(@Request() req: any) {
+    return this.authService.FindResume(req.user.UserId);
   }
 }

@@ -30,6 +30,10 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
+import { getOneUser } from "@/redux-saga/saga/userSaga";
+import { getCookie } from "cookies-next";
+import jwt_decode from "jwt-decode";
+import { userLogout } from "@/redux-saga/action/logoutAction";
 
 const navigation = [
   {
@@ -37,35 +41,35 @@ const navigation = [
     href: "/app",
     icon: HomeIcon,
     current: false,
-    roles: ["Administrator", "Recuirter", "Sales", "Instructor"],
+    roles: ["Administrator", 3, "Sales", "Instructor"],
   },
   {
     name: "Candidat",
     href: "/app/candidat",
     icon: AcademicCapIcon,
     current: false,
-    roles: ["Administrator", "Recuirter", "Instructor"],
+    roles: ["Administrator", 3, "Instructor"],
   },
   {
     name: "Batch",
     href: "/app/batch",
     icon: ViewGridAddIcon,
     current: false,
-    roles: ["Administrator", "Recuirter", "Instructor"],
+    roles: ["Administrator", 3, "Instructor"],
   },
   {
     name: "Talent",
     href: "/app/talent",
     icon: UserGroupIcon,
     current: false,
-    roles: ["Administrator", "Recuirter", "Instructor", "Sales"],
+    roles: ["Administrator", 3, "Instructor", "Sales"],
   },
   {
     name: "Placement",
     href: "/app/placement",
     icon: UserGroupIcon,
     current: false,
-    roles: ["Administrator", "Recuirter", "Sales"],
+    roles: ["Administrator", 3, "Sales"],
   },
   {
     name: "Curriculum",
@@ -79,7 +83,7 @@ const navigation = [
     href: "/app/hiring",
     icon: PhoneOutgoingIcon,
     current: false,
-    roles: ["Administrator", "Recuirter", "Sales"],
+    roles: ["Administrator", 3, "Sales"],
   },
   {
     name: "Setting",
@@ -88,7 +92,7 @@ const navigation = [
     current: false,
     roles: [
       "Administrator",
-      "Recuirter",
+      3,
       "Sales",
       "Instructor",
       "Candidat",
@@ -110,18 +114,23 @@ export default function AppLayout(props: any) {
 
   const dispatch = useDispatch();
   // const { UserProfile } = useSelector((state : any) => state.usrStated);
-  const UserProfile = {
-    username: "erica",
-    roles: "Recuirter",
-    email: "erica@mail.com",
-  };
+  let UserProfile = {};
   const [user, setUser] = useState({});
   useEffect(() => {
-    setUser(UserProfile);
-  }, []);
+    const userToken = getCookie("access_token");
+    if (userToken && typeof userToken === "string") {
+      const fetchData = async () => {
+        const decodedData: any = jwt_decode(userToken);
+        setUser(decodedData);
+      };
+      console.log(fetchData());
+    } else {
+      router.push("/signin");
+    }
+  }, [router]);
 
   const onLogout = () => {
-    // dispatch();
+    dispatch(userLogout());
     router.push("/");
   };
 
@@ -178,7 +187,7 @@ export default function AppLayout(props: any) {
               <div className="flex-shrink-0 flex items-center px-4">
                 <img
                   className="h-10 w-auto"
-                  src="../assets/images/codeid.png"
+                  src="/code-colored.webp"
                   alt="codeid"
                 />
               </div>
@@ -187,7 +196,7 @@ export default function AppLayout(props: any) {
                   <div className="space-y-1">
                     {navigation
                       .filter((item) =>
-                        item.roles.includes(user.roles || UserProfile.roles)
+                        item.roles.includes(user.roleid || UserProfile.roleid)
                       )
                       .map((item) => (
                         <Link
@@ -231,7 +240,7 @@ export default function AppLayout(props: any) {
             <Link href="/">
               <img
                 className="h-10 w-auto"
-                src="../assets/images/codeid.png"
+                src="/code-colored.webp"
                 alt="codeid"
               />
             </Link>
@@ -392,7 +401,7 @@ export default function AppLayout(props: any) {
               <div className="space-y-1">
                 {navigation
                   .filter((item) =>
-                    item.roles.includes(user.roles || UserProfile.roles)
+                    item.roles.includes(user.roleid || UserProfile.roleid)
                   )
                   .map((item) => {
                     item.current = item.href === pathname;

@@ -2,7 +2,7 @@ import { takeEvery, all, take } from "redux-saga/effects";
 import * as ActionJob from "../constant/JobConstant";
 import * as ActionClient from "../constant/ClientConstant";
 import * as ActionMaster from "../constant/MasterConstant";
-import * as ActionUser from "../constant/UserConstant";
+import * as ActionUser from "../constant/userConstant";
 import * as ActionJobApply from "../constant/JobApplyConstant";
 import {
   handleCreateJob,
@@ -19,8 +19,10 @@ import {
   handleGetIndustry,
   handleGetJobType,
 } from "./masterSaga";
-import { handleGetUser } from "./userSaga";
+import { handleGetUser, signUpUser } from "./userSaga";
 import { handleGetResume, handleJobApply } from "./jobApplySaga";
+import { signUpEmployee } from "./employeeSaga";
+import { loginSaga } from "./loginSaga";
 
 function* watchAll() {
   yield all([
@@ -38,6 +40,9 @@ function* watchAll() {
     takeEvery(ActionJobApply.JOB_APPLY_REQ, handleJobApply),
     takeEvery(ActionUser.GET_USER_REQ, handleGetUser),
     takeEvery(ActionJobApply.GET_RESUME_REQ, handleGetResume),
+    takeEvery(ActionUser.USER_SIGNUP_REQ, signUpUser),
+    takeEvery(ActionUser.EMPLOYEE_SIGNUP_REQ, signUpEmployee),
+    takeEvery(ActionUser.USER_LOGIN_REQ, loginSaga),
   ]);
 }
 

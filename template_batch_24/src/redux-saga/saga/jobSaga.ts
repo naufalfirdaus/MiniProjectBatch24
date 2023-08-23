@@ -14,6 +14,7 @@ import {
   UpdateJobSuccess,
 } from "../action/JobAction";
 import job from "@/pages/api/job";
+import { getCookie } from "cookies-next";
 
 function* handleGetJobs(): any {
   try {
@@ -46,7 +47,8 @@ function* handleCreateJob(action: any): any {
   const { payload } = action;
 
   try {
-    const result = yield call(job.CreateJobPost, payload);
+    const token = getCookie("access_token") as string;
+    const result = yield call(job.CreateJobPost, payload, token);
     yield put(CreateJobSuccess(result));
   } catch (error) {
     yield put(CreateJobFail(error));
@@ -68,7 +70,8 @@ function* handleUpdateJob(action: any): any {
   const { payload } = action;
 
   try {
-    const result = yield call(job.UpdateJobPost, payload.id, payload.formData);
+    const token = getCookie("access_token") as string;
+    const result = yield call(job.UpdateJobPost, payload.id, payload.formData, token);
     yield put(UpdateJobSuccess(result));
   } catch (error) {
     yield put(UpdateJobFail(error));

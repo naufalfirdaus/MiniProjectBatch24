@@ -32,15 +32,6 @@ export default function Hiring() {
               >
                 Update Post
               </Link>
-              <button onClick={() => {
-                sessionStorage.setItem("jopoEntityId", job.jopoEntityId);
-                router.push({
-                 pathname: "hiring/apply" ,
-                 query: {
-                  jopoEntityId: job.jopoEntityId
-                 }
-                }, "hiring/apply")
-              }}>apply</button>
             </div>
           );
         })}

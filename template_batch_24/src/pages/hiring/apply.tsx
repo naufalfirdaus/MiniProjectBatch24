@@ -1,15 +1,16 @@
-import AppLayout from "@/pages/component/layout/AppLayout";
 import { ChangeEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
-import { GetUserReq } from "@/redux-saga/action/UserAction";
+import { GetUserReq } from "../../redux-saga/action/userAction";
 import { GetResumeReq, JobApplyReq, ResetJobApply } from "@/redux-saga/action/JobApplyAction";
 import { getAge } from "@/helpers/calculateAge";
 import { domain } from "@/pages/config/config";
 import { useRouter } from "next/router";
 import SubmitAlert from "@/pages/component/form/SubmitAlert";
+import { getCookie } from "cookies-next";
+import LandingPage from "../component/layout/LandingPage";
 
 const validation = Yup.object().shape({
   fullName: Yup.string().trim().required("Full Name is required"),
@@ -23,12 +24,12 @@ const validation = Yup.object().shape({
 export default function Apply() {
   const dispatch = useDispatch();
   const router = useRouter();
+  const isLoggedIn = getCookie("access_token");
   
   const { user } = useSelector((state: any) => state.userState);
   const { resume, createState, error } = useSelector((state: any) => state.jobApplyState);
   
   const [jopoEntityId, setJopoEntityId] = useState<string>("");
-  const loginUserId = "8";    //diganti kalau udah integrasi ke user
 
   const [age, setAge] = useState<number>();
   const [resumeName, setResumeName] = useState<string>("");
@@ -108,9 +109,12 @@ export default function Apply() {
   };
 
   useEffect(() => {
-    dispatch(GetUserReq(loginUserId));
-    dispatch(GetResumeReq(loginUserId));
-  }, []);
+    if(!isLoggedIn) router.push("/signin");
+    if(isLoggedIn) {
+      dispatch(GetUserReq(isLoggedIn));
+      dispatch(GetResumeReq(isLoggedIn));
+    }
+  }, [dispatch, isLoggedIn, router]);
 
   useEffect(() => {
     setResumeName(resume?.usmeFilename);
@@ -137,7 +141,7 @@ export default function Apply() {
   }, [createState, error])
 
   return (
-    <AppLayout>
+    <LandingPage>
       <div className="text-black text-center px-7 py-3">
         <h2 className="font-semibold text-2xl">
           Profesional Application Process
@@ -396,6 +400,6 @@ export default function Apply() {
           dispatch(ResetJobApply());
         }}
       ></SubmitAlert>
-    </AppLayout>
+    </LandingPage>
   );
 }

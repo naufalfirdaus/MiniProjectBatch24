@@ -156,9 +156,9 @@ export class JobhireService {
         jopoModifiedDate: new Date(),
       });
 
-      if (jobExist.jopoStatus.status !== 'Publish') {
-        jobPost.jopoPublishDate =
-          updatedPost.status === 'Publish' && new Date();
+      if (jobExist.jopoStatus?.status !== 'Publish') {
+        updatedPost.status === 'Publish' &&
+          (jobPost.jopoPublishDate = new Date());
       }
 
       const updateJobDesc = this.jobPostDescRepository.create({

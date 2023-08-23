@@ -36,18 +36,19 @@ import { BusinessEntity } from 'output/entities/BusinessEntity';
 import { UsersEducation } from 'output/entities/UsersEducation';
 import { UsersEmail } from 'output/entities/UsersEmail';
 import { UsersPhones } from 'output/entities/UsersPhones';
+import { PhoneNumberType } from 'output/entities/PhoneNumberType';
 import { UsersRoles } from 'output/entities/UsersRoles';
 import { Roles } from 'output/entities/Roles';
 import { UsersAddress } from 'output/entities/UsersAddress';
 import { Address } from 'output/entities/Address';
 import { AddressType } from 'output/entities/AddressType';
 import { City } from 'output/entities/City';
-import { UsersExperiences } from 'output/entities/UsersExperiences';
 import { UsersSkill } from 'output/entities/UsersSkill';
 import { SkillType } from 'output/entities/SkillType';
 import { LocalGuard } from 'src/auth/local/local.guard';
 import { JwtGuard } from 'src/auth/jwt/jwt.guard';
 import { UploadMulter } from 'src/multer/multer';
+import { UsersExperiences } from 'output/entities/UsersExperiences';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { UploadMulter } from 'src/multer/multer';
       UsersEmail,
       UsersPhones,
       UsersMedia,
+      PhoneNumberType,
       UsersRoles,
       UsersAddress,
       Roles,

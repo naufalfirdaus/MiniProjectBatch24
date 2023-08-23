@@ -131,8 +131,6 @@ export class JobhireController {
     @UploadedFiles()
     files: { resume?: Express.Multer.File; photo?: Express.Multer.File },
   ) {
-    console.log(req);
-    return;
     return this.talentApplyService.Create(
       req.user.UserId,
       taapData,

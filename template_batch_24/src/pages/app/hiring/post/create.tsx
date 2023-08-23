@@ -23,10 +23,13 @@ import { CheckIcon, ChevronDownIcon } from "@heroicons/react/outline";
 import { Switch } from "@headlessui/react";
 import { useRouter } from "next/router";
 import SubmitAlert from "@/pages/component/form/SubmitAlert";
+import { getCookie } from "cookies-next";
 
 export default function Create() {
   const dispatch = useDispatch();
   const router = useRouter();
+  const isLoggedIn = getCookie("access_token");
+  
   const { jopoNumber, jobCategory, error, createState } = useSelector(
     (state: any) => state.jobState
   );
@@ -126,6 +129,7 @@ export default function Create() {
   };
 
   useEffect(() => {
+    if (!isLoggedIn) router.push("/signin");
     dispatch(GetJoponumberReq());
     dispatch(GetJobCategoryReq());
     dispatch(GetClientReq());
