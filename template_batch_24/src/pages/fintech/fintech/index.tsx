@@ -33,9 +33,9 @@ export default function Payment() {
   return (
     // Start
     <Layout>
-      <div className="flex flex-row text-black min-h-screen w-fit py-12">
-        <div className="mx-2">
-          <div className="my-4">
+      <div className="flex flex-row text-black min-h-screen py-12 w-[80%] bg-gray-100 justify-center">
+        <div className="w-full mx-2">
+          <div className="my-4 mx-auto flex items-center justify-center">
             <label>Search Fintech</label>
             <input
               placeholder="Search"
@@ -64,7 +64,7 @@ export default function Payment() {
                   <th>
                     <button
                       type="button"
-                      className="ml-1 inline-block rounded px-3 py-2 text-xs font-medium uppercase leading-normal text-xs text-slate-900 transition hover:bg-slate-700 hover:text-white"
+                      className="ml-1 inline-block rounded px-3 py-2 font-medium uppercase leading-normal text-xs text-slate-900 transition hover:bg-slate-700 hover:text-white"
                       onClick={() => setShowModal(true)}
                     >
                       + Add

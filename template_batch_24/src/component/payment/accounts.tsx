@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import Layout from '../_layout';
 import Confirm from './confirm';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetBankReq } from '@/redux-saga/action/bankAction';
 import { GetFintechReq } from '@/redux-saga/action/fintechAction';
-import { GetUserAccountSourceReq, GetUserAccountTargetReq } from '@/redux-saga/action/usersAccountAction';
+import {
+  GetUserAccountSourceReq,
+  GetUserAccountTargetReq,
+} from '@/redux-saga/action/usersAccountAction';
 import { useFormik } from 'formik';
 import { CreateTopupReq } from '@/redux-saga/action/trpaAction';
 import router from 'next/router';
@@ -33,29 +36,29 @@ export default function Accounts() {
     dispatch(GetFintechReq(null, ''));
 
     if (source == '' || target == '') {
-      setSameAccount(true)
+      setSameAccount(true);
     } else if (source === target) {
-      setSameAccount(true)
+      setSameAccount(true);
     } else {
-      setSameAccount(false)
+      setSameAccount(false);
     }
-  }, [dispatch, source, target, selectedSource, selectedTarget])
+  }, [dispatch, source, target, selectedSource, selectedTarget]);
 
   const handleSelectSourceChange = (e: any) => {
-    setSelectedSource(e.target.value)
-    dispatch(GetUserAccountSourceReq({ bankFintech: e.target.value }))
-    setSource('')
-  }
+    setSelectedSource(e.target.value);
+    dispatch(GetUserAccountSourceReq({ bankFintech: e.target.value }));
+    setSource('');
+  };
   const handleSelectTargetChange = (e: any) => {
-    setselectedTarget(e.target.value)
-    dispatch(GetUserAccountTargetReq({ bankFintech: e.target.value }))
-    setTarget('')
-  }
+    setselectedTarget(e.target.value);
+    dispatch(GetUserAccountTargetReq({ bankFintech: e.target.value }));
+    setTarget('');
+  };
 
   // Source Account
   const handleChangeSourceAccount = (e: any) => {
-    setSource(e.target.value)
-  }
+    setSource(e.target.value);
+  };
 
   const selectedSourceAccount = sourceAccount.find(
     (account: any) => account.usacAccountNumber === source
@@ -63,8 +66,8 @@ export default function Accounts() {
 
   // Target Account
   const handleChangeTargetAccount = (e: any) => {
-    setTarget(e.target.value)
-  }
+    setTarget(e.target.value);
+  };
 
   const selectedTargetAccount = targetAccount.find(
     (account: any) => account.usacAccountNumber === target
@@ -74,17 +77,22 @@ export default function Accounts() {
     setIsModalVisible(!isModalVisible);
   };
 
-  const bankOptions = bank.items.map((option: any) => ({
-    value: option.bankEntityId,
-    label: option.bankName
-  }))
+  const bankOptions =
+    bank.items &&
+    bank.items.map((option: any) => ({
+      value: option.bankEntityId,
+      label: option.bankName,
+    }));
 
-  const fintechOptions = fintech.items.map((option: any) => ({
-    value: option.fintEntityId,
-    label: option.fintName
-  }))
+  const fintechOptions =
+    fintech.items &&
+    fintech.items.map((option: any) => ({
+      value: option.fintEntityId,
+      label: option.fintName,
+    }));
 
-  const options = [...bankOptions, ...fintechOptions]
+  const options =
+    bankOptions && fintechOptions ? [...bankOptions, ...fintechOptions] : [];
 
   const transferAction = async (payload: any) => {
     try {
@@ -93,11 +101,9 @@ export default function Accounts() {
 
       alert('Topup success');
       router.push(`/payment/accounts?accountId=${source}`);
-
     } catch (error) {
-      alert('Topup Failed')
+      alert('Topup Failed');
     }
-
   };
 
   const formik = useFormik({
@@ -108,80 +114,108 @@ export default function Accounts() {
       let payload = {
         amount: values.amount,
         source: source,
-        target: target
-      }
+        target: target,
+      };
       setTransferPayload(payload);
       setIsModalVisible(true);
-    }
-  })
+    },
+  });
 
   return (
     <Layout>
-      <div className='h-full px-24'>
-        <div className='flex flex-row py-10'>
-          <div className='mx-2 w-full '>
-            <h1 className='text-center font-medium text-xl'>Source</h1>
-            <div className='my-4 text-gray-900'>
+      <div className="h-full px-24">
+        <div className="flex flex-row py-10">
+          <div className="mx-2 w-full ">
+            <h1 className="text-center font-medium text-xl">Source</h1>
+            <div className="my-4 text-gray-900">
               <label>Source Name</label>
-              <select id="source" onChange={handleSelectSourceChange}
-                className='w-full my-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none'>
+              <select
+                id="source"
+                onChange={handleSelectSourceChange}
+                className="w-full my-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              >
                 <option value={''}>Bank/Fintech</option>
-                {options && options.map((item: any, index: number) => (
-                  <option key={index} value={item.value}>{item.label}</option>
-                ))}
+                {options &&
+                  options.map((item: any, index: number) => (
+                    <option key={index} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
               </select>
             </div>
-            <div className='mt-4 mb-12 text-gray-900'>
+            <div className="mt-4 mb-12 text-gray-900">
               <label>Account</label>
-              <select className='w-full my-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:text-gray-400 disabled:border-gray-400 disabled:bg-gray-100' disabled={!selectedSource}
+              <select
+                className="w-full my-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:text-gray-400 disabled:border-gray-400 disabled:bg-gray-100"
+                disabled={!selectedSource}
                 onChange={handleChangeSourceAccount}
                 value={source}
               >
                 <option value={''}>Users Account</option>
-                {sourceAccount && sourceAccount.map((item: any, index: number) => (
-                  <option key={index}>{item.usacAccountNumber}</option>
-                ))}
+                {sourceAccount &&
+                  sourceAccount.map((item: any, index: number) => (
+                    <option key={index}>{item.usacAccountNumber}</option>
+                  ))}
               </select>
             </div>
-            <div className='my-4 text-gray-900'>
+            <div className="my-4 text-gray-900">
               <label>Current Saldo</label>
-              <span className='mx-2 border-b-2 border-red-300'>Rp{selectedSourceAccount ? selectedSourceAccount.usacSaldo : '0'} </span>
+              <span className="mx-2 border-b-2 border-red-300">
+                Rp
+                {selectedSourceAccount
+                  ? selectedSourceAccount.usacSaldo
+                  : '0'}{' '}
+              </span>
             </div>
           </div>
 
-          <div className='mx-2 w-full'>
-            <h1 className='text-center font-medium text-xl'>Target</h1>
-            <div className='my-4 text-gray-900'>
+          <div className="mx-2 w-full">
+            <h1 className="text-center font-medium text-xl">Target</h1>
+            <div className="my-4 text-gray-900">
               <label>Target Name</label>
-              <select id="source" onChange={handleSelectTargetChange}
-                className='w-full my-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none'>
+              <select
+                id="source"
+                onChange={handleSelectTargetChange}
+                className="w-full my-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              >
                 <option value={''}>Bank/Fintech</option>
-                {options && options.map((item: any, index: number) => (
-                  <option key={index} value={item.value}>{item.label}</option>
-                ))}
+                {options &&
+                  options.map((item: any, index: number) => (
+                    <option key={index} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
               </select>
             </div>
-            <div className='mt-4 mb-12 text-gray-900'>
+            <div className="mt-4 mb-12 text-gray-900">
               <label>Account</label>
-              <select className='w-full my-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:text-gray-400 disabled:border-gray-400 disabled:bg-gray-100' disabled={!selectedTarget}
+              <select
+                className="w-full my-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:text-gray-400 disabled:border-gray-400 disabled:bg-gray-100"
+                disabled={!selectedTarget}
                 onChange={handleChangeTargetAccount}
-                value={target}>
+                value={target}
+              >
                 <option value={''}>Users Account</option>
-                {targetAccount && targetAccount.map((item: any, index: number) => (
-                  <option key={index}>{item.usacAccountNumber}</option>
-                ))}
+                {targetAccount &&
+                  targetAccount.map((item: any, index: number) => (
+                    <option key={index}>{item.usacAccountNumber}</option>
+                  ))}
               </select>
             </div>
-            <div className='my-4 text-gray-900'>
+            <div className="my-4 text-gray-900">
               <label>Current Saldo</label>
-              <span className='mx-2 border-b-2 border-red-300'>Rp{selectedTargetAccount ? selectedTargetAccount.usacSaldo : '0'} </span>
+              <span className="mx-2 border-b-2 border-red-300">
+                Rp
+                {selectedTargetAccount
+                  ? selectedTargetAccount.usacSaldo
+                  : '0'}{' '}
+              </span>
             </div>
           </div>
-
         </div>
 
         <form onSubmit={formik.handleSubmit}>
-          <div className='flex flex-row max-h-full items-center py-10'>
+          <div className="flex flex-row max-h-full items-center py-10">
             <button
               data-modal-target="popup-modal"
               data-modal-toggle="popup-modal"
@@ -192,23 +226,24 @@ export default function Accounts() {
               Transfer
             </button>
 
-            {isModalVisible && (<Confirm toggleModal={toggleModal}
-              transferAction={transferAction}
-              transferPayload={transferPayload} />)}
+            {isModalVisible && (
+              <Confirm
+                toggleModal={toggleModal}
+                transferAction={transferAction}
+                transferPayload={transferPayload}
+              />
+            )}
             <input
-              placeholder='Amount'
-              name='amount'
-              type='number'
-              className='border-2 rounded-md px-2 mx-2 py-1.5 h-10 border-gray-400 text-gray-900'
+              placeholder="Amount"
+              name="amount"
+              type="number"
+              className="border-2 rounded-md px-2 mx-2 py-1.5 h-10 border-gray-400 text-gray-900"
               value={formik.values.amount}
               onChange={formik.handleChange}
             />
           </div>
         </form>
-
-      </div >
-
-
-    </Layout >
-  )
+      </div>
+    </Layout>
+  );
 }

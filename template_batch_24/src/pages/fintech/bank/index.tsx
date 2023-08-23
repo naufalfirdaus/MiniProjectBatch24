@@ -32,9 +32,9 @@ export default function Payment() {
 
   return (
     <Layout>
-      <div className="flex flex-row text-black min-h-screen w-fit py-12">
-        <div className="mx-2">
-          <div className="my-4">
+      <div className="flex flex-row text-black min-h-screen py-12 w-[80%] bg-gray-100 justify-center">
+        <div className="w-full mx-2">
+          <div className="my-4 mx-auto flex items-center justify-center">
             <label>Search Bank</label>
             <input
               placeholder="Search"
@@ -55,7 +55,7 @@ export default function Payment() {
             </button>
           </div>
           <div className="relative overflow-x-auto shadow-md sm:rounded-lg mb-12">
-            <table className="w-full text-smtext-gray-900 dark:text-gray-400 text-center">
+            <table className="w-full text-sm text-gray-900 dark:text-gray-400 text-center">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th>Bank Code</th>
@@ -63,7 +63,7 @@ export default function Payment() {
                   <th>
                     <button
                       type="button"
-                      className="ml-1 inline-block rounded bg-slate-700 px-3 py-2 text-xs font-medium uppercase leading-normal text-white transition hover:bg-slate-700"
+                      className="ml-1 inline-block rounded px-3 py-2 font-medium uppercase leading-normal text-xs text-slate-900 transition hover:bg-slate-700 hover:text-white"
                       onClick={() => setShowModal(true)}
                     >
                       + Add

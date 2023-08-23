@@ -67,9 +67,12 @@ export default function Payment() {
 
   return (
     <Layout>
-      <div className="flex flex-row text-black min-h-screen w-fit py-12">
-        <div className="mx-2">
-          <div className="relative overflow-x-auto shadow-md sm:rounded-lg mb-12">
+      <div className="flex flex-row text-black min-h-screen py-12 w-[80%] bg-gray-100 justify-center">
+        <div className="w-full mx-2">
+          <div className="text-2xl flex mb-6 text-slate-700">
+            <div className="font-bold mr-2">Users</div>Account
+          </div>
+          <div className="overflow-x-auto shadow-md sm:rounded-lg mb-12">
             <table className="w-full text-sm text-gray-900 dark:text-gray-400 text-center">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -80,7 +83,7 @@ export default function Payment() {
                   <th>
                     <button
                       type="button"
-                      className="ml-1 inline-block rounded bg-slate-700 px-3 py-2 text-xs font-medium uppercase leading-normal text-white transition"
+                      className="ml-1 inline-block rounded px-3 py-2 font-medium uppercase leading-normal text-xs text-slate-900 transition hover:bg-slate-700 hover:text-white"
                       onClick={() => setShowModal(true)}
                     >
                       + Add
@@ -154,7 +157,6 @@ export default function Payment() {
               </tbody>
             </table>
           </div>
-
           {users_acc.meta && users_acc.meta.totalPages && (
             <PaginationUsers
               totalPages={users_acc.meta.totalPages}

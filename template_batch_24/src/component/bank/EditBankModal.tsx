@@ -19,7 +19,6 @@ export default function EditBankModal(props: setModal) {
       bank_name: props.setBankName,
     },
     onSubmit: async (values: any) => {
-      window.alert('Data Successfully Insert');
       const payload = {
         id: values.id,
         bank_code: values.bank_code,
