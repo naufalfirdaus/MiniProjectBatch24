@@ -63,8 +63,8 @@ export class EmployeeController {
   }
 
   @Put('update/:id')
-  public async Update(@Param('id') id: any, @Body() fields?: any) {
-    return this.Services.update(id, fields);
+  public async Update(@Param('id') employeeId, @Body() updateData?: any) {
+    return this.Services.update(employeeId, updateData);
   }
 
   @Delete(':id')

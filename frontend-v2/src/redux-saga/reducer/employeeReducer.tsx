@@ -2,7 +2,6 @@ import * as ActionType from "../constant/employeeConstant";
 
 const INIT_STATE = {
   employees: [],
-  users: []
 };
 
 const EmployeeReducer = (state = INIT_STATE, action: any) => {
@@ -19,10 +18,10 @@ const EmployeeReducer = (state = INIT_STATE, action: any) => {
         return { ...state };
     case ActionType.ADD_DATA_SUCCESS:
         return AddEmployee(state, action);
-        case ActionType.GET_ONE_DATA_REQ:
-          return { ...state };
-      case ActionType.GET_ONE_DATA_SUCCESS:
-          return GetOneEmployee(state, action);
+    case ActionType.GET_ONE_DATA_REQ:
+        return { ...state };
+    case ActionType.GET_ONE_DATA_SUCCESS:
+        return GetOneEmployee(state, action);
     default:
       return { ...state };
   }
@@ -42,11 +41,12 @@ function SearchEmployee(state: any, action: any) {
   };
 };
 
-function AddEmployee(state: any, action: any) {
+const AddEmployee = (state:any, action:any) => {
+  const {payload} = action
   return {
       ...state,
-      employees: action.payload,
-  };
+      employees:[...state.employees,payload]
+  }
 }
 
 function GetOneEmployee(state: any, action: any) {

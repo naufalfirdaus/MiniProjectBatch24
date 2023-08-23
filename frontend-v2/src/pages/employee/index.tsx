@@ -18,17 +18,17 @@ export default function Employee(props: any) {
 
     useEffect(() => {
         dispatch(SearchEmployeeReq({}));
-        dispatch(GetEmployeeReq({}));
+        dispatch(GetEmployeeReq(1));
     }, [dispatch]);
 
     const [active, setActive] = React.useState(1);
 
-    let totalPages: number = Math.ceil(employees?.totalCount / employees?.limit);
+    let totalPages: number = Math.ceil(employees?.totalCount / 10);
     console.log("totalPages : ", totalPages);
     
     const getCurrentPageData = () => {
-        const startIndex = (active - 1) * (employees?.limit || 0);
-        const endIndex = startIndex + (employees?.limit || 0);
+        const startIndex = (active - 1) * (10 || 0);
+        const endIndex = startIndex + (10 || 0);
         return employees?.data?.slice(startIndex, endIndex) || [];
       };
 
@@ -124,7 +124,7 @@ export default function Employee(props: any) {
                                         <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                                             <ul tabIndex={0} className='dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52'>
                                             <li>
-                                            <button type='button' onClick={() => { setStatus('Semua'); setStatusLabel('Semua'); }}>
+                                            <button type='button' onClick={() => { setStatus('Contract'); setStatusLabel('Contract'); }}>
                                                 Contract
                                             </button>
                                             </li>
@@ -186,26 +186,26 @@ export default function Employee(props: any) {
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                            {/* { employees&&employees?.data?.map((employee: any) =>  */}
+                            { getCurrentPageData().map((employee: any)=>  
                                 <>
-                                    <tr>
+                                    <tr key={employee.empEntityId}>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            {/* {employee.empEntityId} */}
+                                            {employee.empEntityId}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            {/* {employee.empNationalId} */}
+                                            {employee.empNationalId}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            {/* {employee.empEntity.userFirstName}&nbsp;{employee.empEntity.userLastName} */}
+                                            {employee.empEntity?.userFirstName}&nbsp;{employee.empEntity?.userLastName}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {/* {employee.BirthDate} */}
+                                            {employee.empBirthDate}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            {/* {employee.HireDate} */}
+                                            {employee.empHireDate}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            {/* {employee.employeeClientContracts.eccoStatus} */}
+                                            {employees.employeeClientContracts?.eccoStatus?.status}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <Menu as="div">
@@ -270,7 +270,7 @@ export default function Employee(props: any) {
                                         </td>
                                     </tr>
                                 </>
-                                {/* )} */}
+                                )}
                             </tbody>
                         </table>
                     </div>

@@ -59,7 +59,7 @@ function* handleGetOneEmployee(action: any): any {
 function* handleGetJobRole(): any {
     try {
         const result = yield call(employee.GetJobRole)
-        yield put(GetJoroSuccess([result.data]))
+        yield put(GetJoroSuccess(result.data))
     } catch (error) {
         yield put(GetJoroFailed(error))
 

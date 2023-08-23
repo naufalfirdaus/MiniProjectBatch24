@@ -3,9 +3,9 @@ import config from "@/config/config";
 
 const GetEmployee = async (payload: any) => {
     try {
-        const { pageno = 1, pagesize = 4} = payload;
+        const { pageno = 1, pagesize = 10} = payload;
         const result = await axios.get(`${config.domain}/hr/employee/paging?pageno=${pageno}&pagesize=${pagesize}`);
-        return result.data;
+        return result;
     } catch (error) {
         return error;
     }
@@ -14,7 +14,7 @@ const GetEmployee = async (payload: any) => {
 const GetJobRole = async () => {
     try {
         const result = await axios.get(`${config.domain}/hr/employee/joro`);
-        return result.data;
+        return result;
     } catch (error) {
         return error;
     }
@@ -23,7 +23,7 @@ const GetJobRole = async () => {
 const GetDepartment = async () => {
     try {
         const result = await axios.get(`${config.domain}/hr/employee/dept`);
-        return result.data;
+        return result;
     } catch (error) {
         return error;
     }
@@ -33,7 +33,7 @@ const SearchEmployee = async (payload: any) => {
     try {
         const { pageno = 1, pagesize = 4, name = '', status = ''} = payload;
         const result = await axios.get(`${config.domain}/hr/employee/search?pageno=${pageno}&pagesize=${pagesize}&name=${name}&status=${status}`);
-        return result.data;
+        return result;
     } catch (error) {
         return error;
     }
@@ -41,8 +41,8 @@ const SearchEmployee = async (payload: any) => {
 
 const CreateEmployee = async (payload: any) => {
     try {
-        const result = await axios.get(`${config.domain}/hr/employee/create`);
-        return result.data;
+        const result = await axios.get(`${config.domain}/hr/employee/create`, payload);
+        return result;
     } catch (error) {
         return error;
     }

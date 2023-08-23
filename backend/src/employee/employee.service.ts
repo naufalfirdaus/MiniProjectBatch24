@@ -30,7 +30,7 @@ export class EmployeeService {
   }
 
   public async findAll() {
-    return await this.serviceDepartment.find({
+    return await this.serviceEmp.find({
       relations: [
         'empEntity',
         'employeeClientContracts',
@@ -57,8 +57,11 @@ export class EmployeeService {
                 status: true,
               },
             },
+            empEntity: {
+              userFirstName: true,
+            },
           },
-          relations: ['employeeClientContracts'],
+          relations: ['employeeClientContracts', 'empEntity'],
           take: options.pagesize,
           skip: skippedItems,
           where: {
@@ -88,11 +91,16 @@ export class EmployeeService {
       if (options.status === '') {
         const employee = await this.serviceEmp.find({
           select: {
+            employeeClientContracts: {
+              eccoStatus: {
+                status: true,
+              },
+            },
             empEntity: {
               userFirstName: true,
             },
           },
-          relations: ['empEntity'],
+          relations: ['empEntity', 'employeeClientContracts'],
           take: options.pagesize,
           skip: skippedItems,
           where: {
@@ -117,13 +125,13 @@ export class EmployeeService {
       }
       const employee = await this.serviceEmp.find({
         select: {
-          empEntity: {
-            userFirstName: true,
-          },
           employeeClientContracts: {
             eccoStatus: {
               status: true,
             },
+          },
+          empEntity: {
+            userFirstName: true,
           },
         },
         relations: ['empEntity', 'employeeClientContracts'],
@@ -283,63 +291,6 @@ export class EmployeeService {
       return { success: false, error: error.message };
     }
   }
-
-  // public async update(id: any, fields: any) {
-  //   try {
-  //     const updateData = {
-  //       progHeadline: fields.progHeadline,
-  //       progTitle: fields.progTitle,
-  //       progType: fields.progType,
-  //       progLearningType: fields.progLearningType,
-  //       progRating: fields.progRating,
-  //       progTotalTrainee: fields.progTotalTrainee,
-  //       progBestSeller: fields.progBestSeller,
-  //       progPrice: fields.progPrice,
-  //       progLanguage: fields.progLanguage,
-  //       progDuration: fields.progDuration,
-  //       progDurationType: fields.progDurationType,
-  //       progTagSkill: fields.progTagSkill,
-  //       progCityId: fields.progCityId,
-  //       progCateId: fields.progCateId,
-  //       progCreatedById: fields.progCreatedById,
-  //       progStatus: fields.progStatus,
-  //     };
-
-  //     await this.serviceEmp.update(
-  //       id: updateData,
-  //     );
-
-  //     const desc = await this.serviceEmp.findOne({
-  //       where: { empEntityId: id },
-  //     });
-
-  //     if (desc !== null) {
-  //       await this.serviceEmpDeptHistory.update(id, {
-  //         predItemLearning: {
-  //           items: fields.predItemLearning,
-  //         },
-  //         predDescription: {
-  //           items: fields.predDescription,
-  //         },
-  //       });
-  //     } else {
-  //       await this.serviceEmpDeptHistory.save({
-  //         predProgEntityId: id,
-  //         predItemLearning: { items: fields.predItemLearning },
-  //         predDescription: { items: fields.predDescription },
-  //       });
-  //     }
-
-  //     const result = await this.serviceEmp.findOne({
-  //       where: { empEntityId: id },
-  //       relations: ['employeeDepartmentHistories', 'employeePayHistories'],
-  //     });
-
-  //     return result;
-  //   } catch (error) {
-  //     return error.message;
-  //   }
-  // }
 
   async update(
     employeeId: number,

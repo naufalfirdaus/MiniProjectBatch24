@@ -3,7 +3,7 @@ import TalentReducer from './talentReducer'
 import TalentDetailReducer from './talentDetailReducer'
 import EmployeeReducer from './employeeReducer'
 import JobRoleReducer from './jobroleReducer'
-import DepartementReducer from './departmentreducer'
+import DepartementReducer from './departmentReducer'
 
 const rootReducer = combineReducers({
     talentState : TalentReducer,

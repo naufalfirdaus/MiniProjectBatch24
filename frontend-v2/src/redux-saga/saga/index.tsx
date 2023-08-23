@@ -10,7 +10,7 @@ function* watchAll(){
         takeEvery(ActionRegion.GET_ONE_DATA_REQ, handleGetOneTalent),
         takeEvery(ActionEmployee.GET_DATA_REQ, handleGetEmployee),
         takeEvery(ActionEmployee.SEARCH_DATA_REQ, handleSearchEmployee),
-        takeEvery(ActionEmployee.SEARCH_DATA_REQ, handleCreateEmployee),
+        takeEvery(ActionEmployee.ADD_DATA_REQ, handleCreateEmployee),
         takeEvery(ActionEmployee.GET_ONE_DATA_REQ, handleGetOneEmployee),
         takeEvery(ActionEmployee.GET_JORO_REQ, handleGetJobRole),
         takeEvery(ActionEmployee.GET_DEPT_REQ, handleGetDepartment)
