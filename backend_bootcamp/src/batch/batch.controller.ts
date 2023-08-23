@@ -92,7 +92,7 @@ export class BatchController {
     return await this.serBatch.updateEvaluationTraineeScore(userId, fields);
   }
 
-  @Delete('batchid')
+  @Delete('delete')
   public async deleteBatch(@Query('id') id: number) {
     return await this.serBatch.deleteBatch(id);
   }

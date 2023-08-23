@@ -1,7 +1,7 @@
 import Page from "@/pages/component/commons/Page";
 import AppLayout from "@/pages/component/layout/AppLayout";
 import { getBatchByIdFetch, getInstructorFetch, getTechnologyFetch, updateBatchTry } from "@/redux/slices/batchSlices";
-import { getCandidateByProgramFetch } from "@/redux/slices/candidateSlices";
+import { getCandidateBatchTraineeeFetch } from "@/redux/slices/candidateSlices";
 import { Menu } from "@headlessui/react";
 import { useFormik } from "formik";
 import Image from "next/image";
@@ -28,7 +28,7 @@ export default function EditBatch(){
         dispatch(getTechnologyFetch());
         
         if(Object.keys(batch).length != 0){
-            dispatch(getCandidateByProgramFetch(batch.batchEntityId));
+            dispatch(getCandidateBatchTraineeeFetch({program: batch.batchEntityId, batch: batch.batchId}));
             formattingData();
         }
         

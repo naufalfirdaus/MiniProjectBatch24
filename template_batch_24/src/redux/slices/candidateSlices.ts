@@ -39,12 +39,18 @@ export const candidateSlices = createSlice({
       state.status = "succeeded";
       state.bootcampCandidates = action.payload;
     },
-    getCandidateByProgramFetch: (state, payload: PayloadAction<number>) => {
+    getCandidateBatchTraineeeFetch: (state, payload: PayloadAction<any>) => {
       state.status = 'loading';
     },
-    getCandidateByProgramSuccess: (state, action) => {
-      state.status = 'loading';
+    getCandidateBatchTraineeeSuccess: (state, action) => {
+      state.status = 'succeeded';
       state.programCandidates = action.payload;
+    },
+    updateCandidateStatusTry: (state, action: PayloadAction<any>) => {
+      state.status = 'loading';
+    },
+    updateCandidateStatusSuccess: (state) => {
+      state.status = 'succeeded';
     }
   },
 });
@@ -56,8 +62,10 @@ export const {
   getCandidateFail,
   getPassedCandidateBootcampFetch,
   getPassedCandidateBootcampSuccess,
-  getCandidateByProgramFetch,
-  getCandidateByProgramSuccess
+  getCandidateBatchTraineeeFetch,
+  getCandidateBatchTraineeeSuccess,
+  updateCandidateStatusTry,
+  updateCandidateStatusSuccess,
 } = candidateSlices.actions;
 
 export default candidateSlices.reducer;

@@ -1,5 +1,5 @@
 import { call, put } from "redux-saga/effects";
-import { getCandidateByProgramSuccess, getCandidateFail, getCandidateSuccess, getPassedCandidateBootcampSuccess } from "../slices/candidateSlices";
+import { getCandidateBatchTraineeeSuccess, getCandidateFail, getCandidateSuccess, getPassedCandidateBootcampSuccess, updateCandidateStatusSuccess } from "../slices/candidateSlices";
 import candidateApi from "../../pages/api/candidate";
 
 
@@ -19,12 +19,17 @@ function* workGetPassedCandidateBootcamp(action: any): any {
     yield put(getPassedCandidateBootcampSuccess(bootcampCandidates));
 }
 
-function* workGetCandidateByProgram(action: any): any {
+function* workGetCandidateBatchTrainee(action: any): any {
     const { payload } = action;
-    
-    const programCandidates = yield call(candidateApi.getCandidateByProgram, payload);
-    yield put(getCandidateByProgramSuccess(programCandidates));
+    const candidateBatchTrainee = yield call(candidateApi.getCandidateByProgram, payload);
+    yield put(getCandidateBatchTraineeeSuccess(candidateBatchTrainee));
+}
+
+function* workUpdateCandidateStatus(action: any): any {
+    const { payload } = action;
+    yield call(candidateApi.UpdateStatus, payload);
+    yield put(updateCandidateStatusSuccess());
 }
 
 
-export { workGetCandidateFetch, workGetPassedCandidateBootcamp, workGetCandidateByProgram };
+export { workGetCandidateFetch, workGetPassedCandidateBootcamp, workGetCandidateBatchTrainee, workUpdateCandidateStatus };

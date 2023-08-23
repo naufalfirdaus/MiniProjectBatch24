@@ -109,7 +109,7 @@ export default function CreateBatch() {
                     </div>
                     <div className="mb-6">
                         <label htmlFor="batchEntityId" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Technology</label>
-                        <select id="batchEntityId" name="batchEntityId" defaultValue='' onChange={(e) => onSelectTechChange(e)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full">
+                        <select id="batchEntityId" name="batchEntityId" defaultValue='' onChange={(e) => onSelectTechChange(e)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full" required>
                             <option value='' disabled>Select technology</option>
                             {technologies.length != 0 && technologies.map((technology: any, i: number) => 
                                 <option key={i} value={technology.progEntityId}>{technology.progTitle}</option>
@@ -132,7 +132,7 @@ export default function CreateBatch() {
                     </div>
                     <div className="mb-6">
                         <label htmlFor="batchInstructorId" className="block mb-2 text-sm font-medium text-gray-900">Trainer</label>
-                        <select id="batchInstructorId" name="batchInstructorId" defaultValue='' onChange={formik.handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full">
+                        <select id="batchInstructorId" name="batchInstructorId" defaultValue='' onChange={formik.handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full" required>
                             <option value='' disabled>Select Trainer</option>
                             {instructors.length != 0 && instructors.map((instructor: any, i: number) => 
                                 <option key={i} value={instructor.userEntityId}>{instructor.userFirstName} {instructor.userLastName}</option>
@@ -141,7 +141,7 @@ export default function CreateBatch() {
                     </div>
                     <div className="mb-6">
                         <label htmlFor="batchCoInstructorId" className="block mb-2 text-sm font-medium text-gray-900">Co Trainer</label>
-                        <select id="batchCoInstructorId" name="batchCoInstructorId" defaultValue='' onChange={formik.handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full">
+                        <select id="batchCoInstructorId" name="batchCoInstructorId" defaultValue='' onChange={formik.handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full" required>
                             <option value='' disabled>Select Co Trainer</option>
                             {instructors.length != 0 && instructors.map((instructor: any, i: number) => 
                                 <option key={i} value={instructor.userEntityId}>{instructor.userFirstName} {instructor.userLastName}</option>
@@ -200,7 +200,7 @@ export default function CreateBatch() {
                     )}
                 </div>
                 <div className="flex justify-end gap-2 mt-4">
-                    <button type="submit" className={`bg-green-500 text-white py-1 px-2 rounded-md hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed`} disabled={members.length == 0 ? true : false}>Save</button>
+                    <button type="submit" className={`bg-green-500 text-white py-1 px-2 rounded-md hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed`}>Save</button>
                     <button onClick={(e) => {e.preventDefault(); router.back()}} className="bg-blue-500 text-white py-1 px-2 rounded-md hover:bg-blue-600">Cancel</button>
                 </div>
             </form>

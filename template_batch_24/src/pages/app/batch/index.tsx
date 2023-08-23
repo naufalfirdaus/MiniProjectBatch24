@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { getBatchFetch, getByNameAndStatusFetch, updateBatchStatusTry } from '@/redux/slices/batchSlices';
+import { deleteBatchTry, getBatchFetch, getByNameAndStatusFetch, updateBatchStatusTry } from '@/redux/slices/batchSlices';
 import { getPassedCandidateBootcampFetch } from '@/redux/slices/candidateSlices';
 import batch from '@/pages/api/batch';
 
@@ -36,9 +36,15 @@ export default function Batch() {
     },
   });
 
-  const handleEditButton = (e: any, id:number) => {
+  const handleEditButton = (e: any, id: number) => {
     e.preventDefault();
     navigate.push(`/app/batch/${id}`);
+  }
+
+  const handleDeleteButton = (e: any, id: number) => {
+    e.preventDefault();
+    dispatch(deleteBatchTry(id));
+    setReload(true);
   }
 
   const handleEvaluationButton = (e:any, id: number) => {
@@ -129,7 +135,7 @@ export default function Batch() {
                     {`${new Date(batch.batchStartDate).toLocaleDateString('id-ID', options as any)} - ${new Date(batch.batchEndDate).toLocaleDateString('id-ID', options as any)}`}
                   </td>
                   <td className="px-6 py-4">
-                    {batch.instructorPrograms[0].inproEmpEntity.empEntity.userName}
+                    {Object.keys(batchs).length != 0 && batch.instructorPrograms[0].inproEmpEntity.empEntity.userName}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center">
@@ -146,7 +152,7 @@ export default function Batch() {
                           <Link href='#' onClick={(e) => handleEditButton(e, batch.batchId)} className="block px-4 py-2 hover:bg-gray-100">Edit</Link>
                       </Menu.Item>
                       <Menu.Item>
-                          <a href="#" className="block px-4 py-2 hover:bg-gray-100">Delete</a>
+                          <a href="#" onClick={(e) => handleDeleteButton(e, batch.batchId)} className="block px-4 py-2 hover:bg-gray-100">Delete</a>
                       </Menu.Item>
                       <Menu.Item>
                           <a href="#" onClick={() => handleStatusButton(batch.batchId, 'Close')} className="block px-4 py-2 hover:bg-gray-100">Closed Batch</a>

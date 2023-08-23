@@ -10,6 +10,7 @@ export default function Filtering(props: any){
     const dispatch = useDispatch();
     const candidates = useSelector((state: any) => state.candidates.candidates);
     const candidateLoad = useSelector((state: any) => state.candidates.status);
+    const [reload, setReload] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [selectedData, setSelectedData] = useState<{userId: number; progId: number; username: string;}>({userId: 0, username: '', progId:0});
     const [currentPage, setCurrentPage] = useState(1);
@@ -17,7 +18,8 @@ export default function Filtering(props: any){
     useEffect(() => {
         dispatch(getCandidateFetch({status: props.status}));
         setCurrentPage(candidates.page);
-    }, [Object.keys(candidates).length]);
+        setReload(false);
+    }, [Object.keys(candidates).length, reload]);
 
     const handleStatusChange = (userId: number, progId: number, username: string) => {
         setSelectedData({userId, progId, username});
@@ -82,7 +84,7 @@ export default function Filtering(props: any){
                                     {candidate.prapProgEntity.progTitle}
                                 </td>
                                 <td className="px-6 py-4">
-                                    {candidate.roac.roacName}
+                                    {candidate.prapStatus.status}
                                 </td>
                                 <td className="px-6 py-4">
                                     <button onClick={() => handleStatusChange(candidate.prapUserEntityId, candidate.prapProgEntityId,candidate.prapUserEntity.userFirstName)}>
@@ -96,7 +98,7 @@ export default function Filtering(props: any){
                 </table>
             </div>
             { Object.keys(candidates).length != 0 && <Pagination items={candidates.data.length} pageSize={candidates.limit} currentPage={currentPage} onPageChange={onPageChange}/> }
-            <CandidateModal isOpen={isOpen} setIsOpen={setIsOpen} candidate={selectedData}/>
+            <CandidateModal isOpen={isOpen} setIsOpen={setIsOpen} candidate={selectedData} setReload={setReload} tabs={props.status}/>
         </>
     )
 }

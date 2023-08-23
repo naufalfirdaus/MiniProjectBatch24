@@ -1,11 +1,10 @@
 import { Controller } from '@nestjs/common';
-import { Query } from '@nestjs/common';
 import {
   Get,
   DefaultValuePipe,
   ParseIntPipe,
   Put,
-  Param,
+  Query,
   Body,
 } from '@nestjs/common';
 import { CandidatesService } from './candidates.service';
@@ -28,13 +27,12 @@ export class CandidatesController {
     });
   }
 
-  @Put(':idusr/:identity')
+  @Put('switchstatus')
   public async updateStatus(
-    @Param('idusr') idusr: number,
-    @Param('identity') identity: number,
+    @Query('userentity') idusr: number,
     @Body() fields: any,
   ) {
-    return await this.Service.updateStatus(idusr, identity, fields);
+    return await this.Service.switchStatus(idusr, fields);
   }
 
   @Get('forbootcamp')
@@ -51,7 +49,10 @@ export class CandidatesController {
   }
 
   @Get('program')
-  public async getCandidateByProgram(@Query('id') id: number) {
-    return await this.Service.findCandidateByProgram(id);
+  public async getCandidateAndBatchTrainee(
+    @Query('programId') programId: number,
+    @Query('batchId') batchId: number,
+  ) {
+    return await this.Service.findCandidateAndBatchTrainee(programId, batchId);
   }
 }

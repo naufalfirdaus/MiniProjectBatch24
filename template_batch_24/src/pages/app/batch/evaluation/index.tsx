@@ -16,21 +16,27 @@ export default function BatchEvaluation(){
     const status = useSelector((state: any) => state.batchs.status);
     const batch = useSelector((state: any) => state.batchs.batch);
     const batchEvaluation = useSelector((state: any) => state.batchs.evaluations);
+    const [reload, setReload] = useState(false);
     const dispatch = useDispatch();
     const router = useRouter();
     
     useEffect(() => {
-        dispatch(getBatchByIdFetch(router.query.batchid));
-        dispatch(getBatchEvaluationFetch(router.query.batchid));
+        if(router.query.batchid){
+            dispatch(getBatchByIdFetch(router.query.batchid));
+            dispatch(getBatchEvaluationFetch(router.query.batchid));
+        }
 
-        if(batchEvaluation.length != 0){
+        if(batchEvaluation.length != 0 || reload){
             setStudentData(batchEvaluation)
         }
-    }, [router, batchEvaluation.length, isOpenR]);
+        setReload(false);
+        
+    }, [router, batchEvaluation.length, reload]);
 
     useEffect(() => {
         if(!isOpen || !isOpenR){
             setResign('');
+            setStudentData(batchEvaluation);
         }
     },[isOpen, isOpenR]);
     
@@ -55,12 +61,14 @@ export default function BatchEvaluation(){
     const handleSubmitReview = (e: any) => {
         e.preventDefault();
         dispatch(updateTraineeEvalutaionReviewTry({userId: selectedStudent.batrTraineeEntity.userEntityId, data: { review:selectedStudent.batrReview }}));
+        setReload(true);
         setIsOpen(false);
     }
 
     const handleSubmitResign = (e: any) => {
         e.preventDefault();
         dispatch(updateTraineeEvalutaionReviewTry({userId: selectedStudent.batrTraineeEntity.userEntityId, data: { review: selectedStudent.batrReview, status: 'Resign' }}))
+        setReload(true);
         setIsOpenR(false);
     }
 

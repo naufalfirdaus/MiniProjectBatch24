@@ -15,6 +15,7 @@ import {
   updateTraineeEvalutaionScoreFail,
   updateBatchStatusSuccess,
   updateTraineeEvalutaionReviewSuccess,
+  deleteBatchSuccess,
 } from "../slices/batchSlices";
 import batchAPI from "../../pages/api/batch";
 
@@ -116,6 +117,12 @@ function* workUpdateBatchStatus(action: any): any {
   yield put(updateBatchStatusSuccess(''));
 }
 
+function* workDeleteBatchTry (action: any): any {
+  const {payload} = action;
+  yield call(batchAPI.deleteBatch, payload);
+  yield put(deleteBatchSuccess(''));
+}
+
 export {
   workGetBatchFetch,
   workGetByNameAndStatus,
@@ -128,5 +135,6 @@ export {
   workGetBatchTraineeEvaluation,
   workUpdateTraineeEvaluationScore,
   workUpdateBatchStatus,
-  workUpdateTraineeEvaluationReview
+  workUpdateTraineeEvaluationReview,
+  workDeleteBatchTry,
 };

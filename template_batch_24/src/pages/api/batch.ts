@@ -109,4 +109,13 @@ const updateBatchStatus = async (payload: any) => {
   }
 }
 
-export default { getAll, getByNameAndStatus, createBatch, getTechnology, getInstructors, getById, updateBatch, getBatchEvaluation, getBatchTraineeEvaluation, updateTraineeEvaluationScore, updateBatchStatus, updateTraineeEvaluationReview };
+const deleteBatch = async (batchId: any) => {
+  try {
+    const result = await axios.delete(`${config.domain}/api/bootcamp/batch/delete?id=${batchId}`);
+    return result.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export default { getAll, getByNameAndStatus, createBatch, getTechnology, getInstructors, getById, updateBatch, getBatchEvaluation, getBatchTraineeEvaluation, updateTraineeEvaluationScore, updateBatchStatus, updateTraineeEvaluationReview, deleteBatch };

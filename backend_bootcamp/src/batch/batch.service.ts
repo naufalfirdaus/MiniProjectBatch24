@@ -292,6 +292,7 @@ export class BatchService {
           batrTraineeEntity: true,
         },
         where: { batrBatchId: batchId },
+        order: { batrTraineeEntity: { userFirstName: 'ASC' } },
       });
       return trainees || [];
     }
@@ -400,7 +401,7 @@ export class BatchService {
 
   public async updateEvaluationTraineeReview(userId: number, fields: any) {
     if (fields.status) {
-      this.batchTraineeService.update(
+      await this.batchTraineeService.update(
         {
           batrTraineeEntity: { userEntityId: userId },
         },
@@ -410,7 +411,7 @@ export class BatchService {
         },
       );
     } else {
-      this.batchTraineeService.update(
+      await this.batchTraineeService.update(
         {
           batrTraineeEntity: { userEntityId: userId },
         },
@@ -419,6 +420,8 @@ export class BatchService {
         },
       );
     }
+    const evaluations = this.findBatchEvaluation(fields.batchId);
+    return evaluations;
   }
 
   async deleteTrainee(userId: number) {
@@ -436,7 +439,10 @@ export class BatchService {
   }
 
   public async deleteBatch(id: number) {
-    return await this.batchProgram.delete({ batchId: id });
+    await this.instProg.delete({ batchId: id });
+    await this.batchTraineeEvService.delete({ btevBatch: { batchId: id } });
+    await this.batchTraineeService.delete({ batrBatchId: id });
+    await this.batchProgram.delete({ batchId: id });
   }
 
   async addBatchTraineeEvaliationSkillSet(batchId: number, userId: number) {

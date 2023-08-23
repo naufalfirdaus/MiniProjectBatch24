@@ -22,12 +22,12 @@ const tabs = [
   },
   {
     name: 'Filtering Test',
-    status: 'Filtering',
+    status: 'Ready Test',
     active: false,
   },
   {
     name: 'Contract',
-    status: 'Contract',
+    status: 'Passed',
     active: false,
   },
   {
@@ -37,7 +37,7 @@ const tabs = [
   },
   {
     name: 'Not Responding',
-    status: 'Idle',
+    status: 'Not Responding',
     active: false,
   },
 ];

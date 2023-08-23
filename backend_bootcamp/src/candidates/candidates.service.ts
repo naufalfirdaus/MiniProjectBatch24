@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProgramApply } from 'output/entities/ProgramApply';
-import { Brackets, Like, Repository } from 'typeorm';
+import { Brackets, Like, Repository, Not } from 'typeorm';
 import { PaginationDto } from './candidate.dto';
 import { RoomI } from './candidate.interface';
 import { RouteActions } from 'output/entities/RouteActions';
 import { BatchTrainee } from 'output/entities/BatchTrainee';
+import { ProgramApplyProgress } from 'output/entities/ProgramApplyProgress';
 
 @Injectable()
 export class CandidatesService {
@@ -15,6 +16,8 @@ export class CandidatesService {
     @InjectRepository(BatchTrainee)
     private batchTrainee: Repository<BatchTrainee>,
     @InjectRepository(RouteActions) private serRoac: Repository<RouteActions>,
+    @InjectRepository(ProgramApplyProgress)
+    private programApplyProgressService: Repository<ProgramApplyProgress>,
   ) {}
 
   public async findByStatusAndDate(
@@ -23,7 +26,6 @@ export class CandidatesService {
     year: number,
     options: PaginationDto,
   ): Promise<RoomI> {
-    const skippedItems = (options.page - 1) * options.limit;
     let candidatesFilter = [];
     if (status) {
       if (!month && !year) {
@@ -38,10 +40,7 @@ export class CandidatesService {
             roac: true,
             prapStatus: true,
           },
-          where: [
-            { prapStatus: { status: Like(`%${status}%`) } },
-            { roac: { roacName: Like(`%${status}%`) } },
-          ],
+          where: { prapStatus: { status: Like(`%${status}%`) } },
         });
       } else if (!year) {
         candidatesFilter = await this.serviceProgram
@@ -54,19 +53,7 @@ export class CandidatesService {
           .leftJoinAndSelect('program_entity.progCate', 'category')
           .leftJoinAndSelect('program_apply.roac', 'route_action')
           .leftJoinAndSelect('program_apply.prapStatus', 'status')
-          .take(options.limit)
-          .skip(skippedItems)
-          .where(
-            new Brackets((qb) =>
-              qb
-                .where('route_action.roacName LIKE :roac', {
-                  roac: `%${status}%`,
-                })
-                .orWhere('status.status LIKE :status', {
-                  status: `%${status}%`,
-                }),
-            ),
-          )
+          .where('status.status LIKE :status', { status: `%${status}%` })
           .andWhere(
             'EXTRACT(month FROM program_apply.prap_modified_date) = :month',
             { month: month },
@@ -83,19 +70,7 @@ export class CandidatesService {
           .leftJoinAndSelect('program_entity.progCate', 'category')
           .leftJoinAndSelect('program_apply.roac', 'route_action')
           .leftJoinAndSelect('program_apply.prapStatus', 'status')
-          .take(options.limit)
-          .skip(skippedItems)
-          .where(
-            new Brackets((qb) =>
-              qb
-                .where('route_action.roacName LIKE :roac', {
-                  roac: `%${status}%`,
-                })
-                .orWhere('status.status LIKE :status', {
-                  status: `%${status}%`,
-                }),
-            ),
-          )
+          .where('status.status LIKE :status', { status: `%${status}%` })
           .andWhere(
             'EXTRACT(year FROM program_apply.prap_modified_date) = :year',
             { year: year },
@@ -112,19 +87,7 @@ export class CandidatesService {
           .leftJoinAndSelect('program_entity.progCate', 'category')
           .leftJoinAndSelect('program_apply.roac', 'route_action')
           .leftJoinAndSelect('program_apply.prapStatus', 'status')
-          .take(options.limit)
-          .skip(skippedItems)
-          .where(
-            new Brackets((qb) =>
-              qb
-                .where('route_action.roacName LIKE :roac', {
-                  roac: `%${status}%`,
-                })
-                .orWhere('status.status LIKE :status', {
-                  status: `%${status}%`,
-                }),
-            ),
-          )
+          .where('status.status LIKE :status', { status: `%${status}%` })
           .andWhere(
             new Brackets((qb) =>
               qb
@@ -150,40 +113,35 @@ export class CandidatesService {
     };
   }
 
-  public async updateStatus(idusr: number, identity: number, fields: any) {
+  public async switchStatus(idusr: number, fields: any) {
     try {
-      const findRoac = await this.serRoac.findOne({
-        where: { roacName: Like(`%${fields.status}%`) },
-      });
-      console.log(findRoac.roacId);
-
-      const findCand = {
-        prapUserEntityId: idusr,
-        prapProgEntityId: identity,
-      };
-
-      if (findRoac) {
-        const payload = findRoac.roacId as number;
-
-        const updateStats = await this.serviceProgram
-          .createQueryBuilder()
-          .update(ProgramApply)
-          .set({ roac: payload } as any)
-          .where('prapUserEntityId = :idusr', {
-            idusr: findCand.prapUserEntityId,
-          })
-          .andWhere('prapProgEntityId = :identity', {
-            identity: findCand.prapProgEntityId,
-          })
-          .execute();
-
-        return updateStats;
+      if (fields.score != 0) {
+        await this.serviceProgram.update(
+          { prapUserEntityId: idusr },
+          {
+            prapStatus: { status: fields.status },
+            prapTestScore: fields.score,
+            prapReview: fields.review,
+          },
+        );
       } else {
-        const updateStatus = await this.serviceProgram.update(findCand, {
-          prapStatus: fields.status,
-        });
+        await this.serviceProgram.update(
+          { prapUserEntityId: idusr },
+          { prapStatus: { status: fields.status } },
+        );
+      }
 
-        return updateStatus;
+      if (fields.status != 'Recommendation' || fields.status != 'Passed') {
+        await this.programApplyProgressService.save({
+          parogUserEntityId: idusr,
+          parogProgEntityId: fields.progId,
+          parogActionDate: new Date(),
+          parogModifiedDate: new Date(),
+          parogProgressName: 'done',
+          routeAction: {
+            roacId: fields.status == 'Ready Test' ? 2 : 3,
+          },
+        });
       }
     } catch (error) {
       throw new Error(error.message);
@@ -328,8 +286,11 @@ export class CandidatesService {
     return [];
   }
 
-  public async findCandidateByProgram(id: number) {
-    if (id) {
+  public async findCandidateAndBatchTrainee(
+    programId: number,
+    batchId: number,
+  ) {
+    if (programId && batchId) {
       const candidates = await this.serviceProgram.find({
         relations: {
           prapUserEntity: {
@@ -339,11 +300,36 @@ export class CandidatesService {
           prapProgEntity: true,
         },
         where: {
-          prapProgEntity: { progEntityId: id },
-          prapStatus: { status: 'Passed' },
+          prapProgEntity: { progEntityId: programId },
+          prapStatus: [{ status: 'Passed' }, { status: 'Recommendation' }],
         },
       });
-      return candidates;
+
+      const trainees = await this.batchTrainee.find({
+        select: {
+          batrTraineeEntity: {
+            userEntityId: true,
+          },
+        },
+        relations: {
+          batrTraineeEntity: true,
+          batrBatch: { batchEntity: true },
+        },
+        where: {
+          batrBatch: { batchEntityId: programId },
+          batrBatchId: Not(batchId),
+        },
+      });
+
+      const traineesId = trainees.map(
+        (trainee) => trainee.batrTraineeEntity.userEntityId,
+      );
+
+      const filteredCandidates = candidates.filter(
+        (candidate: any) => !traineesId.includes(candidate.prapUserEntityId),
+      );
+
+      return filteredCandidates;
     }
     return [];
   }
