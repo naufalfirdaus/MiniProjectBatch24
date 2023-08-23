@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DeleteBundleCurriculumReq, GetCatReq, GetCurriculumReq, GetNewIdReq, ResetCurriculumState, SearchCurriculumReq } from '@/redux-saga/action/curriculumAction';
 import Link from 'next/link';
-import CreatePage from './createPage/createPage';
+import CreatePage from './create/page';
 import ViewProgram from './viewPage/ViewProgram';
 import CustomAlert from "@/app/ui/alert";
 
@@ -123,9 +123,10 @@ export default function Page() {
   return (
     <div className='card bg-base-100 shadow-xl'>
       <>
-        {createDisplay ? (
+      {/* createDisplay ? (
           <CreatePage setDisplay={setCreateDisplay} setAlertInfo={setAlertInfo} handleRefresh={handleRefresh}/>
-        ) : viewDisplay ? ( !refresh &&
+        ) :  */}
+        {viewDisplay ? ( !refresh &&
           <ViewProgram setDisplay={setViewDisplay} setAlertInfo={setAlertInfo} handleRefresh={handleRefresh} progEntityId={progId}/>
         ) : (
           <>

@@ -7,6 +7,10 @@ export default function CustomAlert(props: any) {
         setTimeout(() => {
             setModal(false);
             props.setAlert({ showAlert: false });
+            if(props.refresh){
+                props.setRefresh(false);
+                props.setRefresh(true);
+            }
             props.setRefresh(true);
         }, 1500);
     }

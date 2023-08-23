@@ -37,13 +37,13 @@ export default function Page() {
   return (
     <div className='py-10 px-10 card card-compact w-full bg-base-100 shadow-xl'>
       <>
-        {alertInfo.showAlert && <CustomAlert alertInfo={alertInfo} setAlert={setAlertInfo} setRefresh={setRefresh}/>}
+        {alertInfo.showAlert && <CustomAlert alertInfo={alertInfo} setAlert={setAlertInfo} setRefresh={setRefresh} refresh={refresh}/>}
         <div className='py-2'>
           <div className='flex justify-between items-center gap-4'>
             <div className='text-xl font-medium'>Create Curriculum</div>
             <Link href={'/curriculum'} className="btn btn-ghost btn-md">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
-              <span> Back</span>
+              <span> Back </span>
             </Link>
           </div>
         </div>
