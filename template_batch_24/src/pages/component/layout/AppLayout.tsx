@@ -34,6 +34,9 @@ import { getOneUser } from "@/redux-saga/saga/userSaga";
 import { getCookie } from "cookies-next";
 import jwt_decode from "jwt-decode";
 import { userLogout } from "@/redux-saga/action/logoutAction";
+import Image from "next/image";
+import { domain } from "@/pages/config/config";
+import { GetUserReq } from "@/redux-saga/action/userAction";
 
 const navigation = [
   {
@@ -41,64 +44,56 @@ const navigation = [
     href: "/app",
     icon: HomeIcon,
     current: false,
-    roles: ["Administrator", 3, "Sales", "Instructor"],
+    roles: [10, 3, 5, 4],
   },
   {
     name: "Candidat",
     href: "/app/candidat",
     icon: AcademicCapIcon,
     current: false,
-    roles: ["Administrator", 3, "Instructor"],
+    roles: [10, 3, 4],
   },
   {
     name: "Batch",
     href: "/app/batch",
     icon: ViewGridAddIcon,
     current: false,
-    roles: ["Administrator", 3, "Instructor"],
+    roles: [10, 3, 4],
   },
   {
     name: "Talent",
     href: "/app/talent",
     icon: UserGroupIcon,
     current: false,
-    roles: ["Administrator", 3, "Instructor", "Sales"],
+    roles: [10, 3, 4, 5],
   },
   {
     name: "Placement",
     href: "/app/placement",
     icon: UserGroupIcon,
     current: false,
-    roles: ["Administrator", 3, "Sales"],
+    roles: [10, 3, 5],
   },
   {
     name: "Curriculum",
     href: "/app/curriculum",
     icon: BookOpenIcon,
     current: false,
-    roles: ["Administrator", "Instructor"],
+    roles: [10, 4],
   },
   {
     name: "Hiring",
     href: "/app/hiring",
     icon: PhoneOutgoingIcon,
     current: false,
-    roles: ["Administrator", 3, "Sales"],
+    roles: [10, 3, 5],
   },
   {
     name: "Setting",
     href: "/app/setting",
     icon: CogIcon,
     current: false,
-    roles: [
-      "Administrator",
-      3,
-      "Sales",
-      "Instructor",
-      "Candidat",
-      "Talent",
-      "Outsource",
-    ],
+    roles: [10, 3, 5, 4, 1, 2, 11],
   },
 ];
 
@@ -113,8 +108,7 @@ export default function AppLayout(props: any) {
   const { children } = props;
 
   const dispatch = useDispatch();
-  // const { UserProfile } = useSelector((state : any) => state.usrStated);
-  let UserProfile = {};
+  const UserProfile = useSelector((state: any) => state.userState.user);
   const [user, setUser] = useState({});
   useEffect(() => {
     const userToken = getCookie("access_token");
@@ -123,7 +117,8 @@ export default function AppLayout(props: any) {
         const decodedData: any = jwt_decode(userToken);
         setUser(decodedData);
       };
-      console.log(fetchData());
+      fetchData();
+      dispatch(GetUserReq(userToken));
     } else {
       router.push("/signin");
     }
@@ -148,10 +143,10 @@ export default function AppLayout(props: any) {
             as={Fragment}
             enter="transition-opacity ease-linear duration-300"
             enterFrom="opacity-0"
-            enterhref="opacity-100"
+            enterTo="opacity-100"
             leave="transition-opacity ease-linear duration-300"
             leaveFrom="opacity-100"
-            leavehref="opacity-0"
+            leaveTo="opacity-0"
           >
             <Dialog.Overlay className="fixed inset-0 bg-gray-600 bg-opacity-75" />
           </Transition.Child>
@@ -159,20 +154,20 @@ export default function AppLayout(props: any) {
             as={Fragment}
             enter="transition ease-in-out duration-300 transform"
             enterFrom="-translate-x-full"
-            enterhref="translate-x-0"
+            enterTo="translate-x-0"
             leave="transition ease-in-out duration-300 transform"
             leaveFrom="translate-x-0"
-            leavehref="-translate-x-full"
+            leaveTo="-translate-x-full"
           >
             <div className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-white">
               <Transition.Child
                 as={Fragment}
                 enter="ease-in-out duration-300"
                 enterFrom="opacity-0"
-                enterhref="opacity-100"
+                enterTo="opacity-100"
                 leave="ease-in-out duration-300"
                 leaveFrom="opacity-100"
-                leavehref="opacity-0"
+                leaveTo="opacity-0"
               >
                 <div className="absolute top-0 right-0 -mr-12 pt-2">
                   <button
@@ -196,7 +191,7 @@ export default function AppLayout(props: any) {
                   <div className="space-y-1">
                     {navigation
                       .filter((item) =>
-                        item.roles.includes(user.roleid || UserProfile.roleid)
+                        item.roles.includes(user.roleid || UserProfile.userCurrentRole)
                       )
                       .map((item) => (
                         <Link
@@ -258,10 +253,13 @@ export default function AppLayout(props: any) {
                     <Menu.Button className="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-purple-500">
                       <span className="flex w-full justify-between items-center">
                         <span className="flex min-w-0 items-center justify-between space-x-3">
-                          <img
+                          <Image
+                            loader={({ src, width }) => `${src}?w=${width}`}
                             className="w-10 h-10 bg-gray-300 object-cover rounded-full flex-shrink-0"
-                            src="../assets/images/yuri.jpg"
+                            src={`${domain}/users/photo/${UserProfile.userPhoto}`}
                             alt=""
+                            width={0}
+                            height={0}
                           />
                           <span className="flex-1 flex flex-col min-w-0">
                             <span className="text-gray-900 text-sm font-medium truncate">
@@ -284,10 +282,10 @@ export default function AppLayout(props: any) {
                     as={Fragment}
                     enter="transition ease-out duration-100"
                     enterFrom="transform opacity-0 scale-95"
-                    enterhref="transform opacity-100 scale-100"
+                    enterTo="transform opacity-100 scale-100"
                     leave="transition ease-in duration-75"
                     leaveFrom="transform opacity-100 scale-100"
-                    leavehref="transform opacity-0 scale-95"
+                    leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items
                       static
@@ -401,7 +399,7 @@ export default function AppLayout(props: any) {
               <div className="space-y-1">
                 {navigation
                   .filter((item) =>
-                    item.roles.includes(user.roleid || UserProfile.roleid)
+                    item.roles.includes(user.roleid || UserProfile.userCurrentRole)
                   )
                   .map((item) => {
                     item.current = item.href === pathname;
@@ -486,10 +484,10 @@ export default function AppLayout(props: any) {
                       as={Fragment}
                       enter="transition ease-out duration-100"
                       enterFrom="transform opacity-0 scale-95"
-                      enterhref="transform opacity-100 scale-100"
+                      enterTo="transform opacity-100 scale-100"
                       leave="transition ease-in duration-75"
                       leaveFrom="transform opacity-100 scale-100"
-                      leavehref="transform opacity-0 scale-95"
+                      leaveTo="transform opacity-0 scale-95"
                     >
                       <Menu.Items
                         static

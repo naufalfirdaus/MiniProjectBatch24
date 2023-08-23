@@ -78,6 +78,17 @@ const CreateJobApply = async (payload: any, token: string) => {
   }
 };
 
+const GetTalentJobApply = async (jobId: number, token: string) => {
+  try {
+    const result = await axios.get(`${domain}/talent-apply/job/${jobId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return result.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   GetJobs,
   GetJopoNumber,
@@ -86,4 +97,5 @@ export default {
   GetJobPostById,
   UpdateJobPost,
   CreateJobApply,
+  GetTalentJobApply
 };

@@ -72,7 +72,7 @@ export class UsersService {
   }
 
   async FindOneUserApply(userEntityId: number) {
-    return await this.userRepo.findOne({
+    const user = await this.userRepo.findOne({
       where: { userEntityId },
       relations: {
         usersEducations: true,
@@ -81,6 +81,9 @@ export class UsersService {
         },
       },
     });
+    const { userPassword, ...result } = user;
+    result.userBirthDate = new Date(result.userBirthDate + 'Z');
+    return result;
   }
 
   async FindResume(usmeEntityId: number) {
@@ -114,13 +117,7 @@ export class UsersService {
       });
 
       let updatePhone: any;
-      if (updateData.phone) {
-        updatePhone = await this.UsersPhonesRepository.save({
-          uspoEntityId: userEntityId,
-          uspoNumber: updateData.phone,
-          uspoPontyCode: { pontyCode: 'Cell' },
-        });
-      } else if (updateData.phone && updateData.oldPhone) {
+      if (updateData.phone && updateData.oldPhone) {
         updatePhone = await this.UsersPhonesRepository.update(
           {
             uspoEntityId: userEntityId,
@@ -130,6 +127,12 @@ export class UsersService {
             uspoNumber: updateData.phone,
           },
         );
+      } else if (updateData.phone) {
+        updatePhone = await this.UsersPhonesRepository.save({
+          uspoEntityId: userEntityId,
+          uspoNumber: updateData.phone,
+          uspoPontyCode: { pontyCode: 'Cell' },
+        });
       }
 
       let updateResume: UsersMedia, saveUserMedia: UsersMedia;

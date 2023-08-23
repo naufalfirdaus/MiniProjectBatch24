@@ -1,5 +1,14 @@
-import { Controller, Get, Param, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Request,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { TalentApplyService } from './talent-apply.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api/talent-apply')
 @UsePipes(
@@ -16,8 +25,9 @@ export class TalentApplyController {
     return this.talentApplyService.FindAll();
   }
 
-  @Get('/user/:userId/job/:jobId')
-  async GetOne(@Param('userId') userId: number, @Param('jobId') jobId: number) {
-    return this.talentApplyService.FindOne(userId, jobId);
+  @UseGuards(AuthGuard('jwt'))
+  @Get('job/:jobId')
+  async GetOne(@Request() req: any, @Param('jobId') jobId: number) {
+    return this.talentApplyService.FindOne(req.user.UserId, jobId);
   }
 }

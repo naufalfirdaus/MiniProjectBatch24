@@ -3,6 +3,7 @@ import * as JobApplyAction from "../constant/JobApplyConstant";
 const INIT_STATE = {
   resume: {},
   error: null,
+  appliedData: {},
 };
 
 const createState = {
@@ -40,6 +41,12 @@ const JobApplyReducer = (state = INIT_STATE, action: any) => {
       };
     case JobApplyAction.JOB_APPLY_RESET:
       return { ...state, error: null, createState };
+    case JobApplyAction.CHECK_APPLY_REQ:
+      return { ...state, appliedData: {} };
+    case JobApplyAction.CHECK_APPLY_OK:
+      return { ...state, appliedData: action.payload };
+    case JobApplyAction.CHECK_APPLY_FAIL:
+      return { ...state, error: action.error };
     default:
       return { ...state };
   }

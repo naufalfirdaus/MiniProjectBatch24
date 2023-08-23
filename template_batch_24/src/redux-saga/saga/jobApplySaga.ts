@@ -1,6 +1,8 @@
 import { put, call } from "redux-saga/effects";
 import user from "@/pages/api/user";
 import {
+  CheckAppliedFail,
+  CheckAppliedSuccess,
   GetResumeFail,
   GetResumeSuccess,
   JobApplyFail,
@@ -30,4 +32,15 @@ function* handleJobApply(action: any): any {
   }
 }
 
-export { handleGetResume, handleJobApply };
+function* handleCheckApply(action: any): any {
+  try {
+    const token = getCookie("access_token") as string;
+    const { payload } = action;
+    const result = yield call(job.GetTalentJobApply, payload, token);
+    yield put(CheckAppliedSuccess(result));
+  } catch (error) {
+    yield put(CheckAppliedFail(error));
+  }
+}
+
+export { handleGetResume, handleJobApply, handleCheckApply };

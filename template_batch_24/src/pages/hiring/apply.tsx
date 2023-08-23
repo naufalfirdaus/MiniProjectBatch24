@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 import { GetUserReq } from "../../redux-saga/action/userAction";
-import { GetResumeReq, JobApplyReq, ResetJobApply } from "@/redux-saga/action/JobApplyAction";
+import { CheckAppliedReq, GetResumeReq, JobApplyReq, ResetJobApply } from "@/redux-saga/action/JobApplyAction";
 import { getAge } from "@/helpers/calculateAge";
 import { domain } from "@/pages/config/config";
 import { useRouter } from "next/router";
@@ -27,7 +27,7 @@ export default function Apply() {
   const isLoggedIn = getCookie("access_token");
   
   const { user } = useSelector((state: any) => state.userState);
-  const { resume, createState, error } = useSelector((state: any) => state.jobApplyState);
+  const { resume, createState, error, appliedData } = useSelector((state: any) => state.jobApplyState);
   
   const [jopoEntityId, setJopoEntityId] = useState<string>("");
 
@@ -111,10 +111,15 @@ export default function Apply() {
   useEffect(() => {
     if(!isLoggedIn) router.push("/signin");
     if(isLoggedIn) {
+      dispatch(CheckAppliedReq(router.query.jopoEntityId || sessionStorage.getItem("jopoEntityId")));
       dispatch(GetUserReq(isLoggedIn));
       dispatch(GetResumeReq(isLoggedIn));
     }
   }, [dispatch, isLoggedIn, router]);
+
+  if(appliedData?.taapEntityId) {
+    router.push(`/hiring/${router.query.jopoEntityId}`)
+  }
 
   useEffect(() => {
     setResumeName(resume?.usmeFilename);
@@ -147,13 +152,13 @@ export default function Apply() {
           Profesional Application Process
         </h2>
         <form
-          className="mt-5 grid grid-cols-1 gap-4 place-items-center"
+          className="mt-5 grid grid-cols-1 gap-4 place-items-center relative"
           method="post"
           onSubmit={formik.handleSubmit}
         >
           <label
             htmlFor="photo"
-            className={`border rounded-full w-28 h-28 flex items-center justify-center text-sm md:absolute inset-y-16 xl:right-1/4 lg:right-28 md:right-20 cursor-pointer ${
+            className={`border rounded-full w-28 h-28 flex items-center justify-center text-sm md:absolute inset-y-0 xl:right-60 lg:right-28 md:right-16 cursor-pointer ${
               (fileError.photo &&
                 "border-red-500 focus:border-red-500 focus:ring-red-500 focus:ring-offset-red-500 text-red-500") ||
               "border-slate-500"
@@ -197,7 +202,7 @@ export default function Apply() {
             hidden
             onChange={uploadConfig}
           />
-          <div className="w-full md:w-2/5 xl:w-1/4 text-sm text-left">
+          <div className="w-full md:w-2/5 xl:w-1/3 text-sm text-left">
             <input
               type="text"
               name="fullName"
@@ -215,7 +220,7 @@ export default function Apply() {
               <small className="text-red-500">{formik.errors.fullName}</small>
             )}
           </div>
-          <div className="w-full md:w-2/5 xl:w-1/4 text-sm text-left">
+          <div className="w-full md:w-2/5 xl:w-1/3 text-sm text-left">
             <div className="flex justify-between gap-3">
               <input
                 type="date"
@@ -246,7 +251,7 @@ export default function Apply() {
               </small>
             )}
           </div>
-          <div className="w-full md:w-2/5 xl:w-1/4 text-sm text-left">
+          <div className="w-full md:w-2/5 xl:w-1/3 text-sm text-left">
             <select
               name="degree"
               id="degree"
@@ -268,7 +273,7 @@ export default function Apply() {
               </small>
             )}
           </div>
-          <div className="w-full md:w-2/5 xl:w-1/4 text-sm text-left">
+          <div className="w-full md:w-2/5 xl:w-1/3 text-sm text-left">
             <input
               type="text"
               name="school"
@@ -288,7 +293,7 @@ export default function Apply() {
               </small>
             )}
           </div>
-          <div className="w-full md:w-2/5 xl:w-1/4 text-sm text-left">
+          <div className="w-full md:w-2/5 xl:w-1/3 text-sm text-left">
             <input
               type="text"
               name="fieldStudy"
@@ -308,7 +313,7 @@ export default function Apply() {
               </small>
             )}
           </div>
-          <div className="w-full md:w-2/5 xl:w-1/4 text-sm text-left">
+          <div className="w-full md:w-2/5 xl:w-1/3 text-sm text-left">
             <input
               type="text"
               name="phone"
@@ -328,7 +333,7 @@ export default function Apply() {
               </small>
             )}
           </div>
-          <div className="w-full md:w-2/5 xl:w-1/4 text-sm text-left">
+          <div className="w-full md:w-2/5 xl:w-1/3 text-sm text-left">
             <input
               type="file"
               name="resume"
@@ -362,7 +367,7 @@ export default function Apply() {
             )}
           </div>
 
-          <div className="flex w-full md:w-2/5 xl:w-1/4 justify-between gap-3 text-sm">
+          <div className="flex w-full md:w-2/5 xl:w-1/3 justify-between gap-3 text-sm">
             <button
               type="button"
               className="bg-orange-400 px-10 py-2.5 hover:bg-orange-500 focus:bg-orange-500 focus:text-white hover:text-white"

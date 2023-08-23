@@ -20,7 +20,7 @@ import {
   handleGetJobType,
 } from "./masterSaga";
 import { handleGetUser, signUpUser } from "./userSaga";
-import { handleGetResume, handleJobApply } from "./jobApplySaga";
+import { handleCheckApply, handleGetResume, handleJobApply } from "./jobApplySaga";
 import { signUpEmployee } from "./employeeSaga";
 import { loginSaga } from "./loginSaga";
 
@@ -43,6 +43,7 @@ function* watchAll() {
     takeEvery(ActionUser.USER_SIGNUP_REQ, signUpUser),
     takeEvery(ActionUser.EMPLOYEE_SIGNUP_REQ, signUpEmployee),
     takeEvery(ActionUser.USER_LOGIN_REQ, loginSaga),
+    takeEvery(ActionJobApply.CHECK_APPLY_REQ, handleCheckApply),
   ]);
 }
 

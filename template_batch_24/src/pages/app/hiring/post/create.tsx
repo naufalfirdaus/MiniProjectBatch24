@@ -63,7 +63,10 @@ export default function Create() {
     queryAddr === ""
       ? address
       : address.filter((addr: any) =>
-          addr.addrLine1.toLowerCase().includes(queryAddr.toLowerCase())
+      JSON.stringify(addr)
+      .replace(/("\w+":)/g, "")
+      .toLowerCase()
+      .indexOf(queryAddr.toLowerCase()) !== -1
         );
 
   const initialValues = {

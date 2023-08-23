@@ -27,6 +27,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { userLogout } from '@/redux-saga/action/logoutAction';
 import { getCookie } from 'cookies-next';
 import jwt_decode from "jwt-decode";
+import { GetUserReq, getDataOneUserReq } from '@/redux-saga/action/userAction';
+import { domain } from '@/pages/config/config';
 
 const solutions = [
     {
@@ -60,6 +62,8 @@ export default function LandingPage(props: { children: any; }) {
     const dispatch = useDispatch();
     const router = useRouter()
     const [user, setUser] = useState({})
+    const { isLoggedIn } = useSelector((state: any) => state.login);
+    const UserProfile = useSelector((state: any) => state.userState.user);
 
     const onSignout = () => {
         dispatch(userLogout());
@@ -72,9 +76,10 @@ export default function LandingPage(props: { children: any; }) {
                 const decodedData: any = jwt_decode(userToken);
                 setUser(decodedData)
             };
-            console.log(fetchData());
+            fetchData();
+            dispatch(GetUserReq(userToken));
         }
-    },[])
+    },[dispatch, isLoggedIn])
     
     return (
         <div className='bg-white'>
@@ -125,10 +130,10 @@ export default function LandingPage(props: { children: any; }) {
                                                     as={Fragment}
                                                     enter="transition ease-out duration-200"
                                                     enterFrom="opacity-0 translate-y-1"
-                                                    enterhref="opacity-100 translate-y-0"
+                                                    enterTo="opacity-100 translate-y-0"
                                                     leave="transition ease-in duration-150"
                                                     leaveFrom="opacity-100 translate-y-0"
-                                                    leavehref="opacity-0 translate-y-1"
+                                                    leaveTo="opacity-0 translate-y-1"
                                                 >
                                                     <Popover.Panel
                                                         static
@@ -159,13 +164,13 @@ export default function LandingPage(props: { children: any; }) {
                                         )}
                                     </Popover>
 
-                                    <Link href="talent" className="text-base font-medium text-gray-500 hover:text-gray-900">
+                                    <Link href="/talent" className="text-base font-medium text-gray-500 hover:text-gray-900">
                                         Talents
                                     </Link>
-                                    <Link href="bootcamp" className="text-base font-medium text-gray-500 hover:text-gray-900">
+                                    <Link href="/bootcamp" className="text-base font-medium text-gray-500 hover:text-gray-900">
                                         Bootcamp
                                     </Link>
-                                    <Link href="hiring" className="text-base font-medium text-gray-500 hover:text-gray-900">
+                                    <Link href="/hiring" className="text-base font-medium text-gray-500 hover:text-gray-900">
                                         Hiring
                                     </Link>
                                 </Popover.Group>
@@ -176,10 +181,13 @@ export default function LandingPage(props: { children: any; }) {
                                                 <div>
                                                     <Menu.Button className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                                                         <span className="sr-only">Open user menu</span>
-                                                        <img
+                                                        <Image
+                                                            loader={({ src, width }) => `${src}?w=${width}`}
                                                             className="h-8 w-8 rounded-full"
-                                                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auhref=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                                            src={`${domain}/users/photo/${UserProfile.userPhoto}`}
                                                             alt=""
+                                                            width={0}
+                                                            height={0}
                                                         />
                                                     </Menu.Button>
                                                 </div>
@@ -187,10 +195,10 @@ export default function LandingPage(props: { children: any; }) {
                                                     as={Fragment}
                                                     enter="transition ease-out duration-100"
                                                     enterFrom="transform opacity-0 scale-95"
-                                                    enterhref="transform opacity-100 scale-100"
+                                                    enterTo="transform opacity-100 scale-100"
                                                     leave="transition ease-in duration-75"
                                                     leaveFrom="transform opacity-100 scale-100"
-                                                    leavehref="transform opacity-0 scale-95"
+                                                    leaveTo="transform opacity-0 scale-95"
                                                 >
                                                     <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                                                         <div className="py-1">
@@ -269,10 +277,10 @@ export default function LandingPage(props: { children: any; }) {
                                 as={Fragment}
                                 enter="duration-200 ease-out"
                                 enterFrom="opacity-0 scale-95"
-                                enterhref="opacity-100 scale-100"
+                                enterTo="opacity-100 scale-100"
                                 leave="duration-100 ease-in"
                                 leaveFrom="opacity-100 scale-100"
-                                leavehref="opacity-0 scale-95"
+                                leaveTo="opacity-0 scale-95"
                             >
                                 <Popover.Panel
                                     focus

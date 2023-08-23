@@ -196,10 +196,6 @@ export default function Update() {
   useEffect(() => {
     if (!createState?.pending && createState?.success) {
       setAlert({ open: true, status: "success" });
-      setTimeout(() => {
-        router.push("/app/hiring");
-        setAlert({ ...alert, open: false });
-      }, 2000);
       dispatch(CreateJobReset());
     } else if (!createState?.pending && error) {
       setAlert({ open: true, status: "failed" });
@@ -724,7 +720,7 @@ export default function Update() {
         }
         onClose={() => ""}
         onClickOk={() => {
-          alert.status === "success" && router.push("/app/hiring");
+          alert.status === "success" && dispatch(GetJobByIdReq(id))
           setAlert({ ...alert, open: false });
           dispatch(CreateJobReset());
         }}

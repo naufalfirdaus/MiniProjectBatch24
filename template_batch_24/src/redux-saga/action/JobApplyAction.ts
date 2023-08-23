@@ -33,3 +33,18 @@ export const JobApplyFail = (error: any) => ({
 export const ResetJobApply = () => ({
   type: JobApplyAction.JOB_APPLY_RESET,
 });
+
+export const CheckAppliedReq = (payload: any) => ({
+  type: JobApplyAction.CHECK_APPLY_REQ,
+  payload
+});
+
+export const CheckAppliedSuccess = (payload: any) => ({
+  type: JobApplyAction.CHECK_APPLY_OK,
+  payload
+});
+
+export const CheckAppliedFail = (error: any) => ({
+  type: JobApplyAction.CHECK_APPLY_FAIL,
+  error
+});

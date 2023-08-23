@@ -92,7 +92,9 @@ export class JobhireController {
 
   @UseGuards(AuthGuard('jwt'))
   @Put('posting/update/:id')
-  @UseInterceptors(FilesInterceptor('photos'))
+  @UseInterceptors(
+    FilesInterceptor('photos', 10, JobPhotoMulter.MulterOption()),
+  )
   async Update(
     @Request() req: any,
     @Param('id') id: number,
