@@ -117,6 +117,53 @@ const addPhone = async (payload: any, id: any) => {
   }
 };
 
+const updatePhone = async (payload: any, id: any) => {
+  try {
+    const result = await axios.put(
+      `${config.domain}/api/users/profile/phone/${id}`,
+      payload
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
+
+const deletePhone = async (id: any) => {
+  try {
+    const result = await axios.delete(
+      `${config.domain}/api/users/profile/phone/${id}`
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
+
+const addAddress = async (payload: any, id: any) => {
+  try {
+    const result = await axios.post(
+      `${config.domain}/api/users/profile/address/${id}`,
+      payload
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
+
+const updateAddress = async (payload: any, id: any) => {
+  try {
+    const result = await axios.put(
+      `${config.domain}/api/users/profile/address/${id}`,
+      payload
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
+
 export default {
   userSignUp,
   getAllUser,
@@ -129,4 +176,8 @@ export default {
   updateEmail,
   deleteEmail,
   addPhone,
+  updatePhone,
+  deletePhone,
+  addAddress,
+  updateAddress,
 };

@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { Button, Checkbox, Label, Modal, TextInput } from "flowbite-react";
 import Select from "react-select";
-import { addAddressReq } from "@/redux-saga/action/addressAction";
+import { UpdateAddressRequest } from "@/redux-saga/action/addressAction";
 
 const optionList = [
   { value: "Bandung", label: "Bandung" },
@@ -14,11 +14,11 @@ const optionList = [
 
 type ModalAddress = {
   setRefresh: (value: boolean) => void;
-  setOpenModal: (value: string | undefined) => void;
+  setOpenModalEdit: (value: boolean) => void;
   setDataProfile: any;
 };
 
-const CardAddAddress = (props: ModalAddress) => {
+const CardEditAddress = (props: ModalAddress) => {
   const dispatch = useDispatch();
   const [selectedOptions, setSelectedOptions] = useState<null | {
     value: string;
@@ -52,7 +52,7 @@ const CardAddAddress = (props: ModalAddress) => {
         const id = values.user_id;
         props.setRefresh(true);
         window.alert("Data Insert ");
-        dispatch(addAddressReq(payload, id));
+        dispatch(UpdateAddressRequest(payload, id));
         // window.location.reload();
       } catch (error) {
         console.error("Error:", error);
@@ -62,7 +62,7 @@ const CardAddAddress = (props: ModalAddress) => {
   return (
     <>
       <h2 className="text-base font-semibold leading-7 text-gray-900">
-        Add Address
+        Edit Address
       </h2>
       <div className="w-full bg-white p-3 rounded-md mt-3 mb-3">
         <form>
@@ -159,39 +159,24 @@ const CardAddAddress = (props: ModalAddress) => {
                         aria-describedby="button-addon2"
                       /> */}
 
-                      {/* Bagian select search */}
                       <Select
+                        name="city"
+                        id="city"
                         options={optionList}
-                        onChange={(selectedOption) =>
-                          setSelectedOptions(selectedOption)
-                        }
+                        onChange={(selectedOption) => {
+                          setSelectedOptions(selectedOption);
+                          formik.setFieldValue(
+                            "city",
+                            selectedOption?.value || ""
+                          );
+                        }}
                         value={selectedOptions}
                         isSearchable={true}
                         placeholder="Search"
                         aria-label="Search"
-                        classNamePrefix="custom-select"
-                        styles={{
-                          // Styling to remove the blue outline during typing
-                          control: (provided, state) => ({
-                            ...provided,
-                            borderColor: state.isFocused
-                              ? "#ccc"
-                              : provided.borderColor,
-                            boxShadow: state.isFocused
-                              ? "0 0 0 1px #ccc"
-                              : provided.boxShadow,
-                            "&:hover": {
-                              borderColor: state.isFocused
-                                ? "#ccc"
-                                : provided.borderColor,
-                            },
-                          }),
-                          menuPortal: (provided) => ({
-                            ...provided,
-                            zIndex: 9999,
-                          }),
-                        }}
+                        aria-describedby="button-addon2"
                       />
+
                       {/* <!--Search icon--> */}
                       <span
                         className="input-group-text flex items-center whitespace-nowrap rounded px-3 py-1.5 text-center text-base font-normal text-neutral-700 dark:text-neutral-200"
@@ -235,7 +220,6 @@ const CardAddAddress = (props: ModalAddress) => {
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                     placeholder="Code Telp."
                   >
-                    <option value="">Type</option>
                     <option value="Home">Home</option>
                     <option value="Main Office">Main Office</option>
                     <option value="Primary">Primary</option>
@@ -251,7 +235,7 @@ const CardAddAddress = (props: ModalAddress) => {
             <button
               type="button"
               onClick={() => {
-                props.setOpenModal(undefined);
+                props.setOpenModalEdit(false);
               }}
               className="text-sm font-semibold leading-6 text-gray-900"
             >
@@ -261,7 +245,7 @@ const CardAddAddress = (props: ModalAddress) => {
               type="submit"
               onClick={() => {
                 formik.handleSubmit();
-                props.setOpenModal(undefined);
+                props.setOpenModalEdit(false);
               }}
               className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
@@ -274,4 +258,4 @@ const CardAddAddress = (props: ModalAddress) => {
   );
 };
 
-export default CardAddAddress;
+export default CardEditAddress;

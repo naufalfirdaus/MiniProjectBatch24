@@ -32,6 +32,7 @@ const CardEditPassword = (props: Modalpassword) => {
         const id = values.user_id;
         dispatch(changePasswordReq(payload, id));
         props.setRefresh(true);
+        window.location.reload();
       } catch (error) {
         console.error("Error:", error);
       }

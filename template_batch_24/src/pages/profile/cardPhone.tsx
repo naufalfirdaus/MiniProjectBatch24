@@ -6,10 +6,12 @@ import { Flowbite } from "flowbite-react";
 import { useEffect, useState } from "react";
 import type { CustomFlowbiteTheme } from "flowbite-react";
 import CardAddPhone from "./add/cardAddPhone";
+import CardEditPhone from "./edit/cardEditPhone";
 import { useDispatch, useSelector } from "react-redux";
 import { getCookie } from "cookies-next";
 import jwt_decode from "jwt-decode";
 import { useRouter } from "next/router";
+import { deletePhoneRequest } from "@/redux-saga/action/phoneAction";
 
 const customTheme: CustomFlowbiteTheme = {
   button: {
@@ -22,14 +24,24 @@ const customTheme: CustomFlowbiteTheme = {
 };
 
 const CardPhone = () => {
+  const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState<string | undefined>();
   const [openModalEdit, setOpenModalEdit] = useState(false);
-  const [email, setEmail] = useState("");
-  const [id, setId] = useState("");
+  const [phone, setPhone] = useState("");
+  const [id, setIdPhone] = useState("");
+  const [pontycode, setPontyCode] = useState("");
   const [refresh, setRefresh] = useState(false);
 
   const [dataProfile, setDataProfile] = React.useState("");
   const dataUser = useSelector((state: any) => state.user.oneUser);
+
+  const onDelete = (id: any) => {
+    window.alert("Data Successfully Deleted");
+    dispatch(deletePhoneRequest(id));
+    window.location.reload();
+    setRefresh(true);
+  };
+
   const router = useRouter();
   useEffect(() => {
     const userToken = getCookie("access_token");
@@ -96,15 +108,21 @@ const CardPhone = () => {
               </span>
             </div>
             {item.userPhoneNumber.map(
-              (phone: { phone: string; pontycode: string }, index: number) => (
+              (
+                phoneData: {
+                  id: string;
+                  phone: string;
+                  pontycode: { pontyCode: string };
+                },
+                index: number
+              ) => (
                 <div key={index} className="flow-root">
                   <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                     <li className="py-3 sm:py-4">
                       <div className="flex items-center space-x-4">
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm text-gray-900 dark:text-gray-400">
-                            {phone.phone}
-                            {phone.pontycode}
+                            {phoneData.phone} ({phoneData.pontycode.pontyCode})
                           </p>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -113,7 +131,10 @@ const CardPhone = () => {
                               color="edit"
                               className="w-5 h-5"
                               onClick={() => {
-                                setOpenModalEdit(true); // Open the edit modal
+                                setIdPhone(phoneData.id);
+                                setPhone(phoneData.phone);
+                                setPontyCode(phoneData.pontycode.pontyCode);
+                                setOpenModalEdit(true);
                               }}
                             >
                               <svg
@@ -127,16 +148,19 @@ const CardPhone = () => {
                               </svg>
                             </Button>
                             <Modal
-                              // show={openModalEdit && id === emailObj.id}
+                              show={openModalEdit && phone === phoneData.phone}
                               size="lg"
                               popup
                               onClose={() => setOpenModalEdit(false)}
                             >
                               <Modal.Header />
                               <Modal.Body>
-                                <CardAddPhone
-                                  setOpenModal={setOpenModal}
+                                <CardEditPhone
+                                  setIdPhone={phoneData.id}
+                                  setOpenModalEdit={setOpenModalEdit}
                                   setRefresh={setRefresh}
+                                  setPhone={phoneData.phone}
+                                  setPontyCode={phoneData.pontycode.pontyCode}
                                   setDataProfile={dataProfile}
                                 />
                               </Modal.Body>
@@ -147,7 +171,7 @@ const CardPhone = () => {
                             <Button
                               color="delete"
                               className="w-5 h-5"
-                              onClick={() => setOpenModal("form-elements")}
+                              onClick={() => onDelete(phoneData.id)}
                             >
                               <svg
                                 className="w-2 h-2 text-gray-800 dark:text-white"
@@ -165,7 +189,7 @@ const CardPhone = () => {
                                 />
                               </svg>
                             </Button>
-                            <Modal
+                            {/* <Modal
                               show={openModal === "form-elements"}
                               size="lg"
                               popup
@@ -179,7 +203,7 @@ const CardPhone = () => {
                                   setDataProfile={dataProfile}
                                 />
                               </Modal.Body>
-                            </Modal>
+                            </Modal> */}
                           </Flowbite>
                         </div>
                       </div>

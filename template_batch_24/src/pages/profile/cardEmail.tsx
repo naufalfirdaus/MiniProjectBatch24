@@ -36,8 +36,9 @@ const CardEmail = () => {
   const dataUser = useSelector((state: any) => state.user.oneUser);
 
   const onDelete = (id: any) => {
-    dispatch(deleteEmailRequest(id));
     window.alert("Data Successfully Deleted");
+    dispatch(deleteEmailRequest(id));
+
     window.location.reload();
     setRefresh(true);
   };

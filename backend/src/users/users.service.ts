@@ -113,6 +113,8 @@ export class UsersService {
       .where('user.userEntityId = :id', { id })
       .leftJoinAndSelect('user.usersEmails', 'usersEmail')
       .leftJoinAndSelect('user.usersPhones', 'usersPhone')
+      .leftJoinAndSelect('usersPhone.uspoPontyCode', 'uspoPontyCode') //penambahan join uspocode untuk mengambilcode nya
+      .leftJoinAndSelect('user.usersAddresses', 'usersAddress') //penambaha join address untuk ambil id addres tapi ini belum bisa ke get address yang di table master nya
       .getOne();
   }
 
@@ -557,7 +559,7 @@ export class UsersService {
   //fungsi add address
   public async addaddress(id: number, fields: any, search_city: string) {
     try {
-      const city = await this.CityRepository.createQueryBuilder('city')
+      const city = await this.CityRepository.createQueryBuilder('city') //penambahan search untuk FE
         .where('city_name ILIKE :search_city', {
           search_city: `%${search_city}%`,
         })
@@ -626,7 +628,7 @@ export class UsersService {
     }
   }
 
-  // fungsi edit address
+  // fungsi edit address //penambahan search untuk FE
   public async editaddress(addrid: number, fields: any, search_city: string) {
     try {
       const address = await this.AddressRepository.findOne({
@@ -944,7 +946,7 @@ export class UsersService {
     });
   }
 
-  //fungsi add experience
+  //fungsi add experience //penambahan search untuk FE
   public async addexperience(id: number, fields: any, search_city: string) {
     try {
       const user = await this.userRepo.findOne({
@@ -956,7 +958,7 @@ export class UsersService {
       if (!user) {
         throw new Error(`User with ID ${id} not found.`);
       }
-      const city = await this.CityRepository.createQueryBuilder('city')
+      const city = await this.CityRepository.createQueryBuilder('city') //penambahan search untuk FE
         .where('city_name ILIKE :search_city', {
           search_city: `%${search_city}%`,
         })
@@ -1098,7 +1100,7 @@ export class UsersService {
     }
   }
 
-  //edit data experience
+  //edit data experience //penambahan search untuk FE
   public async editexperience(
     usexid: number,
     fields: any,
@@ -1114,7 +1116,7 @@ export class UsersService {
       if (!user) {
         throw new Error(`User with ID ${usexid} not found.`);
       }
-      const city = await this.CityRepository.createQueryBuilder('city')
+      const city = await this.CityRepository.createQueryBuilder('city') //penambahan search untuk FE
         .where('city_name ILIKE :search_city', {
           search_city: `%${search_city}%`,
         })
@@ -1265,7 +1267,7 @@ export class UsersService {
     });
   }
   ///  penambahan userskill
-  //fungsi add skill
+  //fungsi add skill //penambahan search untuk FE
   public async addskill(id: number, search_skill: string) {
     try {
       if (search_skill) {
@@ -1284,7 +1286,7 @@ export class UsersService {
 
         const skillType = await this.SkillTypeRepository.createQueryBuilder(
           'skill_type',
-        )
+        ) //penambahan search untuk FE
           .where('skty_name ILIKE :search_skill', {
             search_skill: `%${search_skill}%`,
           })

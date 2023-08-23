@@ -10,10 +10,10 @@ const PhoneReducer = (state = INIT_STATE, action: any) => {
       return { ...state };
     case userAction.ADD_PHONE_SUCCESS:
       return addphone(state, action);
-    // case userAction.UPDATE_EMAIL_SUCCESS:
-    //   return updateemail(state, action);
-    // case userAction.DELETE_EMAIL_SUCCESS:
-    //   return deleteemail(state, action);
+    case userAction.UPDATE_PHONE_SUCCESS:
+      return updatephone(state, action);
+    case userAction.DELETE_PHONE_SUCCESS:
+      return deletephone(state, action);
     default:
       return state;
   }
@@ -26,18 +26,18 @@ const addphone = (state: any, action: any) => {
   };
 };
 
-// const updateemail = (state: any, action: any) => {
-//   return {
-//     ...state,
-//     email: action.payload,
-//   };
-// };
+const updatephone = (state: any, action: any) => {
+  return {
+    ...state,
+    phone: action.payload,
+  };
+};
 
-// const deleteemail = (state: any, action: any) => {
-//   return {
-//     ...state,
-//     email: action.payload,
-//   };
-// };
+const deletephone = (state: any, action: any) => {
+  return {
+    ...state,
+    phone: action.payload,
+  };
+};
 
 export default PhoneReducer;

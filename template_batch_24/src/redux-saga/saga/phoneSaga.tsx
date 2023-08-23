@@ -1,7 +1,14 @@
 import { call, put } from "redux-saga/effects";
 import userApi from "../../pages/api/endPointApi";
 
-import { addPhoneFail, addPhoneSuccess } from "../action/phoneAction";
+import {
+  UpdatePhoneFailed,
+  UpdatePhoneSuccess,
+  addPhoneFail,
+  addPhoneSuccess,
+  deletePhoneFailed,
+  deletePhoneSuccess,
+} from "../action/phoneAction";
 
 function* handlePhoneUsers(action: any): any {
   const { payload, id } = action;
@@ -13,24 +20,24 @@ function* handlePhoneUsers(action: any): any {
   }
 }
 
-// function* handleUpdateEmailUsers(action: any): any {
-//   const { payload, id } = action;
-//   try {
-//     const result = yield call(userApi.updateEmail, payload, id);
-//     yield put(UpdateEmailSuccess(result));
-//   } catch (error) {
-//     yield put(UpdateEmailFailed(error));
-//   }
-// }
+function* handleUpdatePhoneUsers(action: any): any {
+  const { payload, id } = action;
+  try {
+    const result = yield call(userApi.updatePhone, payload, id);
+    yield put(UpdatePhoneSuccess(result));
+  } catch (error) {
+    yield put(UpdatePhoneFailed(error));
+  }
+}
 
-// function* handleDeleteEmailUsers(action: any): any {
-//   const { id } = action;
-//   try {
-//     const result = yield call(userApi.deleteEmail, id);
-//     yield put(deleteEmailSuccess(result));
-//   } catch (error) {
-//     yield put(deleteEmailFailed(error));
-//   }
-// }
+function* handleDeletePhoneUsers(action: any): any {
+  const { id } = action;
+  try {
+    const result = yield call(userApi.deletePhone, id);
+    yield put(deletePhoneSuccess(result));
+  } catch (error) {
+    yield put(deletePhoneFailed(error));
+  }
+}
 
-export { handlePhoneUsers };
+export { handlePhoneUsers, handleUpdatePhoneUsers, handleDeletePhoneUsers };

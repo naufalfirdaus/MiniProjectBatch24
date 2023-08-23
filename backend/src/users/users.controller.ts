@@ -89,14 +89,20 @@ export class UsersController {
     }
     // const userEmails = user.usersEmails.map((email) => email.pmailAddress);
     const userEmails = user.usersEmails.map((email) => ({
-      id: email.pmailId, // Assuming email has a 'pmailid' property for ID
+      id: email.pmailId,
       email: email.pmailAddress,
     }));
     // const userPhoneNumbers = user.usersPhones.map((phone) => phone.uspoNumber);
     const userPhoneNumbers = user.usersPhones.map((phone) => ({
+      id: phone.uspoNumber,
       phone: phone.uspoNumber,
-      pontycode: phone.uspoPontyCode,
+      pontycode: phone.uspoPontyCode, //untuk menampilkan data pontycode yang
     }));
+
+    const userAddress = user.usersAddresses.map((address) => ({
+      AddressId: address.etadAddrId,
+    }));
+
     return {
       userEntityId: user.userEntityId,
       userName: user.userName,
@@ -104,6 +110,7 @@ export class UsersController {
       userLastName: user.userLastName,
       userEmail: userEmails,
       userPhoneNumber: userPhoneNumbers,
+      userAddress: userAddress, //untuk menampilkan users address ketika getone
     };
   }
 
@@ -162,7 +169,7 @@ export class UsersController {
   public async Deletephone(@Param('usponumber') usponumber: string) {
     return this.authService.deletephone(usponumber);
   }
-
+  //penambahan di @body search menyesuaikan di service
   @Post('users/profile/address/:id')
   @UseInterceptors(FileInterceptor('fields'))
   public async addAddress(
@@ -172,7 +179,7 @@ export class UsersController {
   ) {
     return this.authService.addaddress(id, fields, search_city);
   }
-
+  //penambahan di @body search menyesuaikan di service
   @Put('users/profile/address/:addrid') //perubahan pada :id menjadi :addrid dan penambahan search
   @UseInterceptors(FileInterceptor('fields'))
   public async editAddress(
@@ -207,7 +214,7 @@ export class UsersController {
   public async Deleteeducation(@Param('id') id: number) {
     return this.authService.deleteeducation(id);
   }
-
+  //penambahan di @body search menyesuaikan di service
   @Post('users/profile/experience/:id') //penambahan search
   @UseInterceptors(FileInterceptor('fields'))
   public async addExperience(
@@ -217,7 +224,7 @@ export class UsersController {
   ) {
     return this.authService.addexperience(id, fields, search_city);
   }
-
+  //penambahan di @body search menyesuaikan di service
   @Put('users/profile/experience/:usexid')
   @UseInterceptors(FileInterceptor('fields'))
   public async editExperience(
@@ -232,7 +239,7 @@ export class UsersController {
   public async Deleteexperience(@Param('usexid') usexid: number) {
     return this.authService.deleteexperience(usexid);
   }
-
+  //penambahan di @body search menyesuaikan di service
   @Post('users/profile/skill/:id')
   @UseInterceptors(FileInterceptor('search_skill'))
   public async addSkill(

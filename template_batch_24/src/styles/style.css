@@ -1,8 +1,7 @@
+.custom-navbar:hover {
+  color: #e93e1e; /* Ganti warna sesuai keinginan Anda */
+}
 
-  .custom-navbar:hover {
-    color:#e93e1e; /* Ganti warna sesuai keinginan Anda */
-  }
-
- button .custom-modal-profile:hover{
-    background-color: azure;
-  }
+button .custom-modal-profile:hover {
+  background-color: azure;
+}

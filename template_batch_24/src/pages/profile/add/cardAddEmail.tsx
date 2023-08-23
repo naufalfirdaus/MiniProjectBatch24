@@ -27,7 +27,7 @@ const CardAddEmail = (props: Modalemail) => {
 
         const id = values.user_id;
         props.setRefresh(true);
-
+        window.alert("Data Successfully ");
         dispatch(addEmailReq(payload, id));
         window.location.reload();
       } catch (error) {

@@ -4,60 +4,61 @@ import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { Button, Checkbox, Label, Modal, TextInput } from "flowbite-react";
 
-import { addPhoneReq } from "@/redux-saga/action/phoneAction";
+import {
+  UpdatePhoneRequest,
+  addPhoneReq,
+} from "@/redux-saga/action/phoneAction";
 
 type Modalphone = {
   setRefresh: (value: boolean) => void;
-  setOpenModal: (value: string | undefined) => void;
+  setOpenModalEdit: (value: boolean) => void;
+  setIdPhone: any;
+  setPontyCode: any;
+  setPhone: any;
   setDataProfile: any;
 };
 
-const CardAddPhone = (props: Modalphone) => {
+const CardEditPhone = (props: Modalphone) => {
   const dispatch = useDispatch();
   const [selectedPontyCode, setSelectedPontyCode] = useState("");
+
+  useEffect(() => {
+    setSelectedPontyCode(props.setPontyCode);
+  }, [props.setPontyCode]);
+
   const handlePontyCodeChange = (event: any) => {
     setSelectedPontyCode(event.target.value);
     formik.setFieldValue("pontycode", event.target.value);
   };
-
   const formik = useFormik({
     initialValues: {
       user_id: props.setDataProfile.userid,
-      phone: "",
-      PontyCode: "",
+      id: props.setIdPhone,
+      phone: props.setPhone,
+      PontyCode: props.setPontyCode,
     },
     onSubmit: async (values) => {
       try {
         const payload = {
+          userid: values.user_id,
           phone: values.phone,
           PontyCode: selectedPontyCode,
         };
 
-        const id = values.user_id;
+        const id = values.id;
+
+        dispatch(UpdatePhoneRequest(payload, id));
         props.setRefresh(true);
-        window.alert("Data Successfully ");
-        dispatch(addPhoneReq(payload, id));
         window.location.reload();
       } catch (error) {
         console.error("Error:", error);
       }
     },
-    validate: (values) => {
-      const errors: Record<string, string> = {};
-
-      if (!values.phone) {
-        errors.phone = "Phone number is required";
-      } else if (!/^\d+$/.test(values.phone)) {
-        errors.phone = "Please enter numbers only";
-      }
-
-      return errors;
-    },
   });
   return (
     <>
       <h2 className="text-base font-semibold leading-7 text-gray-900">
-        Add Phone
+        Edit Phone
       </h2>
       <div className="w-full  bg-white p-3 rounded-md mt-3">
         <form>
@@ -111,7 +112,7 @@ const CardAddPhone = (props: Modalphone) => {
             <button
               type="button"
               className="text-sm font-semibold leading-6 text-gray-900"
-              onClick={() => props.setOpenModal(undefined)}
+              onClick={() => props.setOpenModalEdit(false)}
             >
               Cancel
             </button>
@@ -120,7 +121,7 @@ const CardAddPhone = (props: Modalphone) => {
               className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               onClick={() => {
                 formik.handleSubmit();
-                props.setOpenModal(undefined);
+                props.setOpenModalEdit(false);
               }}
             >
               Save
@@ -132,4 +133,4 @@ const CardAddPhone = (props: Modalphone) => {
   );
 };
 
-export default CardAddPhone;
+export default CardEditPhone;

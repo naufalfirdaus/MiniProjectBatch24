@@ -5,6 +5,7 @@ import loginReducer from "./loginReducer";
 import ChangePasswordReducer from "./changePasswordReducer";
 import EmailReducer from "./EmailReducer";
 import PhoneReducer from "./phoneReducer";
+import AddressReducer from "./addressReducer";
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   password: ChangePasswordReducer,
   email: EmailReducer,
   phone: PhoneReducer,
+  address: AddressReducer,
 });
 
 export default rootReducer;
