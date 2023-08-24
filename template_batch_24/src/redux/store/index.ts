@@ -4,6 +4,7 @@ import createSagaMiddleware from "@redux-saga/core";
 import candidateReducer from "../slices/candidateSlices";
 import batchReducer from "../slices/batchSlices";
 import dashboardReducer from "../slices/dashboardSlices";
+import userReducer from "../slices/userSlices";
 import rootSaga from "../saga/index";
 
 const logger = createLogger();
@@ -13,6 +14,7 @@ const store = configureStore({
         candidates: candidateReducer,
         batchs: batchReducer,
         dashboards: dashboardReducer,
+        users: userReducer,
     },
     middleware: [saga],
 });

@@ -15,6 +15,7 @@ export default function Batch() {
   const dispatch = useDispatch();
   const batchs = useSelector((state: any) => state.batchs.batchs);
   const batchLoad = useSelector((state: any) => state.batchs.status);
+  const user = useSelector((state: any) => state.users.user);
   const [reload, setReload] = useState(false);
 
   useEffect(() => {
@@ -148,18 +149,26 @@ export default function Batch() {
                         <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 4 15"> <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/></svg>
                     </Menu.Button>
                     <Menu.Items className='absolute z-10 text-sm w-32 text-gray-600 right-0 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
-                      <Menu.Item>
-                          <Link href='#' onClick={(e) => handleEditButton(e, batch.batchId)} className="block px-4 py-2 hover:bg-gray-100">Edit</Link>
-                      </Menu.Item>
-                      <Menu.Item>
-                          <a href="#" onClick={(e) => handleDeleteButton(e, batch.batchId)} className="block px-4 py-2 hover:bg-gray-100">Delete</a>
-                      </Menu.Item>
-                      <Menu.Item>
-                          <a href="#" onClick={() => handleStatusButton(batch.batchId, 'Close')} className="block px-4 py-2 hover:bg-gray-100">Closed Batch</a>
-                      </Menu.Item>
-                      <Menu.Item>
-                          <a href="#"  onClick={() => handleStatusButton(batch.batchId, 'Running')} className="block px-4 py-2 hover:bg-gray-100">Set To Running</a>
-                      </Menu.Item>
+                      {user && user.roles == 'Recruiter' &&
+                        <>
+                          <Menu.Item>
+                              <Link href='#' onClick={(e) => handleEditButton(e, batch.batchId)} className="block px-4 py-2 hover:bg-gray-100">Edit</Link>
+                          </Menu.Item>
+                          <Menu.Item>
+                              <a href="#" onClick={(e) => handleDeleteButton(e, batch.batchId)} className="block px-4 py-2 hover:bg-gray-100">Delete</a>
+                          </Menu.Item>
+                        </>
+                      }
+                      {user && user.roles == 'Instructor' &&
+                        <>
+                          <Menu.Item>
+                              <a href="#" onClick={() => handleStatusButton(batch.batchId, 'Close')} className="block px-4 py-2 hover:bg-gray-100">Closed Batch</a>
+                          </Menu.Item>
+                          <Menu.Item>
+                              <a href="#"  onClick={() => handleStatusButton(batch.batchId, 'Running')} className="block px-4 py-2 hover:bg-gray-100">Set To Running</a>
+                          </Menu.Item>
+                        </>
+                      }
                       <Menu.Item>
                           <Link href='#' onClick={(e) => handleEvaluationButton(e, batch.batchId)} className="block px-4 py-2 hover:bg-gray-100">Evaluation</Link>
                       </Menu.Item>

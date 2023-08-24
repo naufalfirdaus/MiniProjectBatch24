@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Batch } from 'output/entities/Batch';
 import { BatchTrainee } from 'output/entities/BatchTrainee';
@@ -18,6 +19,12 @@ import { CandidatesController } from 'src/candidates/candidates.controller';
 import { CandidatesService } from 'src/candidates/candidates.service';
 import { DashboardController } from 'src/dashboard/dashboard.controller';
 import { DashboardService } from 'src/dashboard/dashboard.service';
+import { JwtModule } from '@nestjs/jwt';
+import { UsersService } from 'src/users/users.service';
+import { UsersController } from 'src/users/users.controller';
+import { LocalGuard } from 'src/auth/local/local.guard';
+import { JwtGuard } from 'src/auth/jwt/jwt.guard';
+import { Roles } from 'output/entities/Roles';
 
 @Module({
   imports: [
@@ -33,10 +40,28 @@ import { DashboardService } from 'src/dashboard/dashboard.service';
       Employee,
       BatchTrainee,
       BatchTraineeEvaluation,
-      ProgramApplyProgress
+      ProgramApplyProgress,
+      Roles,
     ]),
+    PassportModule,
+    JwtModule.register({
+      secret: 'miniproject',
+      signOptions: { expiresIn: '2d' },
+    }),
   ],
-  providers: [CandidatesService, BatchService, DashboardService],
-  controllers: [CandidatesController, BatchController, DashboardController],
+  providers: [
+    CandidatesService,
+    BatchService,
+    DashboardService,
+    UsersService,
+    LocalGuard,
+    JwtGuard,
+  ],
+  controllers: [
+    CandidatesController,
+    BatchController,
+    DashboardController,
+    UsersController,
+  ],
 })
 export class GlobalModule {}

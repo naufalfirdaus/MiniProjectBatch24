@@ -11,11 +11,34 @@ import { useDispatch, useSelector } from "react-redux";
 import { getChartFetch, getSummaryFetch } from "@/redux/slices/dashboardSlices";
 import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+// import DatePicker from 'react-datepicker';
+// import "react-datepicker/dist/react-datepicker.css";
 
 export default function Dashboard() {
   const summary = useSelector((state: any) => state.dashboards.summary);
   const chartData = useSelector((state: any) => state.dashboards.chartData);
   const dispatch = useDispatch();
+  const [reload, setReload] = useState(false);
+  // const [year, setYear] = useState<any>();
+  // const handleFilterYear = (date: Date, e: any) => {
+  //   // e.preventDefault();
+  //   setYear(date);
+  //   // dispatch(getChartFetch(date.getFullYear()));
+  //   const mac = {...monthApplicantsChart};
+  //   mac.series[0].data = chartData.applicantByMonth;
+  //   setMonthApplicantsChart(mac);
+
+  // }
+
+  // useEffect(() => {
+  //   if(year){
+  //     dispatch(getChartFetch(year.getFullYear()));
+  //     const mac = {...monthApplicantsChart};
+  //     mac.series[0].data = chartData.applicantByMonth;
+  //     setMonthApplicantsChart(mac);
+  //     console.log('loop 2');
+  //   }
+  // }, [year])
   const [fieldStudyChart, setFieldStudyChart] = useState<any>({
     options: {
       colors: ["#2a9d8f", "#264653", '#B8336A', '#815355'],
@@ -285,13 +308,18 @@ export default function Dashboard() {
       },
       xaxis: {
         categories: [
-          "01 Feb",
-          "02 Feb",
-          "03 Feb",
-          "04 Feb",
-          "05 Feb",
-          "06 Feb",
-          "07 Feb",
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
         ],
         labels: {
           show: true,
@@ -313,15 +341,15 @@ export default function Dashboard() {
     },
     series: [
       {
-        name: "Clicks",
-        data: [6500, 6418, 6456, 6526, 6356, 6456],
+        name: "Applicants",
+        data: [6500, 6418, 6456, 6526, 6356, 6456, 6500, 6418, 6456, 6526, 6356, 6456],
         color: "#2a9d8f",
       },
-      {
-        name: "CPC",
-        data: [6456, 6356, 6526, 6332, 6418, 6500],
-        color: "#264653",
-      },
+      // {
+      //   name: "CPC",
+      //   data: [6456, 6356, 6526, 6332, 6418, 6500],
+      //   color: "#264653",
+      // },
     ],
   });
   const [techChart, setTechChart] = useState<any>({
@@ -415,7 +443,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     dispatch(getSummaryFetch());
-    dispatch(getChartFetch());
+    dispatch(getChartFetch(''));
     if (Object.keys(chartData).length != 0) {
 
       const tc = { ...techChart };
@@ -442,8 +470,17 @@ export default function Dashboard() {
       fs.options.labels = fsLabel;
       fs.series = fsSeries;
       setFieldStudyChart(fs);
+
+      const mac = {...monthApplicantsChart};
+      mac.series[0].data = chartData.applicantByMonth;
+      setMonthApplicantsChart(mac);
     }
-  }, [Object.keys(chartData).length]);
+    setReload(false);
+  }, [Object.keys(chartData).length, reload]);
+
+  if(Object.keys(chartData).length == 0) {
+    return <h1>Loading..</h1>
+  }
 
   return (
     <div>
@@ -510,6 +547,14 @@ export default function Dashboard() {
           <div className="grid lg:grid-cols-3 gap-4 py-5">
             <div className="w-full bg-white border border-gray-200 rounded-lg shadow shadow-gray-200 p-4">
               <h5 className="text-md font-medium leading-none text-gray-900 dark:text-white pb-3">Applicants by Month</h5>
+              {/* <DatePicker
+                  className='ml-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 font-medium rounded-lg text-sm py-1.5 w-16 text-center'
+                  selected={year}
+                  placeholderText="Year"
+                  onChange={(date: Date, e) => handleFilterYear(date, e)}
+                  dateFormat="yyyy"
+                  showYearPicker
+              /> */}
               <Chart
                 options={monthApplicantsChart.options}
                 series={monthApplicantsChart.series}

@@ -11,9 +11,10 @@ function* workGetSummaryFetch (): any {
     }
 }
 
-function* workGetChartFetch (): any {
+function* workGetChartFetch (action: any): any {
+    const {payload } = action;
     try {
-        const chartData = yield call(dashboardApi.getDashboardChart);
+        const chartData = yield call(dashboardApi.getDashboardChart, payload);
         yield put(getChartFetchSuccess(chartData));
     } catch (error: any) {
         yield put(getChartFetchFail(error))

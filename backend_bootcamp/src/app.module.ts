@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { GlobalModule } from './global/global.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { DashboardController } from './dashboard/dashboard.controller';
-import { DashboardService } from './dashboard/dashboard.service';
 
 @Module({
   imports: [

@@ -10,9 +10,9 @@ const getDashboardSummary = async () => {
   }
 };
 
-const getDashboardChart = async () => {
+const getDashboardChart = async (payload: any) => {
   try {
-    const result = await axios.get(`${config.domain}/api/bootcamp/dashboard/chart`); 
+    const result = await axios.get(`${config.domain}/api/bootcamp/dashboard/chart`, {params: {year: payload}}); 
     return result.data;
   } catch (error) {
     return error;

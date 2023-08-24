@@ -82,7 +82,7 @@ export default function BatchEvaluation(){
             <Page title={`Batch#${router.query.batchid} ${Object.keys(batch).length != 0 && batch.batchEntity.progTitle} `} titleButton='Back' onClick={() => router.push('/app/batch')}>
                 <div className="border border-slate-300 rounded-lg p-4">
                     <div className="grid grid-cols-4 gap-4">
-                        {batchEvaluation.length != 0 && batchEvaluation.map((student: any, i: number) => 
+                        {batchEvaluation.length == 0 ? <h1 className="text-center col-span-4">No trainee yet.</h1> : batchEvaluation.map((student: any, i: number) => 
                             <div key={i} className="w-full max-w-xs py-2 bg-white border border-gray-200 rounded-lg shadow">
                                 <div className="flex justify-end px-4">
                                     <Menu as='div' className='relative'>

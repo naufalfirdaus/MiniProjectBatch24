@@ -6,11 +6,7 @@ import {
   MenuAlt1Icon,
   XIcon,
   SelectorIcon,
-  ClipboardListIcon,
-  CollectionIcon,
-  CreditCardIcon,
   ViewGridAddIcon,
-  CashIcon,
   CogIcon,
   PhoneOutgoingIcon,
   UserGroupIcon,
@@ -18,19 +14,15 @@ import {
   BookOpenIcon,
 } from "@heroicons/react/outline";
 
-import {
-  ChevronRightIcon,
-  DotsVerticalIcon,
-  DuplicateIcon,
-  PencilAltIcon,
-  SearchIcon,
-  TrashIcon,
-  UserAddIcon,
-} from "@heroicons/react/solid";
+import { SearchIcon } from "@heroicons/react/solid";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { usePathname } from 'next/navigation';
+import { getCookie, hasCookie } from "cookies-next";
+import jwtDecode from "jwt-decode";
+import { logoutTry, setUserDataFromCookie } from "@/redux/slices/userSlices";
+import Page from "../commons/Page";
 
 const navigation = [
   {
@@ -38,35 +30,35 @@ const navigation = [
     href: "/app",
     icon: HomeIcon,
     current: false,
-    roles: ["Administrator", "Recuirter", "Sales", "Instructor"],
+    roles: ["Administrator", "Recruiter", "Sales", "Instructor"],
   },
   {
     name: "Candidat",
     href: "/app/candidat",
     icon: AcademicCapIcon,
     current: false,
-    roles: ["Administrator", "Recuirter", "Instructor"],
+    roles: ["Administrator", "Recruiter", "Instructor"],
   },
   {
     name: "Batch",
     href: "/app/batch",
     icon: ViewGridAddIcon,
     current: false,
-    roles: ["Administrator", "Recuirter", "Instructor"],
+    roles: ["Administrator", "Recruiter", "Instructor"],
   },
   {
     name: "Talent",
     href: "/app/talent",
     icon: UserGroupIcon,
     current: false,
-    roles: ["Administrator", "Recuirter", "Instructor", "Sales"],
+    roles: ["Administrator", "Recruiter", "Instructor", "Sales"],
   },
   {
     name: "Placement",
     href: "/app/placement",
     icon: UserGroupIcon,
     current: false,
-    roles: ["Administrator", "Recuirter", "Sales"],
+    roles: ["Administrator", "Recruiter", "Sales"],
   },
   {
     name: "Curriculum",
@@ -80,7 +72,7 @@ const navigation = [
     href: "/app/hiring",
     icon: PhoneOutgoingIcon,
     current: false,
-    roles: ["Administrator", "Recuirter", "Sales"],
+    roles: ["Administrator", "Recruiter", "Sales"],
   },
   {
     name: "Setting",
@@ -89,7 +81,7 @@ const navigation = [
     current: false,
     roles: [
       "Administrator",
-      "Recuirter",
+      "Recruiter",
       "Sales",
       "Instructor",
       "Candidat",
@@ -108,18 +100,36 @@ export default function AppLayout(props: any) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { children } = props;
   const pathname = usePathname();
-
+  const [reload, setReload] = useState(false);
   const dispatch = useDispatch();
-  // const { UserProfile } = useSelector((state : any) => state.usrStated);
-  // const [user, setUser] = useState({});
-  // useEffect(() => {
-  //   setUser(UserProfile);
-  // }, []);
+  const user = useSelector((state: any) => state.users.user);
+  const [userData, setUserData] = useState<any>({});
+
+  useEffect(() => {
+    if(hasCookie('access_token')){
+      const token = getCookie('access_token') as string; 
+      const decode = jwtDecode(token);
+      dispatch(setUserDataFromCookie(decode))
+    } else {
+      setUserData(null);
+      router.push("/signin");
+    }
+
+    if(user){
+      setUserData(user);
+    }
+    setReload(false);
+  }, [reload]);
   
-  const onLogout = () => {
-    // dispatch();
+  const onLogout = (e: any) => {
+    e.preventDefault();
+    dispatch(logoutTry());
     router.push("/");
   };
+
+  if(!user) {
+    return (<Page><h1>redirect....</h1></Page>)
+  }
 
   return (
     <div className="h-screen flex overflow-hidden bg-white">
@@ -181,10 +191,10 @@ export default function AppLayout(props: any) {
               <div className="mt-5 flex-1 h-0 overflow-y-auto">
                 <nav className="px-2">
                   <div className="space-y-1">
-                    {navigation
-                      // .filter((item) =>
-                      //   item.roles.includes(user.roles || UserProfile.roles)
-                      // )
+                    {user && navigation
+                      .filter((item) =>
+                        item.roles.includes(user.roles || userData.roles)
+                      )
                       .map((item) => { 
                         const isActive = pathname == item.href;
                         item.current = isActive;
@@ -257,12 +267,10 @@ export default function AppLayout(props: any) {
                           />
                           <span className="flex-1 flex flex-col min-w-0">
                             <span className="text-gray-900 text-sm font-medium truncate">
-                              username
-                              {/* {user.username || UserProfile.username} */}
+                              {user && user.username || userData.username}
                             </span>
                             <span className="text-gray-500 text-sm truncate">
-                              email
-                              {/* {user.email || UserProfile.email} */}
+                              {user && user.roles || userData.roles}
                             </span>
                           </span>
                         </span>
@@ -371,7 +379,7 @@ export default function AppLayout(props: any) {
                           {({ active }) => (
                             <Link
                               href="/"
-                              onClick={onLogout}
+                              onClick={(e) => onLogout(e)}
                               className={classNames(
                                 active
                                   ? "bg-gray-100 text-gray-900"
@@ -393,10 +401,10 @@ export default function AppLayout(props: any) {
             {/* Navigation */}
             <nav className="px-3 mt-6">
               <div className="space-y-1">
-                {navigation
-                  // .filter((item) =>
-                  //   item.roles.includes(user.roles || UserProfile.roles)
-                  // )
+                {user && navigation
+                  .filter((item) =>
+                    item.roles.includes(user.roles || userData.roles)
+                  )
                   .map((item) => {
                     const isActive = pathname == item.href;
                     item.current = isActive;
@@ -574,7 +582,7 @@ export default function AppLayout(props: any) {
                             {({ active }) => (
                               <Link
                                 href="#"
-                                onClick={onLogout}
+                                onClick={(e) => onLogout(e)}
                                 className={classNames(
                                   active
                                     ? "bg-gray-100 text-gray-900"

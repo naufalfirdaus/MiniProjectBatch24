@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, DefaultValuePipe, Query } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 
 @Controller('/api/bootcamp/dashboard')
@@ -11,7 +11,9 @@ export class DashboardController {
   }
 
   @Get('chart')
-  public async getChartAll() {
-    return this.dashboardService.getChart();
+  public async getChartAll(
+    @Query('year', new DefaultValuePipe(null)) year: number,
+  ) {
+    return this.dashboardService.getChart(year);
   }
 }

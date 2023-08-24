@@ -2,6 +2,7 @@ import { takeEvery, all } from "redux-saga/effects";
 import { workGetCandidateBatchTrainee, workGetCandidateFetch, workGetPassedCandidateBootcamp, workUpdateCandidateStatus } from "./candidateSaga";
 import { workCreateBatch, workDeleteBatchTry, workGetBatchByIdFetch, workGetBatchEvaluation, workGetBatchFetch, workGetBatchTraineeEvaluation, workGetByNameAndStatus, workGetTechnologyFetch, workInstructorFetch, workUpdateBatch, workUpdateBatchStatus, workUpdateTraineeEvaluationReview, workUpdateTraineeEvaluationScore } from "./batchSaga";
 import { workGetChartFetch, workGetSummaryFetch } from "./dashboardSaga";
+import { workLoginTry, workLogoutTry } from "./userSaga";
 
 function* watchAll() {
   yield all([
@@ -24,6 +25,8 @@ function* watchAll() {
     takeEvery('batch/deleteBatchTry', workDeleteBatchTry),
     takeEvery('dashboard/getSummaryFetch', workGetSummaryFetch),
     takeEvery('dashboard/getChartFetch', workGetChartFetch),
+    takeEvery('user/loginTry', workLoginTry),
+    takeEvery('user/logoutTry', workLogoutTry),
   ]);
 }
 

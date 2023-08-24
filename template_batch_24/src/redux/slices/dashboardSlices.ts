@@ -27,7 +27,7 @@ const dashboardSlices = createSlice({
       state.status = "failed";
       state.error = action.error.message;
     },
-    getChartFetch: (state) => {
+    getChartFetch: (state, action: PayloadAction<any>) => {
       state.status = "loading";
     },
     getChartFetchSuccess: (state, action) => {

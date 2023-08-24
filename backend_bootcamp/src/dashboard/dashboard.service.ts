@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BatchTrainee } from 'output/entities/BatchTrainee';
 import { ProgramApply } from 'output/entities/ProgramApply';
-import { Repository } from 'typeorm';
+import { Raw, Repository } from 'typeorm';
 
 @Injectable()
 export class DashboardService {
@@ -20,7 +20,7 @@ export class DashboardService {
     return { allCandidate, onTraining, onBoarding: 0, idle: 0 };
   }
 
-  public async getChart() {
+  public async getChart(year: number) {
     const interestTech = await this.programApplyService
       .createQueryBuilder('program_apply')
       .select('COUNT(program_apply.prap_user_entity_id)::int as y')
@@ -56,6 +56,40 @@ export class DashboardService {
       .groupBy('users_education.usdu_field_study')
       .getRawMany();
 
-    return { interestTech, educations, university, fieldStudy };
+    const applicantByMonth = [];
+    let findedData = [];
+    for (let i = 1; i <= 12; i++) {
+      if (year) {
+        findedData = await this.programApplyService
+          .createQueryBuilder('program_apply')
+          .select('*')
+          .where(
+            'EXTRACT(month FROM program_apply.prap_modified_date) = :month',
+            { month: i },
+          )
+          .andWhere(
+            'EXTRACT(year FROM program_apply.prap_modified_date) = :year',
+            { year },
+          )
+          .execute();
+      } else {
+        findedData = await this.programApplyService.find({
+          where: {
+            prapModifiedDate: Raw(
+              (alias) => `EXTRACT(month FROM ${alias}) = ${i}`,
+            ),
+          },
+        });
+      }
+      applicantByMonth.push(findedData.length);
+    }
+
+    return {
+      interestTech,
+      educations,
+      university,
+      fieldStudy,
+      applicantByMonth,
+    };
   }
 }

@@ -1,31 +1,20 @@
 import React, { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
-// import Image from 'next/image';
-import { useRouter } from "next/router";
-import { Popover, Dialog, Menu, Transition } from "@headlessui/react";
+import { Popover, Menu, Transition } from "@headlessui/react";
 import {
-  AnnotationIcon,
   ChatAlt2Icon,
-  ChatAltIcon,
-  DocumentReportIcon,
-  HeartIcon,
-  InboxIcon,
   MenuIcon,
-  PencilAltIcon,
   QuestionMarkCircleIcon,
-  ReplyIcon,
-  SparklesIcon,
-  TrashIcon,
   TrendingUpIcon,
   UserGroupIcon,
-  UsersIcon,
-  SelectorIcon,
   XIcon,
 } from "@heroicons/react/outline";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import { useSelector, useDispatch } from "react-redux";
 import Image from "next/image";
-// import { doPushSignoutRequest } from "../../redux-saga/Action/UsrAction";
+import { getCookie, hasCookie } from "cookies-next";
+import { logoutTry, setUserDataFromCookie } from "@/redux/slices/userSlices";
+import jwtDecode from "jwt-decode";
 
 const solutions = [
   {
@@ -61,18 +50,32 @@ function classNames(...classes: any[]) {
 export default function LandingPage(props: any) {
   const { children } = props;
   const dispatch = useDispatch();
-  const router = useRouter();
-  const [user, setUser] = useState({});
-  // const { UserProfile } = useSelector((state) => state.usrStated);
+  const [userData, setUserData] = useState<any>({});
+  const [reload, setReload] = useState(false);
+  const user = useSelector((state: any) => state.users.user);
 
-  const onSignout = () => {
-    // dispatch(doPushSignoutRequest());
-    router.reload();
+  const onSignout = (e: any) => {
+    e.preventDefault();
+    dispatch(logoutTry());
+    setReload(true);
   };
-  // useEffect(() => {
-  //   setUser(UserProfile);
-  // }, []);
-  // console.log(user);
+
+  useEffect(() => {
+    if(hasCookie('access_token')){
+      const token = getCookie('access_token') as string; 
+      const decode = jwtDecode(token);
+      dispatch(setUserDataFromCookie(decode))
+    } else {
+      setUserData(null);
+    }
+
+    if(user){
+      setUserData(user);
+    }
+    setReload(false);
+    
+  }, [reload]);
+
   return (
     <div className="bg-white">
       <header>
@@ -183,7 +186,7 @@ export default function LandingPage(props: any) {
                   </Link>
                 </Popover.Group>
                 <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-                  {user ? (
+                  {userData ? (
                     <Menu as="div" className="ml-3 relative">
                       <div>
                         <Menu.Button className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
@@ -216,8 +219,7 @@ export default function LandingPage(props: any) {
                                   )}
                                 >
                                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                    {/* Hi,{user.username} */}
-                                    Hi, Bootcamp
+                                    Hi, {Object.keys(userData).length != 0 && userData.username || user.username}
                                   </dd>
                                 </Link>
                               )}
@@ -259,7 +261,7 @@ export default function LandingPage(props: any) {
                             {({ active }) => (
                               <Link
                                 href="#"
-                                onClick={onSignout}
+                                onClick={(e) => onSignout(e)}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "block px-4 py-2 text-sm text-gray-700"

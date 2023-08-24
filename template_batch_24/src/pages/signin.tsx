@@ -6,21 +6,26 @@ import { useRouter } from "next/router";
 import { LockClosedIcon } from "@heroicons/react/solid";
 import * as Yup from "yup";
 import Link from "next/link";
+import { loginTry, setUserDataFromCookie } from "@/redux/slices/userSlices";
+import { getCookie, hasCookie } from "cookies-next";
+import jwtDecode from "jwt-decode";
+import Page from "./component/commons/Page";
 
 export default function signin() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { message, UserProfile } = useSelector((state : any) => state.usrStated);
+  const { error, user } = useSelector((state : any) => state.users);
   const validationSchema = Yup.object().shape({
     username: Yup.string().required("Username is required"),
     password: Yup.string().min(3).max(10).required("Password is required"),
   });
 
   useEffect(() => {
-    if (UserProfile) {
-      router.push("/");
-    }
-  }, [UserProfile]);
+    if(hasCookie('access_token') || user){
+      router.push("/app");
+    } 
+  }, [user]);
+  
 
   const formik = useFormik({
     initialValues: {
@@ -33,16 +38,21 @@ export default function signin() {
         username: values.username,
         password: values.password,
       };
-      dispatch();
+      dispatch(loginTry(payload));
     },
   });
+
+  if(user){
+    return (<Page><h1>redirect....</h1></Page>)
+  }
+
   return (
     <div>
       <div className="text-center mt-24">
         <div className="flex items-center justify-center">
           <img
             className="h-10 w-auto"
-            src="../assets/images/codeid.png"
+            src="/assets/images/codeid_logo.png"
             alt="codeid"
           />
         </div>
@@ -58,7 +68,8 @@ export default function signin() {
         </span>
       </div>
       <div className="flex justify-center my-2 mx-4 md:mx-0">
-        <form className="w-full max-w-xl bg-white rounded-lg shadow-md p-6">
+        <form onSubmit={formik.handleSubmit} className="w-full max-w-xl bg-white rounded-lg shadow-md p-6">
+        {error && <h1 className="text-white bg-red-400 p-3 my-2 rounded-md text-center">{error}</h1>}
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full md:w-full px-3 mb-6">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
@@ -108,8 +119,7 @@ export default function signin() {
               ) : null}
             </div>
             <div className="w-full md:w-full px-3 mb-6">
-              <button
-                onClick={formik.handleSubmit}
+              <button type="submit"
                 className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
               >
                 Sign In
