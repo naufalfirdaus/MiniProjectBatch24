@@ -24,7 +24,16 @@ export default function Checkpoint(props: any) {
   return (
     <Box sx={{ maxWidth: 400 }}>
       <Stepper activeStep={activeStep} orientation="vertical">
-        <Step>
+        <Step
+          sx={{
+            "& .MuiStepLabel-root .Mui-completed": {
+              color: "#212121", // circle color (COMPLETED)
+            },
+            "& .MuiStepLabel-root .Mui-active": {
+              color: "#212121", // circle color (ACTIVE)
+            },
+          }}
+        >
           <StepLabel>
             <Typography>Apply Bootcamp</Typography>
           </StepLabel>
@@ -39,7 +48,16 @@ export default function Checkpoint(props: any) {
             </Typography>
           </StepContent>
         </Step>
-        <Step>
+        <Step
+          sx={{
+            "& .MuiStepLabel-root .Mui-completed": {
+              color: "#212121", // circle color (COMPLETED)
+            },
+            "& .MuiStepLabel-root .Mui-active": {
+              color: "#212121", // circle color (ACTIVE)
+            },
+          }}
+        >
           <StepLabel>
             <Typography>Filtering Test</Typography>
           </StepLabel>
@@ -54,7 +72,16 @@ export default function Checkpoint(props: any) {
             </Typography>
           </StepContent>
         </Step>
-        <Step>
+        <Step
+          sx={{
+            "& .MuiStepLabel-root .Mui-completed": {
+              color: "#212121", // circle color (COMPLETED)
+            },
+            "& .MuiStepLabel-root .Mui-active": {
+              color: "#212121", // circle color (ACTIVE)
+            },
+          }}
+        >
           <StepLabel>
             <Typography>Contract</Typography>
           </StepLabel>
@@ -69,7 +96,16 @@ export default function Checkpoint(props: any) {
             </Typography>
           </StepContent>
         </Step>
-        <Step>
+        <Step
+          sx={{
+            "& .MuiStepLabel-root .Mui-completed": {
+              color: "#212121", // circle color (COMPLETED)
+            },
+            "& .MuiStepLabel-root .Mui-active": {
+              color: "#212121", // circle color (ACTIVE)
+            },
+          }}
+        >
           <StepLabel>
             <Typography>Briefing Bootcamp</Typography>
           </StepLabel>
@@ -84,7 +120,16 @@ export default function Checkpoint(props: any) {
             </Typography>
           </StepContent>
         </Step>
-        <Step>
+        <Step
+          sx={{
+            "& .MuiStepLabel-root .Mui-completed": {
+              color: "#212121", // circle color (COMPLETED)
+            },
+            "& .MuiStepLabel-root .Mui-active": {
+              color: "#212121", // circle color (ACTIVE)
+            },
+          }}
+        >
           <StepLabel>
             <Typography>Join Bootcamp</Typography>
           </StepLabel>

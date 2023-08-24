@@ -179,7 +179,7 @@ const DetailBootcamp = () => {
             </div>
           </div>
           <div>
-            <div className="rounded-2xl bg-slate-100 p-5 mb-5">
+            <div className="rounded-2xl bg-gray-100 p-5 mb-5">
               <h2 className="mb-2 text-lg">What you&apos;ll learn</h2>
               <ul className="ml-5 list-disc">
                 {detail?.learnItems?.predItemLearning.items.map((item: any) => {
@@ -194,7 +194,7 @@ const DetailBootcamp = () => {
                 })}
               </ul>
             </div>
-            <div className="rounded-2xl bg-slate-100 p-5 mb-5">
+            <div className="rounded-2xl bg-gray-100 p-5 mb-5">
               <h2 className="mb-2 text-lg">Bootcamp Material</h2>
               <Accordion data={detail?.material}></Accordion>
               {/* {detail?.material?.map((item: any) => {
@@ -217,11 +217,11 @@ const DetailBootcamp = () => {
             <div className="mb-5 p-5">
               {/* <h2 className="text-lg mb-2">Description</h2> */}
               <div className="flex justify-center p-5">
-              <p className=" text-xl text-center ">{detail?.endDate?.batchDescription}</p>
+              <p className=" text-xl text-center ">{detail?.learnItems?.predDescription?.items}</p>
               </div>
             </div>
           </div>
-          <div className="mb-5 p-5 rounded-2xl bg-slate-100">
+          <div className="mb-5 p-5 rounded-2xl bg-gray-100">
             <div>
               <h2 className="text-lg mb-2">Instructor</h2>
             </div>
@@ -303,7 +303,7 @@ const DetailBootcamp = () => {
             })}
           </div>
         </div>
-        <div className="mt-0 p-3 bg-slate-300">
+        <div className="mt-0 p-3 bg-gray-300">
           <div>
             <YouTube videoId="atKItcv56HE" opts={youtubeOps} />
           </div>
@@ -377,10 +377,10 @@ const DetailBootcamp = () => {
               <p className="ml-2">0813-3333-3333</p>
             </div>
           </div>
-          <div className=" bg-slate-200 rounded-2xl m-3 p-1">
+          <div className=" bg-gray-200 rounded-2xl m-3 p-1">
             <div className="flex flex-col items-center">
               <button
-                className="bg-blue-700 text-white p-3 mt-3"
+                className="bg-slate-800 text-white p-3 mt-3"
                 onClick={() => {
                   router.push(`apply`);
                 }}
@@ -394,7 +394,17 @@ const DetailBootcamp = () => {
               </div>
               <div className="bg-white rounded-2xl shadow-lg ">
                 <ul className="p-3">
-                  <li className="mb-2">Usia Maksimal 26 Tahun</li>
+                {detail?.learnItems?.predRequirement?.items.map((item: any) => {
+                  return (
+                    <li
+                      key={Math.floor(Math.random() * 100) + 1}
+                      className="mb-2"
+                    >
+                      {item}
+                    </li>
+                  );
+                })}
+                  {/* <li className="mb-2">Usia Maksimal 26 Tahun</li>
                   <li className="mb-2">
                     Pendidikan SMK RPL/D3/S1 Teknik Informatika/Sistem Informasi
                   </li>
@@ -402,7 +412,7 @@ const DetailBootcamp = () => {
                     Memiliki passion di bidang pemrogramman
                   </li>
                   <li className="mb-2">Pengalaman di bidang RDBMS & SQL</li>
-                  <li className="mb-2">Mampu bekerja sama dalam team</li>
+                  <li className="mb-2">Mampu bekerja sama dalam team</li> */}
                 </ul>
               </div>
             </div>
@@ -420,7 +430,7 @@ const DetailBootcamp = () => {
               </div>
             </div>
           </div>
-          <div className=" bg-slate-200 rounded-2xl m-3">
+          <div className=" bg-gray-200 rounded-2xl m-3">
             <div className="flex flex-col items-center">
               <h3 className="text-lg m-3">
                 {detail?.bootcampAndMentor?.progPrice.toLocaleString("id-ID", {
@@ -430,7 +440,7 @@ const DetailBootcamp = () => {
               </h3>
             </div>
             <div className="flex flex-col items-center ">
-              <button className="bg-blue-700 text-white p-3 px-5 items-center">
+              <button className="bg-slate-800 text-white p-3 px-5 items-center">
                 Buy This Course
               </button>
             </div>

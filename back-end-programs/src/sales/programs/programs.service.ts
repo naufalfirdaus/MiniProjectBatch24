@@ -419,7 +419,9 @@ export class ProgramsService {
   async getLearnItems(progEntityId: number) {
     const query = `
     SELECT 
-      pred_item_learning AS "predItemLearning" 
+      pred_item_learning AS "predItemLearning",
+      pred_requirement AS "predRequirement",
+      pred_description AS "predDescription" 
     FROM curriculum.program_entity_description 
     WHERE pred_prog_entity_id = $1::integer;
     `;

@@ -30,7 +30,7 @@ const Dashboard = () => {
               return (
                 <div
                   key={item.progEntityId}
-                  className="border m-5 p-3 items-center w-60 min-h-100 "
+                  className="border m-5 p-3 flex flex-col w-60 min-h-100 "
                 >
                   <div className="flex items-center">
                     <Image
@@ -42,19 +42,19 @@ const Dashboard = () => {
                     ></Image>
                   </div>
                   <div>
-                    <h3>{item.progTitle}</h3>
-                    <p>{"Apply Date : " + item.prapApplyDate.split("T")[0]}</p>
-                    <p>{"Status : " + item.prapStatus}</p>
-                    <p>{"Last Progress : " + item.latestProgress}</p>
+                    <h3 className="font-bold my-2">{item.progTitle}</h3>
+                    <p className="mb-1">{"Apply Date : " + item.prapApplyDate.split("T")[0]}</p>
+                    <p className="mb-1">{"Status : " + item.prapStatus}</p>
+                    <p className="mb-3">{"Last Progress : " + item.latestProgress}</p>
                   </div>
                   <div>
                     {item.prapStatus === "Failed" ? (
-                      <button className="p-3 bg-slate-800 text-white cursor-no-drop w-full" disabled>
+                      <button className="p-3 bg-gray-600 text-white cursor-no-drop w-full" disabled>
                         Check Progress
                       </button>
                     ) : (
                       <button
-                        className="p-3 bg-blue-700 text-white"
+                        className="p-3 bg-slate-800 text-white w-full"
                         onClick={() =>
                           router.push({
                             pathname: "/app/programs/apply",

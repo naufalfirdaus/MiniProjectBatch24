@@ -14,6 +14,7 @@ import {
   UserImageRequest,
   UserDataRequest,
 } from "@/redux-saga/action/UserAction";
+import * as Yup from "yup";
 
 interface formType {
   firstName: string;
@@ -26,7 +27,14 @@ interface formType {
   image: any;
 }
 
-
+const validation = Yup.object().shape({
+  firstName: Yup.string().required("Please Insert Your First Name"),
+  lastName: Yup.string().required("Please Insert Your Last Name"),
+  birthDate: Yup.date().required("Please Insert Your Birth Date"),
+  degree: Yup.string().required(),
+  school: Yup.string().required("Please Insert Your School Name"),
+  fieldStudy: Yup.string().required("Please Insert Your Field Study"),
+});
 
 const Apply = () => {
   const router = useRouter();
@@ -38,6 +46,7 @@ const Apply = () => {
   const [image, setImage] = useState<any>("");
   const [uploadImage, setUploadImage] = useState<any>(false);
   const [previewImage, setPreviewImage] = useState<any>("");
+  const [motivation, setMotivation] = useState(false)
   const [user, setUser] = useState({
     UserId: "",
     Firstname: "",
@@ -55,8 +64,7 @@ const Apply = () => {
   const initialValues: formType = {
     firstName: UserData?.userFirstName || "",
     lastName: UserData?.userLastName || "",
-    // birthDate: UserData?.userBirthDate?.split("T")[0] || "",
-    birthDate: UserData?.userBirthDate || "",
+    birthDate: UserData?.userBirthDate?.split("T")[0] || "",
     school: UserData?.usersEducations[0].usduSchool || "",
     fieldStudy: UserData?.usersEducations[0].usduFieldStudy || "",
     degree: UserData?.usersEducations[0].usduDegree || "",
@@ -84,6 +92,10 @@ const Apply = () => {
       degree: UserData.usersEducations.usduDegree,
       photo: UserData.userphoto,
     });
+
+    if (UserData.userBirthDate) {
+      handleAge(UserData.userBirthDate);
+    }
   }, [progId]);
 
   console.log("ini user profile ", UserProfile);
@@ -109,9 +121,9 @@ const Apply = () => {
     return yearsDiff;
   };
 
-  const handleAge = (event: any) => {
+  const handleAge = (birthDate: any) => {
     // event.preventDefault();
-    const newBirthDate = event.target.value;
+    const newBirthDate = birthDate;
     setBirthdate(newBirthDate);
 
     if (newBirthDate) {
@@ -124,8 +136,12 @@ const Apply = () => {
   };
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: initialValues,
+    validationSchema: validation,
     onSubmit: async (values) => {
+      if (!motivation) return;
+
       let payload = new FormData();
       payload.append("firstName", values.firstName);
       payload.append("lastName", values.lastName);
@@ -177,6 +193,10 @@ const Apply = () => {
     };
     reader.readAsDataURL(image);
   };
+
+  const handleMotivation = () => {
+    setMotivation(true)
+  }
   return (
     <>
       {/* <Header></Header> */}
@@ -203,9 +223,15 @@ const Apply = () => {
                     id="firstName"
                     value={formik.values.firstName}
                     onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                     placeholder={UserData?.userFirstName}
                     className="mr-2"
                   />
+                  {formik.touched.firstName && formik.errors.firstName && (
+                    <p className="text-red-500">
+                      {formik.errors.firstName as string}
+                    </p>
+                  )}
                 </div>
                 <div className="my-2">
                   <div className="mb-1">
@@ -217,8 +243,14 @@ const Apply = () => {
                     id="lastName"
                     value={formik.values.lastName}
                     onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                     placeholder={UserData?.userLastName}
                   />
+                  {formik.touched.lastName && formik.errors.lastName && (
+                    <p className="text-red-500">
+                      {formik.errors.lastName as string}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="flex flex-row items-center justify-between">
@@ -232,11 +264,18 @@ const Apply = () => {
                     id="birthDate"
                     value={formik.values.birthDate}
                     max={new Date().toISOString().split("T")[0]}
+                    onBlur={formik.handleBlur}
                     // onChange={handleAge}
                     onChange={(event) => {
-                      handleAge(event), formik.handleChange(event);
+                      handleAge(event.currentTarget.value),
+                        formik.handleChange(event);
                     }}
                   />
+                  {formik.touched.birthDate && formik.errors.birthDate && (
+                    <p className="text-red-500">
+                      {formik.errors.birthDate as string}
+                    </p>
+                  )}
                 </div>
                 <div className="mt-5">
                   <svg
@@ -282,10 +321,16 @@ const Apply = () => {
                     name="school"
                     id="school"
                     value={formik.values.school}
+                    onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
                     placeholder={UserData?.usersEducations[0].usduSchool}
                     className="w-full"
                   />
+                  {formik.touched.school && formik.errors.school && (
+                    <p className="text-red-500">
+                      {formik.errors.school as string}
+                    </p>
+                  )}
                 </div>
                 <div className="my-2">
                   <div className="mb-1">
@@ -298,10 +343,16 @@ const Apply = () => {
                     name="fieldStudy"
                     id="fieldStudy"
                     value={formik.values.fieldStudy}
+                    onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
                     placeholder={UserData?.usersEducations[0].usduFieldStudy}
                     className="w-full"
                   />
+                  {formik.touched.fieldStudy && formik.errors.fieldStudy && (
+                    <p className="text-red-500">
+                      {formik.errors.fieldStudy as string}
+                    </p>
+                  )}
                 </div>
                 <div className="my-2">
                   <div className="mb-1">
@@ -313,6 +364,7 @@ const Apply = () => {
                     name="degree"
                     id="degree"
                     value={formik.values.degree}
+                    onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
                     className="w-full"
                   >
@@ -322,6 +374,11 @@ const Apply = () => {
                     <option value="Bachelor">Bachelor</option>
                     <option value="Diploma">Diploma</option>
                   </select>
+                  {formik.touched.degree && formik.errors.degree && (
+                    <p className="text-red-500">
+                      {formik.errors.degree as string}
+                    </p>
+                  )}
                 </div>
                 <div className="flex flex-col my-2">
                   <label htmlFor="motivation" className="mb-1">
@@ -332,7 +389,13 @@ const Apply = () => {
                     id="motivation"
                     rows={4}
                     cols={50}
+                    onChange={handleMotivation}
                   ></textarea>
+                  {!motivation && (
+                    <p className="text-red-500">
+                      Please Insert Your Motivation to Join Bootcamp
+                    </p>
+                  )}
                 </div>
                 <div className="my-2">
                   <span className="mr-3">Curriculum Vitae</span>
@@ -341,12 +404,13 @@ const Apply = () => {
                     name="file"
                     id="file"
                     onChange={uploadConfig("file")}
+                    accept="application/pdf"
                   ></input>
                 </div>
                 <div className="flex flex-col items-center">
                   <button
                     type="submit"
-                    className="bg-blue-500 p-2 w-full mb-5 text-white"
+                    className="bg-slate-800 p-2 w-full mb-5 text-white"
                     onClick={() => {
                       formik.handleSubmit();
                     }}
@@ -359,7 +423,7 @@ const Apply = () => {
             <div className="flex flex-col items-center">
               <div className="flex justify-center">
                 {uploadImage === false ? (
-                  !UserData.userPhoto === null ? (
+                  !UserData?.userPhoto === null ? (
                     <Image
                       width={150}
                       height={150}
@@ -387,12 +451,15 @@ const Apply = () => {
                 )}
               </div>
               <div>
-                <label htmlFor="image" className="mr-3">Upload Image</label>
+                <label htmlFor="image" className="mr-3">
+                  Upload Image
+                </label>
                 <input
                   id="file-upload"
                   name="file-upload"
                   type="file"
                   onChange={imageConfig("file")}
+                  accept="image/jpg"
                 ></input>
               </div>
               <div>

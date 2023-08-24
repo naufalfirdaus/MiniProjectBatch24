@@ -71,7 +71,7 @@ const ProgramBootcamp = () => {
       <Header></Header>
       <Slider></Slider>
       <div>
-        <div className="flex justify-center my-3 p-3 pb-5 border-b border-b-slate-800">
+        <div className="flex justify-center my-3 p-3 pb-5 shadow-md  ">
           <div className="flex flex-row">
             <Search
               label="Search"
@@ -166,7 +166,7 @@ const ProgramBootcamp = () => {
                         })}
                     </p>
                     <button
-                      className="p-1 text-white bg-blue-700 items-center w-28 "
+                      className="p-1 text-white bg-slate-800 items-center w-28 "
                       onClick={() => {
                         // router.push({
                         //   pathname: "/app/programs/[DetailBootcamp]",
