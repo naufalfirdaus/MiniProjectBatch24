@@ -113,6 +113,7 @@ export class UsersService {
       .where('user.userEntityId = :id', { id })
       .leftJoinAndSelect('user.usersEmails', 'usersEmail')
       .leftJoinAndSelect('user.usersPhones', 'usersPhone')
+      .leftJoinAndSelect('user.usersEducations', 'usersEducation')
       .leftJoinAndSelect('usersPhone.uspoPontyCode', 'uspoPontyCode') //penambahan join uspocode untuk mengambilcode nya
       .leftJoinAndSelect('user.usersAddresses', 'usersAddress') //penambaha join address untuk ambil id addres tapi ini belum bisa ke get address yang di table master nya
       .getOne();
@@ -695,7 +696,7 @@ export class UsersService {
         },
       );
 
-      return { useraddress, address, useraddressadty };
+      return { useraddress };
     } catch (error) {
       throw new Error(error.message);
     }
@@ -832,7 +833,7 @@ export class UsersService {
         },
       });
       if (!user) {
-        throw new Error(`User with ID ${usduid} not found.`);
+        throw new Error(`Education ID ${usduid} not found.`);
       }
 
       let userdegree;

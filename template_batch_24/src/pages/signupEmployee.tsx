@@ -52,7 +52,7 @@ export default function signup() {
         uspoPontyCode: values.PontyCode,
         pmailAddress: values.email,
         apply: values.Apply * 1, // Mengonversi string ke angka
-        confirmPassword: values.confirmPassword
+        confirmPassword: values.confirmPassword,
       };
       dispatch(employeeSignupReq(payload));
       // console.log("data payload", payload);
@@ -63,11 +63,7 @@ export default function signup() {
     <div>
       <div className="text-center mt-24">
         <div className="flex items-center justify-center">
-          <img
-            className="h-10 w-auto"
-            src="../assets/images/codeid.png"
-            alt="codeid"
-          />
+          <img className="h-10 w-auto" src="code-colored.webp" alt="codeid" />
         </div>
         <h2 className="text-4xl tracking-tight">Sign up into your account</h2>
         <span className="text-sm">
@@ -81,7 +77,10 @@ export default function signup() {
         </span>
       </div>
       <div className="flex justify-center my-2 mx-4 md:mx-0">
-        <form className="w-full max-w-xl bg-white rounded-lg shadow-md p-6" onSubmit={formik.handleSubmit}>
+        <form
+          className="w-full max-w-xl bg-white rounded-lg shadow-md p-6"
+          onSubmit={formik.handleSubmit}
+        >
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full md:w-full px-3 mb-6">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
@@ -301,13 +300,18 @@ export default function signup() {
             </div>
             <div className="w-full md:w-full px-3 mb-6">
               <button
-              type="submit"
+                type="submit"
                 className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
               >
                 Sign Up
               </button>
               <div className="flex justify-center mt-3">
-                <p className="text-black">If you are apply for bootcamp or jobs, click <Link href="/signup"><span className="font-semibold">here</span></Link></p>
+                <p className="text-black">
+                  If you are apply for bootcamp or jobs, click{" "}
+                  <Link href="/signup">
+                    <span className="font-semibold">here</span>
+                  </Link>
+                </p>
               </div>
             </div>
           </div>

@@ -15,6 +15,11 @@ import {
   handleUpdatePhoneUsers,
 } from "./phoneSaga";
 import { handleAddressUsers, handleUpdateAddressUsers } from "./addressSaga";
+import {
+  handleAddEducationUsers,
+  handleDeleteEducationUsers,
+  handleUpdateEducationUsers,
+} from "./EducationSaga";
 
 function* watchAll() {
   yield all([
@@ -33,6 +38,9 @@ function* watchAll() {
     takeEvery(userAction.DELETE_PHONE_REQ, handleDeletePhoneUsers),
     takeEvery(userAction.ADD_ADDRESS_REQ, handleAddressUsers),
     takeEvery(userAction.UPDATE_ADDRESS_REQ, handleUpdateAddressUsers),
+    takeEvery(userAction.ADD_EDUCATION_REQ, handleAddEducationUsers),
+    takeEvery(userAction.UPDATE_EDUCATION_REQ, handleUpdateEducationUsers),
+    takeEvery(userAction.DELETE_EDUCATION_REQ, handleDeleteEducationUsers),
   ]);
 }
 

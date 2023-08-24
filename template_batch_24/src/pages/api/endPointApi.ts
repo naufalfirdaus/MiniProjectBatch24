@@ -164,6 +164,52 @@ const updateAddress = async (payload: any, id: any) => {
   }
 };
 
+const deleteAddress = async (id: any) => {
+  try {
+    const result = await axios.delete(
+      `${config.domain}/api/users/profile/address/${id}`
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
+
+const addEducation = async (payload: any, id: any) => {
+  try {
+    const result = await axios.post(
+      `${config.domain}/api/users/profile/education/${id}`,
+      payload
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
+
+const updateEducation = async (payload: any, id: any) => {
+  try {
+    const result = await axios.put(
+      `${config.domain}/api/users/profile/education/${id}`,
+      payload
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
+
+const deleteEducation = async (id: any) => {
+  try {
+    const result = await axios.delete(
+      `${config.domain}/api/users/profile/education/${id}`
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
+
 export default {
   userSignUp,
   getAllUser,
@@ -180,4 +226,8 @@ export default {
   deletePhone,
   addAddress,
   updateAddress,
+  deleteAddress,
+  addEducation,
+  updateEducation,
+  deleteEducation,
 };

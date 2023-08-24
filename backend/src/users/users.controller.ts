@@ -103,6 +103,18 @@ export class UsersController {
       AddressId: address.etadAddrId,
     }));
 
+    const userEducation = user.usersEducations.map((education) => ({
+      EducationId: education.usduId,
+      School: education.usduSchool,
+      Degree: education.usduDegree,
+      Study: education.usduFieldStudy,
+      Grade: education.usduGrade,
+      YearStart: education.usduStartDate,
+      YearEnd: education.usduEndDate,
+      Activity: education.usduActivities,
+      Description: education.usduDescription,
+    }));
+
     return {
       userEntityId: user.userEntityId,
       userName: user.userName,
@@ -111,6 +123,7 @@ export class UsersController {
       userEmail: userEmails,
       userPhoneNumber: userPhoneNumbers,
       userAddress: userAddress, //untuk menampilkan users address ketika getone
+      userEducation: userEducation,
     };
   }
 

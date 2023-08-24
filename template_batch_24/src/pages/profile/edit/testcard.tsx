@@ -9,10 +9,10 @@ import { addEducationReq } from "@/redux-saga/action/educationAction";
 
 type Modaleducation = {
   setRefresh: (value: boolean) => void;
-  setOpenModal: (value: string | undefined) => void;
+  setOpenModaltest: (value: string | undefined) => void;
   setDataProfile: any;
 };
-const CardAddEducation = (props: Modaleducation) => {
+const CardAddEducationtest = (props: Modaleducation) => {
   const dispatch = useDispatch();
   const [selectedDegreeCode, setSelectedDegreeCode] = useState("");
   const handleDegreeCodeChange = (event: any) => {
@@ -65,7 +65,7 @@ const CardAddEducation = (props: Modaleducation) => {
         // window.alert("Data Successfully ");
         dispatch(addEducationReq(payload, id));
         props.setRefresh(true);
-        window.location.reload();
+        // window.location.reload();
       } catch (error) {
         console.error("Error:", error);
       }
@@ -333,7 +333,7 @@ const CardAddEducation = (props: Modaleducation) => {
               type="button"
               className="text-sm font-semibold leading-6 text-gray-900"
               onClick={() => {
-                props.setOpenModal(undefined);
+                props.setOpenModaltest(undefined);
               }}
             >
               Cancel
@@ -343,7 +343,7 @@ const CardAddEducation = (props: Modaleducation) => {
               className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               onClick={() => {
                 formik.handleSubmit();
-                props.setOpenModal(undefined);
+                props.setOpenModaltest(undefined);
               }}
             >
               Save
@@ -355,4 +355,4 @@ const CardAddEducation = (props: Modaleducation) => {
   );
 };
 
-export default CardAddEducation;
+export default CardAddEducationtest;

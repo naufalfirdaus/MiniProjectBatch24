@@ -17,10 +17,10 @@ export default function signin() {
     username: Yup.string().required("Username is required"),
     password: Yup.string().min(3).max(10).required("Password is required"),
   });
-  
+
   // useEffect(() => {
   //  dispatch(getDataAllUserReq())
-   
+
   // }, [dispatch]);
 
   const formik = useFormik({
@@ -35,18 +35,14 @@ export default function signin() {
         password: values.password,
       };
       dispatch(userLoginReq(payload));
-      router.push('/profile');
+      router.push("/profile");
     },
   });
   return (
     <div>
       <div className="text-center mt-24">
         <div className="flex items-center justify-center">
-          <img
-            className="h-10 w-auto"
-            src="../assets/images/codeid.png"
-            alt="codeid"
-          />
+          <img className="h-10 w-auto" src="code-colored.webp" alt="codeid" />
         </div>
         <h2 className="text-4xl tracking-tight">Sign in into your account</h2>
         <span className="text-sm">
@@ -60,7 +56,10 @@ export default function signin() {
         </span>
       </div>
       <div className="flex justify-center my-2 mx-4 md:mx-0">
-        <form className="w-full max-w-xl bg-white rounded-lg shadow-md p-6" onSubmit={formik.handleSubmit}>
+        <form
+          className="w-full max-w-xl bg-white rounded-lg shadow-md p-6"
+          onSubmit={formik.handleSubmit}
+        >
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full md:w-full px-3 mb-6">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">

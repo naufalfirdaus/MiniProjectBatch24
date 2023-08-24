@@ -5,26 +5,47 @@ import { useEffect, useState } from "react";
 import { Button, Checkbox, Label, Modal, TextInput } from "flowbite-react";
 
 import { addPhoneReq } from "@/redux-saga/action/phoneAction";
-import { addEducationReq } from "@/redux-saga/action/educationAction";
+import {
+  UpdateEducationRequest,
+  addEducationReq,
+} from "@/redux-saga/action/educationAction";
 
 type Modaleducation = {
   setRefresh: (value: boolean) => void;
-  setOpenModal: (value: string | undefined) => void;
-  setDataProfile: any;
+  setOpenModalEdit: (value: boolean) => void;
+  setId: any;
+  setSchool: any;
+  setDegree: any;
+  setStudy: any;
+  setGrade: any;
+  setStart: any;
+  //   setStartYear: any;
+  //   setEnd: any;
+  //   setEndYear: any;
+  setActivities: any;
+  setDescription: any;
 };
-const CardAddEducation = (props: Modaleducation) => {
+const CardEditEducation = (props: Modaleducation) => {
   const dispatch = useDispatch();
   const [selectedDegreeCode, setSelectedDegreeCode] = useState("");
   const handleDegreeCodeChange = (event: any) => {
     setSelectedDegreeCode(event.target.value);
     formik.setFieldValue("degree", event.target.value);
   };
+  useEffect(() => {
+    setSelectedDegreeCode(props.setDegree);
+  }, [props.setDegree]);
 
   const [selectedStartCode, setSelectedStartCode] = useState("");
+
   const handleStartCodeChange = (event: any) => {
     setSelectedStartCode(event.target.value);
     formik.setFieldValue("start", event.target.value);
   };
+
+  useEffect(() => {
+    setSelectedStartCode(props.setStart);
+  }, [props.setStart]);
 
   const [selectedEndCode, setSelectedEndCode] = useState("");
   const handleEndCodeChange = (event: any) => {
@@ -34,17 +55,17 @@ const CardAddEducation = (props: Modaleducation) => {
 
   const formik = useFormik({
     initialValues: {
-      user_id: props.setDataProfile.userid,
-      school: "",
-      study: "",
-      degree: "",
-      grade: "",
-      start: "",
+      education_id: props.setId,
+      school: props.setSchool,
+      degree: props.setDegree,
+      study: props.setStudy,
+      grade: props.setGrade,
+      start: props.setStart,
       startYear: "",
       end: "",
       endYear: "",
-      activies: "",
-      description: "",
+      activies: props.setActivities,
+      description: props.setDescription,
     },
     onSubmit: async (values) => {
       try {
@@ -61,9 +82,9 @@ const CardAddEducation = (props: Modaleducation) => {
           description: values.description,
         };
 
-        const id = values.user_id;
+        const id = values.education_id;
         // window.alert("Data Successfully ");
-        dispatch(addEducationReq(payload, id));
+        dispatch(UpdateEducationRequest(payload, id));
         props.setRefresh(true);
         window.location.reload();
       } catch (error) {
@@ -74,7 +95,7 @@ const CardAddEducation = (props: Modaleducation) => {
   return (
     <>
       <h2 className="text-base font-semibold leading-7 text-gray-900">
-        Add Education
+        Edit Education
       </h2>
       <div className="w-full bg-white p-3 rounded-md mt-3 mb-3">
         <form>
@@ -333,7 +354,7 @@ const CardAddEducation = (props: Modaleducation) => {
               type="button"
               className="text-sm font-semibold leading-6 text-gray-900"
               onClick={() => {
-                props.setOpenModal(undefined);
+                props.setOpenModalEdit(false);
               }}
             >
               Cancel
@@ -343,7 +364,7 @@ const CardAddEducation = (props: Modaleducation) => {
               className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               onClick={() => {
                 formik.handleSubmit();
-                props.setOpenModal(undefined);
+                props.setOpenModalEdit(false);
               }}
             >
               Save
@@ -355,4 +376,4 @@ const CardAddEducation = (props: Modaleducation) => {
   );
 };
 
-export default CardAddEducation;
+export default CardEditEducation;
