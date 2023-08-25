@@ -1,4 +1,5 @@
 import * as userAction from '../constant/userConstant';
+import { deleteCookie } from 'cookies-next';
 
 const INIT_STATE = {
     isLoggedIn: false,
@@ -21,7 +22,7 @@ const loginReducer = (state = INIT_STATE, action:any) => {
                 currentUser: null,
             };
         case userAction.USER_LOGOUT:
-        sessionStorage.removeItem('access_token');
+        deleteCookie('access_token');
         return {
           ...state,
           isLoggedIn: false,
