@@ -19,7 +19,6 @@ export default function EditFintechModal(props: setModal) {
       fint_name: props.setFintName,
     },
     onSubmit: async (values: any) => {
-      window.alert('Data Successfully Insert');
       const payload = {
         id: values.id,
         fint_code: values.fint_code,

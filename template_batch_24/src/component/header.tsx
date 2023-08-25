@@ -37,7 +37,9 @@ const Header: React.FC = () => {
       const fetchData = async () => {
         const decodedData: any = jwt_decode(userToken);
         setDataProfile(decodedData);
-        dispatch(getDataOneUserReq(decodedData.userid));
+        if (!dataUser || dataUser.length === 0) {
+          dispatch(getDataOneUserReq(decodedData.userid));
+        }
       };
       fetchData();
     } else {
@@ -49,7 +51,7 @@ const Header: React.FC = () => {
     return () => {
       window.removeEventListener('click', handleOutsideClick);
     };
-  }, [router, dispatch]);
+  }, [dataUser, dispatch, router]);
 
   return (
     <header className="flex bg-white p-4 border-b-2">
