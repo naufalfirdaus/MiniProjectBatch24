@@ -1,15 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { useFormik, ErrorMessage } from "formik";
+import { useFormik } from "formik";
 import { useRouter } from "next/router";
-import { LockClosedIcon } from "@heroicons/react/solid";
 import * as Yup from "yup";
 import Link from "next/link";
-import { loginTry, setUserDataFromCookie } from "@/redux/slices/userSlices";
-import { getCookie, hasCookie } from "cookies-next";
-import jwtDecode from "jwt-decode";
-import Page from "./component/commons/Page";
+import { loginTry } from "@/redux/slices/userSlices";
+import { hasCookie } from "cookies-next";
 
 export default function signin() {
   const dispatch = useDispatch();
@@ -23,10 +20,9 @@ export default function signin() {
   useEffect(() => {
     if(hasCookie('access_token') || user){
       router.push("/app");
-    } 
+    }
   }, [user]);
   
-
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -43,12 +39,12 @@ export default function signin() {
   });
 
   if(user){
-    return (<Page><h1>redirect....</h1></Page>)
+    return <div className="h-screen flex items-center justify-center text-5xl font-medium"><h1>Redirect....</h1></div>
   }
 
   return (
-    <div>
-      <div className="text-center mt-24">
+    <div className="h-screen">
+      <div className="text-center pt-24">
         <div className="flex items-center justify-center">
           <img
             className="h-10 w-auto"

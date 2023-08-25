@@ -479,7 +479,7 @@ export default function Dashboard() {
   }, [Object.keys(chartData).length, reload]);
 
   if(Object.keys(chartData).length == 0) {
-    return <h1>Loading..</h1>
+    return <div className="h-screen flex items-center justify-center text-5xl font-medium"><h1>Loading...</h1></div>
   }
 
   return (

@@ -50,7 +50,6 @@ function classNames(...classes: any[]) {
 export default function LandingPage(props: any) {
   const { children } = props;
   const dispatch = useDispatch();
-  const [userData, setUserData] = useState<any>({});
   const [reload, setReload] = useState(false);
   const user = useSelector((state: any) => state.users.user);
 
@@ -65,19 +64,13 @@ export default function LandingPage(props: any) {
       const token = getCookie('access_token') as string; 
       const decode = jwtDecode(token);
       dispatch(setUserDataFromCookie(decode))
-    } else {
-      setUserData(null);
-    }
-
-    if(user){
-      setUserData(user);
-    }
+    } 
     setReload(false);
     
   }, [reload]);
 
   return (
-    <div className="bg-white">
+    <div className="bg-white h-screen">
       <header>
         <Popover className="relative bg-white">
           {({ open }) => (
@@ -186,7 +179,7 @@ export default function LandingPage(props: any) {
                   </Link>
                 </Popover.Group>
                 <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-                  {userData ? (
+                  {user ? (
                     <Menu as="div" className="ml-3 relative">
                       <div>
                         <Menu.Button className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
@@ -219,7 +212,7 @@ export default function LandingPage(props: any) {
                                   )}
                                 >
                                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                    Hi, {Object.keys(userData).length != 0 && userData.username || user.username}
+                                    Hi, {user && user.username}
                                   </dd>
                                 </Link>
                               )}

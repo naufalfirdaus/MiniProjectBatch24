@@ -22,8 +22,6 @@ import { usePathname } from 'next/navigation';
 import { getCookie, hasCookie } from "cookies-next";
 import jwtDecode from "jwt-decode";
 import { logoutTry, setUserDataFromCookie } from "@/redux/slices/userSlices";
-import Page from "../commons/Page";
-
 const navigation = [
   {
     name: "Home",
@@ -100,10 +98,8 @@ export default function AppLayout(props: any) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { children } = props;
   const pathname = usePathname();
-  const [reload, setReload] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state.users.user);
-  const [userData, setUserData] = useState<any>({});
 
   useEffect(() => {
     if(hasCookie('access_token')){
@@ -111,15 +107,9 @@ export default function AppLayout(props: any) {
       const decode = jwtDecode(token);
       dispatch(setUserDataFromCookie(decode))
     } else {
-      setUserData(null);
       router.push("/signin");
     }
-
-    if(user){
-      setUserData(user);
-    }
-    setReload(false);
-  }, [reload]);
+  }, []);
   
   const onLogout = (e: any) => {
     e.preventDefault();
@@ -128,7 +118,7 @@ export default function AppLayout(props: any) {
   };
 
   if(!user) {
-    return (<Page><h1>redirect....</h1></Page>)
+    return (<div className="h-screen flex items-center justify-center text-5xl font-medium"><h1>Redirect...</h1></div>);
   }
 
   return (
@@ -182,9 +172,9 @@ export default function AppLayout(props: any) {
                 </div>
               </Transition.Child>
               <div className="flex-shrink-0 flex items-center px-4">
-                <Image width={50} height={50}
+                <Image width={200} height={200}
                   className="h-10 w-auto"
-                  src="/assets/images/codeid_logo.png"
+                  src="/assets/images/code-txt.png"
                   alt="codeid"
                 />
               </div>
@@ -193,7 +183,7 @@ export default function AppLayout(props: any) {
                   <div className="space-y-1">
                     {user && navigation
                       .filter((item) =>
-                        item.roles.includes(user.roles || userData.roles)
+                        item.roles.includes(user.roles)
                       )
                       .map((item) => { 
                         const isActive = pathname == item.href;
@@ -240,9 +230,9 @@ export default function AppLayout(props: any) {
         <div className="flex flex-col w-64 border-r border-gray-200 pt-5 pb-4 bg-gray-100">
           <div className="flex items-center flex-shrink-0 px-6">
             <Link href="/">
-              <Image width={50} height={50}
+              <Image width={200} height={200}
                 className="h-10 w-auto"
-                src="/assets/images/codeid_logo.png"
+                src="/assets/images/code-txt.png"
                 alt="codeid"
               />
             </Link>
@@ -267,10 +257,10 @@ export default function AppLayout(props: any) {
                           />
                           <span className="flex-1 flex flex-col min-w-0">
                             <span className="text-gray-900 text-sm font-medium truncate">
-                              {user && user.username || userData.username}
+                              {user && user.username}
                             </span>
                             <span className="text-gray-500 text-sm truncate">
-                              {user && user.roles || userData.roles}
+                              {user && user.roles}
                             </span>
                           </span>
                         </span>
@@ -403,7 +393,7 @@ export default function AppLayout(props: any) {
               <div className="space-y-1">
                 {user && navigation
                   .filter((item) =>
-                    item.roles.includes(user.roles || userData.roles)
+                    item.roles.includes(user.roles)
                   )
                   .map((item) => {
                     const isActive = pathname == item.href;
