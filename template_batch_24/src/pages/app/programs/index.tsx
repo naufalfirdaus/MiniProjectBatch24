@@ -4,7 +4,7 @@ import Link from "next/link";
 import programs from "@/pages/api/programs";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { GetProgramRequest } from "@/redux-saga/action/ProgramsAction";
+import { GetProgramRequest } from "@/redux-saga/action/programsAction";
 import config from "@/config/config";
 import { useRouter } from "next/router";
 import Search from "./Search";

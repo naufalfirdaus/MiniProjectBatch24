@@ -1,4 +1,4 @@
-import * as ProgramAction from "../constant/ProgramsConstant";
+import * as ProgramAction from "../constant/programsConstant";
 
 // export const GetProgramRequest = (payload: any) => ({
 export const GetProgramRequest = (payload: any) => ({

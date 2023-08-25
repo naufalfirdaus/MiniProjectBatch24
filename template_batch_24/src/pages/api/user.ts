@@ -4,7 +4,8 @@ import { getCookie } from "cookies-next";
 
 const signin = async (params: any) => {
   try {
-    const result = await axios.post(`${config.domain}/users/signin`, params);
+    // const result = await axios.post(`${config.domain}/users/signin`, params);
+    const result = await axios.post(`${config.domain}/api/signin`, params);
     return result;
   } catch (error) {
     return error;
@@ -16,7 +17,8 @@ const profile = async () => {
     Authorization: `Bearer ${getCookie("access-token")}`,
   };
   try {
-    const result = await axios.get(`${config.domain}/users/profile`);
+    // const result = await axios.get(`${config.domain}/users/profile`);
+    const result = await axios.get(`${config.domain}/api/profile`);
     return result;
   } catch (error) {
     return error;
@@ -38,9 +40,11 @@ const uploadImage = async (userId: string, payload: any) => {
 
 const getData = async (payload: any) => {
   try {
-    const result = await axios.get(`${config.domain}/users/user-data`, {
-      params: { userEntityId: payload },
-    });
+    // const result = await axios.get(`${config.domain}/users/user-data`, {
+    //   params: { userEntityId: payload },
+    // });
+    const result = await axios.get(`${config.domain}/api/${payload}`);
+
     return result;
   } catch (error) {}
 };

@@ -1,7 +1,7 @@
 import { takeEvery, all, take } from "redux-saga/effects";
-import * as ActionApply from "../constant/ApplyConstant";
-import * as ActionProgram from "../constant/ProgramsConstant";
-import * as ActionUser from "../constant/UserConstant";
+import * as ActionApply from "../constant/applyConstant";
+import * as ActionProgram from "../constant/programsConstant";
+import * as userAction from "../constant/userConstant";
 import { handleCreateApply } from "./applySaga";
 import {
   handleGetDetail,
@@ -9,7 +9,9 @@ import {
   handleGetDashboard,
   handleGetProgress
 } from "./programSaga";
-import { handleSignin, handleSignout, handleImage, handleData } from "./userSaga";
+// import { handleSignin, handleSignout, handleImage, handleData } from "./userSaga";
+import { handleImage, getOneUser } from "./userSaga";
+import { loginSaga } from "./loginSaga";
 
 function* watchAll() {
   yield all([
@@ -18,10 +20,14 @@ function* watchAll() {
     takeEvery(ActionProgram.GET_DETAIL_REQ, handleGetDetail),
     takeEvery(ActionProgram.GET_DASHBOARD_REQ, handleGetDashboard),
     takeEvery(ActionProgram.GET_PROGRESS_REQ, handleGetProgress),
-    takeEvery(ActionUser.USER_SIGNIN_REQ, handleSignin),
-    takeEvery(ActionUser.USER_SIGNOUT_REQ, handleSignout),
-    takeEvery(ActionUser.USER_IMAGE_REQ, handleImage),
-    takeEvery(ActionUser.USER_DATA_REQ, handleData),
+    // takeEvery(ActionUser.USER_SIGNIN_REQ, handleSignin),
+    // takeEvery(ActionUser.USER_SIGNOUT_REQ, handleSignout),
+    takeEvery(userAction.USER_IMAGE_REQ, handleImage),
+    // takeEvery(ActionUser.USER_DATA_REQ, handleData),
+    takeEvery(userAction.USER_LOGIN_REQ, loginSaga),
+    takeEvery(userAction.GET_ONE_USER_REQ, getOneUser),
+
+
   ]);
 }
 

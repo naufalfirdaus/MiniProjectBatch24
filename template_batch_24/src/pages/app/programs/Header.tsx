@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Menu from "@mui/joy/Menu";
@@ -9,16 +9,35 @@ import Avatar from "@mui/material/Avatar";
 import config from "@/config/config";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { UserDataRequest } from "@/redux-saga/action/UserAction";
+// import { UserDataRequest } from "@/redux-saga/action/userAction";
+import jwt_decode from "jwt-decode";
+import { getCookie } from "cookies-next";
+import { useRouter } from "next/router";
+import { getDataOneUserReq } from "@/redux-saga/action/userAction";
 
 const Header = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const { UserProfile } = useSelector((state: any) => state.userState);
-  const UserData = useSelector((state: any) => state.userState.data);
+  // const UserData = useSelector((state: any) => state.userState.data);
+  const UserData = useSelector((state: any) => state.userState.oneUser);
+  const [userId, setUserId] = useState();
 
   useEffect(() => {
-    dispatch(UserDataRequest(UserProfile?.UserId));
-  }, []);
+    const userToken = getCookie("access_token");
+    if (typeof userToken === "string") {
+      const fetchData = async () => {
+        const decodedData: any = jwt_decode(userToken);
+        console.log('INI DECODED DATA', decodedData)
+        setUserId(decodedData.userid)
+        dispatch(getDataOneUserReq(userId));
+      };
+      console.log(fetchData());
+    } else {
+      router.push("/signin");
+    }
+    console.log('INI USER ID', userId)
+  }, [dispatch, router, userId]);
 
   return (
     <nav className="bg-white shadow" role="navigation">
@@ -95,10 +114,10 @@ const Header = () => {
             <li>
               <Dropdown sx={{ border: 0 }}>
                 <MenuButton>
-                  {UserData?.userPhoto ? (
+                  {UserData?.oneUSerData?.userPhoto ? (
                     <Avatar
                       alt="User Image"
-                      src={`${config.domain}/programs/image/${UserData?.userPhoto}`}
+                      src={`${config.domain}/programs/image/${UserData?.oneUSerData?.userPhoto}`}
                     />
                   ) : (
                     <Avatar

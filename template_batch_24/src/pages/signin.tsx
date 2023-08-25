@@ -6,8 +6,9 @@ import { useRouter } from "next/router";
 import { LockClosedIcon } from "@heroicons/react/solid";
 import * as Yup from "yup";
 import Link from "next/link";
-import { UserSigninRequest } from "@/redux-saga/action/UserAction";
+// import { UserSigninRequest } from "@/redux-saga/action/userAction";
 import Image from "next/image";
+import { userLoginReq } from "@/redux-saga/action/loginAction";
 
 export default function signin() {
   const dispatch = useDispatch();
@@ -29,7 +30,8 @@ export default function signin() {
         username: values.username,
         password: values.password,
       };
-      dispatch(UserSigninRequest(payload));
+      // dispatch(UserSigninRequest(payload));
+      dispatch(userLoginReq(payload));
       window.alert("Login Berhasil");
       router.push("app/programs");
     },

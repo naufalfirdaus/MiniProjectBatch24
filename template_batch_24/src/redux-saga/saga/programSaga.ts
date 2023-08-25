@@ -9,7 +9,7 @@ import {
   GetDashboardFailed,
   GetProgressSuccess,
   GetProgressFailed
-} from "../action/ProgramsAction";
+} from "../action/programsAction";
 
 // function* handleGetProgram(action: any): any {
 function* handleGetProgram(action: any): any {

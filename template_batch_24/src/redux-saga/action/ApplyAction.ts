@@ -1,4 +1,4 @@
-import * as ApplyAction from "../constant/ApplyConstant";
+import * as ApplyAction from '../constant/applyConstant';
 
 export const AddApplyRequest = (
   userId: string,

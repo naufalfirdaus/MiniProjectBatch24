@@ -1,6 +1,6 @@
 import { call, put } from "redux-saga/effects";
 import programs from "@/pages/api/programs";
-import { AddApplySuccess, AddApplyFailed } from "../action/ApplyAction";
+import { AddApplySuccess, AddApplyFailed } from "../action/applyAction";
 
 // function* handleGetRegion(action:any):any {
 //     const { payload } = action

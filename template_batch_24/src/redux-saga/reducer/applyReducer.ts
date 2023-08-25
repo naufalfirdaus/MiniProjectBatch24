@@ -1,4 +1,4 @@
-import * as ActionType from "../constant/ApplyConstant";
+import * as ActionType from "../constant/applyConstant";
 
 const INIT_STATE = {
   data: [],

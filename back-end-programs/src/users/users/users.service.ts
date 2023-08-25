@@ -12,22 +12,42 @@ export class UsersService {
     private jwtService: JwtService,
   ) {}
 
-  private async findUserByUsername(username: string) {
-    return this.userRepo.findOne({
+  // private async findUserByUsername(username: string) {
+  //   return this.userRepo.findOne({
+  //     where: [
+  //       { userName: username },
+  //       { usersEmails: { pmailAddress: username } },
+  //     ],
+  //     relations: {
+  //       usersEmails: true,
+  //       usersPhones: true,
+  //       usersEducations: true,
+  //     },
+  //   });
+  // }
+
+  // public async validateUser(username: string, password: string) {
+  //   const user = await this.findUserByUsername(username);
+
+  //   if (user) {
+  //     const compare = await bcrypt.compare(password, user.userPassword);
+  //     if (compare) {
+  //       const { userPassword, ...result } = user;
+  //       return result;
+  //     }
+  //   }
+
+  //   return null;
+  // }
+
+  public async validateUser(username: string, password: string) {
+    const user = await this.userRepo.findOne({
       where: [
         { userName: username },
         { usersEmails: { pmailAddress: username } },
       ],
-      relations: {
-        usersEmails: true,
-        usersPhones: true,
-        usersEducations: true,
-      },
+      relations: ['usersEmails'],
     });
-  }
-
-  public async validateUser(username: string, password: string) {
-    const user = await this.findUserByUsername(username);
 
     if (user) {
       const compare = await bcrypt.compare(password, user.userPassword);
@@ -40,33 +60,48 @@ export class UsersService {
     return null;
   }
 
+  // public async login(user: any) {
+  //   const User = await this.findUserByUsername(user.userName);
+
+  //   const {
+  //     userEntityId,
+  //     userName,
+  //     userFirstName,
+  //     userLastName,
+  //     userCurrentRole,
+  //   } = user;
+
+  //   const { usersEmails, usersPhones, usersEducations, userPhoto } = User;
+
+  //   const payload = {
+  //     userid: userEntityId,
+  //     username: userName,
+  //     firstname: userFirstName,
+  //     lastname: userLastName,
+  //     userphoto: userPhoto,
+  //     email: usersEmails[0].pmailAddress,
+  //     phone: usersPhones[0].uspoNumber,
+  //     roleid: userCurrentRole,
+  //     school: usersEducations[0].usduSchool,
+  //     degree: usersEducations[0].usduDegree,
+  //     fieldstudy: usersEducations[0].usduFieldStudy,
+  //   };
+
+  //   return {
+  //     access_token: this.jwtService.sign(payload),
+  //   };
+  // }
+
   public async login(user: any) {
-    const User = await this.findUserByUsername(user.userName);
-
-    const {
-      userEntityId,
-      userName,
-      userFirstName,
-      userLastName,
-      userCurrentRole,
-    } = user;
-
-    const { usersEmails, usersPhones, usersEducations, userPhoto } = User;
-
     const payload = {
-      userid: userEntityId,
-      username: userName,
-      firstname: userFirstName,
-      lastname: userLastName,
-      userphoto: userPhoto,
-      email: usersEmails[0].pmailAddress,
-      phone: usersPhones[0].uspoNumber,
-      roleid: userCurrentRole,
-      school: usersEducations[0].usduSchool,
-      degree: usersEducations[0].usduDegree,
-      fieldstudy: usersEducations[0].usduFieldStudy,
+      userid: user.userEntityId,
+      username: user.userName,
+      firstname: user.userFirstName,
+      lastname: user.userLastName,
+      email: user.pmailAddress,
+      phone: user.uspoNumber,
+      roleid: user.userCurrentRole,
     };
-
     return {
       access_token: this.jwtService.sign(payload),
     };
@@ -87,5 +122,17 @@ export class UsersService {
     } catch (error) {
       error.message;
     }
+  }
+
+  public async findOne(id: number) {
+    return await this.userRepo
+      .createQueryBuilder('user')
+      .where('user.userEntityId = :id', { id })
+      .leftJoinAndSelect('user.usersEmails', 'usersEmail')
+      .leftJoinAndSelect('user.usersPhones', 'usersPhone')
+      .leftJoinAndSelect('user.usersEducations', 'usersEducation')
+      .leftJoinAndSelect('usersPhone.uspoPontyCode', 'uspoPontyCode') //penambahan join uspocode untuk mengambilcode nya
+      .leftJoinAndSelect('user.usersAddresses', 'usersAddress') //penambaha join address untuk ambil id addres tapi ini belum bisa ke get address yang di table master nya
+      .getOne();
   }
 }

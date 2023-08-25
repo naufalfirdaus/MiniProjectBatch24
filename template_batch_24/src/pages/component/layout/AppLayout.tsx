@@ -30,11 +30,12 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/router";
 import {
-  UserDataRequest,
-  UserSignoutRequest,
-} from "@/redux-saga/action/UserAction";
+  // UserDataRequest,
+  // UserSignoutRequest,
+} from "@/redux-saga/action/userAction";
 import config from "@/config/config";
 import Image from "next/image";
+import { userLogout } from "@/redux-saga/action/logoutAction";
 
 const navigation = [
   {
@@ -62,14 +63,16 @@ export default function AppLayout(props: any) {
 
   const dispatch = useDispatch();
   const { UserProfile } = useSelector((state: any) => state.userState);
-  const UserData = useSelector((state: any) => state.userState.data);
+  // const UserData = useSelector((state: any) => state.userState.data);
+  const UserData = useSelector((state: any) => state.userState.oneUser);
 
   useEffect(() => {
-    dispatch(UserDataRequest(UserProfile.UserId));
+    // dispatch(UserDataRequest(UserProfile.UserId));
   }, []);
 
   const onLogout = () => {
-    dispatch(UserSignoutRequest());
+    // dispatch(UserSignoutRequest());
+    dispatch(userLogout());
     router.push("/signin");
   };
 
@@ -197,10 +200,10 @@ export default function AppLayout(props: any) {
                     <Menu.Button className="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-purple-500">
                       <span className="flex w-full justify-between items-center">
                         <span className="flex min-w-0 items-center justify-between space-x-3">
-                          {UserData?.userPhoto ? (
+                          {UserData?.oneUSerData?.userPhoto ? (
                             <Image
                               className="w-10 h-10 bg-gray-300 object-cover rounded-full flex-shrink-0"
-                              src={`${config.domain}/programs/image/${UserData?.userPhoto}`}
+                              src={`${config.domain}/programs/image/${UserData?.oneUSerData?.userPhoto}`}
                               width={100}
                               height={100}
                               alt="User Image"
@@ -216,7 +219,7 @@ export default function AppLayout(props: any) {
                           )}
                           <span className="flex-1 flex flex-col min-w-0">
                             <span className="text-gray-900 text-sm font-medium truncate">
-                              {UserData?.userName}
+                              {UserData?.oneUSerData?.userName}
                             </span>
                             <span className="text-gray-500 text-sm truncate">
                               {UserProfile?.email}
@@ -339,10 +342,10 @@ export default function AppLayout(props: any) {
                     <div>
                       <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                         <span className="sr-only">Open user menu</span>
-                        {UserData?.userPhoto ? (
+                        {UserData?.oneUSerData?.userPhoto ? (
                           <Image
                             className="w-10 h-10 bg-gray-300 object-cover rounded-full flex-shrink-0"
-                            src={`${config.domain}/programs/image/${UserData?.userPhoto}`}
+                            src={`${config.domain}/programs/image/${UserData?.oneUSerData?.userPhoto}`}
                             width={100}
                             height={100}
                             alt="User Image"

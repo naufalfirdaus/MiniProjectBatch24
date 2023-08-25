@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
-import { AddApplyRequest } from "@/redux-saga/action/ApplyAction";
+import { AddApplyRequest } from "@/redux-saga/action/applyAction";
 import { useSelector } from "react-redux";
 import config from "@/config/config";
 import { useRouter } from "next/router";
 import AppLayout from "@/pages/component/layout/AppLayout";
 import Header from "./Header";
 import Checkpoint from "./Checkpoint";
-import { GetProgressRequest } from "@/redux-saga/action/ProgramsAction";
+import { GetProgressRequest } from "@/redux-saga/action/programsAction";
 import {
   UserImageRequest,
-  UserDataRequest,
-} from "@/redux-saga/action/UserAction";
+  // UserDataRequest,
+} from "@/redux-saga/action/userAction";
 import * as Yup from "yup";
 
 interface formType {
@@ -46,7 +46,7 @@ const Apply = () => {
   const [image, setImage] = useState<any>("");
   const [uploadImage, setUploadImage] = useState<any>(false);
   const [previewImage, setPreviewImage] = useState<any>("");
-  const [motivation, setMotivation] = useState(false)
+  const [motivation, setMotivation] = useState(false);
   const [user, setUser] = useState({
     UserId: "",
     Firstname: "",
@@ -56,18 +56,21 @@ const Apply = () => {
     degree: "",
     photo: "",
   });
-  const { UserProfile } = useSelector((state: any) => state.userState);
-  const UserData = useSelector((state: any) => state.userState.data);
+  // const { UserProfile } = useSelector((state: any) => state.userState);
+  const UserData = useSelector((state: any) => state.userState.oneUser);
   const detail = useSelector((state: any) => state.programState.detail);
   const progress = useSelector((state: any) => state.programState.progress);
 
   const initialValues: formType = {
-    firstName: UserData?.userFirstName || "",
-    lastName: UserData?.userLastName || "",
-    birthDate: UserData?.userBirthDate?.split("T")[0] || "",
-    school: UserData?.usersEducations[0].usduSchool || "",
-    fieldStudy: UserData?.usersEducations[0].usduFieldStudy || "",
-    degree: UserData?.usersEducations[0].usduDegree || "",
+    firstName: UserData?.oneUSerData?.userFirstName || "",
+    lastName: UserData?.oneUSerData?.userLastName || "",
+    birthDate: UserData?.oneUSerData?.userBirthDate?.split("T")[0] || "",
+    // school: UserData?.usersEducations[0].usduSchool || "",
+    // fieldStudy: UserData?.usersEducations[0].usduFieldStudy || "",
+    // degree: UserData?.usersEducations[0].usduDegree || "",
+    school: UserData?.oneUSerData?.userEducation[0].School || "",
+    fieldStudy: UserData?.oneUSerData?.userEducation[0].Study || "",
+    degree: UserData?.oneUSerData?.userEducation[0]?.Degree || "",
     file: null,
     image: null,
   };
@@ -75,30 +78,34 @@ const Apply = () => {
   console.log("photo ", UserData);
 
   useEffect(() => {
-    dispatch(UserDataRequest(UserProfile.UserId));
-    dispatch(GetProgressRequest(UserProfile.UserId, progId));
+    // dispatch(UserDataRequest(UserProfile.UserId));
+    // dispatch(GetProgressRequest(UserProfile.UserId, progId));
     setProgId(
       parseInt(detail?.bootcampAndMentor?.progEntityId || query.progId)
     );
+    dispatch(GetProgressRequest(UserData?.oneUSerData?.userEntityId, progId));
     console.log("ini user progid ", progId);
 
-    setUser({
-      ...user,
-      UserId: UserProfile.UserId,
-      Firstname: UserData.userFirstName,
-      Lastname: UserData.userLastName,
-      school: UserData.usersEducations.usduSchool,
-      Fieldstudy: UserData.usersEducations.usduFieldStudy,
-      degree: UserData.usersEducations.usduDegree,
-      photo: UserData.userphoto,
-    });
+    // setUser({
+    //   ...user,
+    //   UserId: UserProfile.UserId,
+    //   Firstname: UserData.userFirstName,
+    //   Lastname: UserData.userLastName,
+    //   // school: UserData.usersEducations.usduSchool,
+    //   // Fieldstudy: UserData.usersEducations.usduFieldStudy,
+    //   // degree: UserData.usersEducations.usduDegree,
+    //   school: UserData.userEducation[0].School,
+    //   Fieldstudy: UserData.userEducation[0].Study,
+    //   degree: UserData.userEducation[0].Degree,
+    //   photo: UserData.userphoto,
+    // });
 
-    if (UserData.userBirthDate) {
-      handleAge(UserData.userBirthDate);
+    if (UserData?.oneUSerData?.userBirthDate) {
+      handleAge(UserData?.oneUSerData?.userBirthDate);
     }
   }, [progId]);
 
-  console.log("ini user profile ", UserProfile);
+  // console.log("ini user profile ", UserProfile);
   console.log("ini user data ", UserData);
   console.log("ini user detail ", detail);
   console.log("ini user user ", user);
@@ -154,11 +161,13 @@ const Apply = () => {
 
       let imageForm = new FormData();
       imageForm.append("file", values.image);
-      dispatch(UserImageRequest(user.UserId, imageForm));
+      // dispatch(UserImageRequest(user.UserId, imageForm));
+      dispatch(UserImageRequest(UserData.oneUSerData.userEntityId, imageForm));
 
       dispatch(
         AddApplyRequest(
-          UserProfile.UserId,
+          // UserProfile.UserId,
+          UserData.oneUSerData.userEntityId,
           detail.bootcampAndMentor.progEntityId,
           payload
         )
@@ -195,8 +204,8 @@ const Apply = () => {
   };
 
   const handleMotivation = () => {
-    setMotivation(true)
-  }
+    setMotivation(true);
+  };
   return (
     <>
       {/* <Header></Header> */}
@@ -224,7 +233,7 @@ const Apply = () => {
                     value={formik.values.firstName}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    placeholder={UserData?.userFirstName}
+                    placeholder={UserData?.oneUSerData?.userFirstName}
                     className="mr-2"
                   />
                   {formik.touched.firstName && formik.errors.firstName && (
@@ -244,7 +253,7 @@ const Apply = () => {
                     value={formik.values.lastName}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    placeholder={UserData?.userLastName}
+                    placeholder={UserData?.oneUSerData?.userLastName}
                   />
                   {formik.touched.lastName && formik.errors.lastName && (
                     <p className="text-red-500">
@@ -323,7 +332,8 @@ const Apply = () => {
                     value={formik.values.school}
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
-                    placeholder={UserData?.usersEducations[0].usduSchool}
+                    // placeholder={UserData?.usersEducations[0].usduSchool}
+                    placeholder={UserData?.oneUSerData?.userEducation[0].School}
                     className="w-full"
                   />
                   {formik.touched.school && formik.errors.school && (
@@ -345,7 +355,8 @@ const Apply = () => {
                     value={formik.values.fieldStudy}
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
-                    placeholder={UserData?.usersEducations[0].usduFieldStudy}
+                    // placeholder={UserData?.usersEducations[0].usduFieldStudy}
+                    placeholder={UserData?.oneUSerData?.userEducation[0].Study}
                     className="w-full"
                   />
                   {formik.touched.fieldStudy && formik.errors.fieldStudy && (
@@ -423,7 +434,7 @@ const Apply = () => {
             <div className="flex flex-col items-center">
               <div className="flex justify-center">
                 {uploadImage === false ? (
-                  !UserData?.userPhoto === null ? (
+                  !UserData?.oneUSerData?.userPhoto === null ? (
                     <Image
                       width={150}
                       height={150}
@@ -436,7 +447,7 @@ const Apply = () => {
                       width={150}
                       height={150}
                       alt="user photo"
-                      src={`${config.domain}/programs/image/${UserData?.userPhoto}`}
+                      src={`${config.domain}/programs/image/${UserData?.oneUSerData?.userPhoto}`}
                       className="rounded-full"
                     ></Image>
                   )

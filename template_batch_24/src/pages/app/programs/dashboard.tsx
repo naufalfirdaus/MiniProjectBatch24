@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { GetDashboardRequest } from "@/redux-saga/action/ProgramsAction";
+import { GetDashboardRequest } from "@/redux-saga/action/programsAction";
 import config from "@/config/config";
 import { useRouter } from "next/router";
 import AppLayout from "@/pages/component/layout/AppLayout";
@@ -11,13 +11,14 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const dashboard = useSelector((state: any) => state.programState.dashboard);
-  const { UserProfile } = useSelector((state: any) => state.userState);
+  // const { UserProfile } = useSelector((state: any) => state.userState);
+  const UserData = useSelector((state: any) => state.userState.oneUser);
 
-  console.log(UserProfile);
+  console.log(UserData);
   console.log(dashboard);
 
   useEffect(() => {
-    dispatch(GetDashboardRequest(UserProfile.UserId));
+    dispatch(GetDashboardRequest(UserData?.oneUSerData?.userEntityId));
   }, []);
 
   return (

@@ -1,4 +1,4 @@
-import * as ActionType from "../constant/ProgramsConstant";
+import * as ActionType from "../constant/programsConstant";
 
 const INIT_STATE = {
   program: [],
