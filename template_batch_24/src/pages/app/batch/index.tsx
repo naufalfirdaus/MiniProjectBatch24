@@ -7,15 +7,15 @@ import Link from 'next/link';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { deleteBatchTry, getBatchFetch, getByNameAndStatusFetch, updateBatchStatusTry } from '@/redux/slices/batchSlices';
-import { getPassedCandidateBootcampFetch } from '@/redux/slices/candidateSlices';
+import { deleteBatchTry, getBatchFetch, getByNameAndStatusFetch, updateBatchStatusTry } from '@/redux-saga/slices/batchSlices';
+import { getPassedCandidateBootcampFetch } from '@/redux-saga/slices/candidateSlices';
 import batch from '@/pages/api/batch';
 
 export default function Batch() {
   const dispatch = useDispatch();
   const batchs = useSelector((state: any) => state.batchs.batchs);
   const batchLoad = useSelector((state: any) => state.batchs.status);
-  const user = useSelector((state: any) => state.users.user);
+  const user = useSelector((state: any) => state.login.currentUser);
   const [reload, setReload] = useState(false);
 
   useEffect(() => {

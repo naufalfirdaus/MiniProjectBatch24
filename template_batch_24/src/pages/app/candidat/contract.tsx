@@ -1,6 +1,6 @@
 import Pagination from '@/pages/component/commons/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCandidateFetch } from '@/redux/slices/candidateSlices';
+import { getCandidateFetch } from '@/redux-saga/slices/candidateSlices';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { paginate } from '@/helper/paginate';

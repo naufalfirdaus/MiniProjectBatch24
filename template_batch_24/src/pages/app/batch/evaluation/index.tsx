@@ -1,6 +1,6 @@
 import Page from "@/pages/component/commons/Page";
 import AppLayout from "@/pages/component/layout/AppLayout";
-import { getBatchByIdFetch, getBatchEvaluationFetch, updateTraineeEvalutaionReviewTry } from "@/redux/slices/batchSlices";
+import { getBatchByIdFetch, getBatchEvaluationFetch, updateTraineeEvalutaionReviewTry } from "@/redux-saga/slices/batchSlices";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";

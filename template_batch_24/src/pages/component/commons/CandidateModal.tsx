@@ -1,6 +1,6 @@
-import { updateCandidateStatusTry } from "@/redux/slices/candidateSlices";
+import { updateCandidateStatusTry } from "@/redux-saga/slices/candidateSlices";
 import { Dialog, Transition } from "@headlessui/react";
-import { ChangeEvent, Fragment, useState } from "react";
+import { Fragment, useState } from "react";
 import { useDispatch } from "react-redux";
 
 export default function CandidateModal(props: any) {

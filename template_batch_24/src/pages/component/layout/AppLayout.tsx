@@ -3,25 +3,26 @@ import { Dialog, Menu, Transition } from "@headlessui/react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   HomeIcon,
-  MenuAlt1Icon,
-  XIcon,
-  SelectorIcon,
-  ViewGridAddIcon,
+  Bars3Icon,
+  XMarkIcon,
+  ChevronUpDownIcon,
+  SquaresPlusIcon,
   CogIcon,
-  PhoneOutgoingIcon,
+  PhoneArrowUpRightIcon,
   UserGroupIcon,
   AcademicCapIcon,
   BookOpenIcon,
-} from "@heroicons/react/outline";
-
-import { SearchIcon } from "@heroicons/react/solid";
+  MagnifyingGlassIcon,
+  BriefcaseIcon,
+} from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { usePathname } from 'next/navigation';
 import { getCookie, hasCookie } from "cookies-next";
 import jwtDecode from "jwt-decode";
-import { logoutTry, setUserDataFromCookie } from "@/redux/slices/userSlices";
+import { userLoginSetToken } from "@/redux-saga/action/loginAction";
+import { userLogout } from "@/redux-saga/action/logoutAction";
 const navigation = [
   {
     name: "Home",
@@ -40,7 +41,7 @@ const navigation = [
   {
     name: "Batch",
     href: "/app/batch",
-    icon: ViewGridAddIcon,
+    icon: SquaresPlusIcon,
     current: false,
     roles: ["Administrator", "Recruiter", "Instructor"],
   },
@@ -54,7 +55,7 @@ const navigation = [
   {
     name: "Placement",
     href: "/app/placement",
-    icon: UserGroupIcon,
+    icon: BriefcaseIcon,
     current: false,
     roles: ["Administrator", "Recruiter", "Sales"],
   },
@@ -68,7 +69,7 @@ const navigation = [
   {
     name: "Hiring",
     href: "/app/hiring",
-    icon: PhoneOutgoingIcon,
+    icon: PhoneArrowUpRightIcon,
     current: false,
     roles: ["Administrator", "Recruiter", "Sales"],
   },
@@ -99,13 +100,13 @@ export default function AppLayout(props: any) {
   const { children } = props;
   const pathname = usePathname();
   const dispatch = useDispatch();
-  const user = useSelector((state: any) => state.users.user);
+  const user = useSelector((state: any) => state.login.currentUser);
 
   useEffect(() => {
     if(hasCookie('access_token')){
       const token = getCookie('access_token') as string; 
       const decode = jwtDecode(token);
-      dispatch(setUserDataFromCookie(decode))
+      dispatch(userLoginSetToken(decode))
     } else {
       router.push("/signin");
     }
@@ -113,7 +114,7 @@ export default function AppLayout(props: any) {
   
   const onLogout = (e: any) => {
     e.preventDefault();
-    dispatch(logoutTry());
+    dispatch(userLogout());
     router.push("/");
   };
 
@@ -167,7 +168,7 @@ export default function AppLayout(props: any) {
                     onClick={() => setSidebarOpen(false)}
                   >
                     <span className="sr-only">Close sidebar</span>
-                    <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                    <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
                   </button>
                 </div>
               </Transition.Child>
@@ -264,7 +265,7 @@ export default function AppLayout(props: any) {
                             </span>
                           </span>
                         </span>
-                        <SelectorIcon
+                        <ChevronUpDownIcon
                           className="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500"
                           aria-hidden="true"
                         />
@@ -437,7 +438,7 @@ export default function AppLayout(props: any) {
             onClick={() => setSidebarOpen(true)}
           >
             <span className="sr-only">Open sidebar</span>
-            <MenuAlt1Icon className="h-6 w-6" aria-hidden="true" />
+            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
           <div className="flex-1 flex justify-between px-4 sm:px-6 lg:px-8">
             <div className="flex-1 flex">
@@ -447,7 +448,7 @@ export default function AppLayout(props: any) {
                 </label>
                 <div className="relative w-full text-gray-400 focus-within:text-gray-600">
                   <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-                    <SearchIcon className="h-5 w-5" aria-hidden="true" />
+                    <MagnifyingGlassIcon className="h-5 w-5" aria-hidden="true" />
                   </div>
                   <input
                     id="search_field"

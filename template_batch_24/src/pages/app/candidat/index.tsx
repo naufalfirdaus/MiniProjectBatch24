@@ -5,7 +5,7 @@ import Apply from './apply';
 import Page from '@/pages/component/commons/Page';
 import Filtering from './filtering';
 import { useDispatch } from 'react-redux';
-import { getCandidateFetch } from '@/redux/slices/candidateSlices';
+import { getCandidateFetch } from '@/redux-saga/slices/candidateSlices';
 import Contract from './contract';
 import Disqualified from './disqualified';
 import NotResponding from './notResponding';

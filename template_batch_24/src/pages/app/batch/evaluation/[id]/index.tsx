@@ -1,8 +1,8 @@
 import Page from "@/pages/component/commons/Page";
 import AppLayout from "@/pages/component/layout/AppLayout";
-import { getBatchTraineeEvaluationFetch, updateTraineeEvalutaionScoreTry } from "@/redux/slices/batchSlices";
+import { getBatchTraineeEvaluationFetch, updateTraineeEvalutaionScoreTry } from "@/redux-saga/slices/batchSlices";
 import { Disclosure } from "@headlessui/react";
-import { ChevronUpIcon } from "@heroicons/react/outline";
+import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

@@ -1,7 +1,7 @@
 import Page from "@/pages/component/commons/Page";
 import AppLayout from "@/pages/component/layout/AppLayout";
-import { createBatchTry, getInstructorFetch, getTechnologyFetch, changeToIdle } from "@/redux/slices/batchSlices";
-import { getPassedCandidateBootcampFetch } from "@/redux/slices/candidateSlices";
+import { createBatchTry, getInstructorFetch, getTechnologyFetch, changeToIdle } from "@/redux-saga/slices/batchSlices";
+import { getPassedCandidateBootcampFetch } from "@/redux-saga/slices/candidateSlices";
 import { Menu } from "@headlessui/react";
 import { useFormik } from "formik";
 import Image from "next/image";

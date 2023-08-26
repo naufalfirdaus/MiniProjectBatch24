@@ -3,12 +3,12 @@ import AppLayout from "../component/layout/AppLayout";
 import Page from "../component/commons/Page";
 import {
   BriefcaseIcon,
-  ClipboardCheckIcon,
+  ClipboardDocumentCheckIcon,
   CalendarIcon,
   ClipboardIcon,
-} from "@heroicons/react/outline";
+} from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import { getChartFetch, getSummaryFetch } from "@/redux/slices/dashboardSlices";
+import { getChartFetch, getSummaryFetch } from "@/redux-saga/slices/dashboardSlices";
 import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 // import DatePicker from 'react-datepicker';
@@ -492,7 +492,7 @@ export default function Dashboard() {
               <div className="py-3 bg-white border border-gray-200 rounded-lg shadow hover:scale-105 transition-all">
                 <div className="flex items-center">
                   <div className="px-3 font-medium">
-                    <ClipboardCheckIcon className="h-6 w-6" />
+                    <ClipboardDocumentCheckIcon className="h-6 w-6" />
                   </div>
                   <div className="border-l-2 pl-3">
                     <p className="text-lg font-medium ">Candidate</p>

@@ -2,26 +2,27 @@ import React, { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import { Popover, Menu, Transition } from "@headlessui/react";
 import {
-  ChatAlt2Icon,
-  MenuIcon,
+  ChatBubbleLeftRightIcon,
+  Bars3Icon,
   QuestionMarkCircleIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   UserGroupIcon,
-  XIcon,
-} from "@heroicons/react/outline";
-import { ChevronDownIcon } from "@heroicons/react/solid";
+  ChevronDownIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/solid";
 import { useSelector, useDispatch } from "react-redux";
 import Image from "next/image";
 import { getCookie, hasCookie } from "cookies-next";
-import { logoutTry, setUserDataFromCookie } from "@/redux/slices/userSlices";
 import jwtDecode from "jwt-decode";
+import { userLoginSetToken } from "@/redux-saga/action/loginAction";
+import { userLogout } from "@/redux-saga/action/logoutAction";
 
 const solutions = [
   {
     name: "Company Training",
     description: "Upgrade your employees skill with latest technology.",
     href: "#",
-    icon: TrendingUpIcon,
+    icon: ArrowTrendingUpIcon,
   },
   {
     name: "Partner With Us",
@@ -33,7 +34,7 @@ const solutions = [
     name: "Live Chat",
     description: "Need information, contact live chat with us",
     href: "#",
-    icon: ChatAlt2Icon,
+    icon: ChatBubbleLeftRightIcon,
   },
   {
     name: "Knowledge Base",
@@ -51,11 +52,11 @@ export default function LandingPage(props: any) {
   const { children } = props;
   const dispatch = useDispatch();
   const [reload, setReload] = useState(false);
-  const user = useSelector((state: any) => state.users.user);
+  const user = useSelector((state: any) => state.login.currentUser);
 
   const onSignout = (e: any) => {
     e.preventDefault();
-    dispatch(logoutTry());
+    dispatch(userLogout());
     setReload(true);
   };
 
@@ -63,7 +64,7 @@ export default function LandingPage(props: any) {
     if(hasCookie('access_token')){
       const token = getCookie('access_token') as string; 
       const decode = jwtDecode(token);
-      dispatch(setUserDataFromCookie(decode))
+      dispatch(userLoginSetToken(decode))
     } 
     setReload(false);
     
@@ -90,7 +91,7 @@ export default function LandingPage(props: any) {
                 <div className="-mr-2 -my-2 md:hidden">
                   <Popover.Button className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
                     <span className="sr-only">Open menu</span>
-                    <MenuIcon className="h-6 w-6" aria-hidden="true" />
+                    <Bars3Icon className="h-6 w-6" aria-hidden="true" />
                   </Popover.Button>
                 </div>
                 <Popover.Group as="nav" className="hidden md:flex space-x-10">
@@ -307,7 +308,7 @@ export default function LandingPage(props: any) {
                         <div className="-mr-2">
                           <Popover.Button className="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
                             <span className="sr-only">Close menu</span>
-                            <XIcon className="h-6 w-6" aria-hidden="true" />
+                            <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                           </Popover.Button>
                         </div>
                       </div>
