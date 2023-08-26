@@ -14,6 +14,16 @@ import { ProgramApplyProgress } from 'output/entities/ProgramApplyProgress';
 import { MulterModule } from '@nestjs/platform-express';
 import { UploadMulter } from 'src/multer/multer';
 import { Employee } from 'output/entities/Employee';
+import { Fintech } from 'output/entities/Fintech';
+import { UsersAccount } from 'output/entities/UsersAccount';
+import { FintechController } from './fintech/fintech.controller';
+import { SalesOrderHeader } from 'output/entities/SalesOrderHeader';
+import { TransactionPayment } from 'output/entities/TransactionPayment';
+import { Status } from 'output/entities/Status';
+import { OrderController } from './order/order.controller';
+import { OrderService } from './order/order.service';
+import { MailService } from './mail/mail.service';
+import { FintechService } from './fintech/fintech.service';
 
 @Module({
   imports: [
@@ -26,10 +36,27 @@ import { Employee } from 'output/entities/Employee';
       ProgramApply,
       ProgramApplyProgress,
       Employee,
+      Fintech,
+      UsersAccount,
+      SalesOrderHeader,
+      TransactionPayment,
+      Status,
     ]),
     MulterModule.register(UploadMulter.MulterOption()),
   ],
-  controllers: [CartController, ProgramsController],
-  providers: [CartService, ProgramsService],
+  controllers: [
+    ProgramsController,
+    CartController,
+    FintechController,
+    OrderController,
+  ],
+  providers: [
+    ProgramsService,
+    CartService,
+    UsersAccount,
+    OrderService,
+    MailService,
+    FintechService,
+  ],
 })
 export class SalesModule {}
