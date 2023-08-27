@@ -1,16 +1,16 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 const initialState: {
-  candidates: object;
+  candidates: any;
   programCandidates: object[];
   bootcampCandidates: object[];
-  status: string;
+  isLoading: boolean;
   error: any;
 } = {
-  candidates: {},
+  candidates: null,
   programCandidates: [],
   bootcampCandidates: [],
-  status: "idle",
+  isLoading: false,
   error: null,
 };
 
@@ -18,45 +18,41 @@ export const candidateSlices = createSlice({
   name: "candidate",
   initialState: initialState,
   reducers: {
-    changeToIdle: (state, _) =>{
-      state.status = 'idle';
-    },
     getCandidateFetch: (state, payload: PayloadAction<object>) => {
-      state.status = "loading";
+      state.isLoading = true;
     },
     getCandidateSuccess: (state, action) => {
-      state.status = "succeeded";
+      state.isLoading = false;
       state.candidates = action.payload;
     },
     getCandidateFail: (state, action: any) => {
-      state.status = "failed";
+      state.isLoading = false;
       state.error = action.error.message;
     },
     getPassedCandidateBootcampFetch: (state, payload: PayloadAction<any>) => {
-      state.status = "loading";
+      state.isLoading = true;
     },
     getPassedCandidateBootcampSuccess: (state, action) => {
-      state.status = "succeeded";
+      state.isLoading = false;
       state.bootcampCandidates = action.payload;
     },
     getCandidateBatchTraineeeFetch: (state, payload: PayloadAction<any>) => {
-      state.status = 'loading';
+      state.isLoading = true;
     },
     getCandidateBatchTraineeeSuccess: (state, action) => {
-      state.status = 'succeeded';
+      state.isLoading = false;
       state.programCandidates = action.payload;
     },
     updateCandidateStatusTry: (state, action: PayloadAction<any>) => {
-      state.status = 'loading';
+      state.isLoading = true;
     },
     updateCandidateStatusSuccess: (state) => {
-      state.status = 'succeeded';
+      state.isLoading = false;
     }
   },
 });
 
 export const {
-  changeToIdle,
   getCandidateFetch,
   getCandidateSuccess,
   getCandidateFail,

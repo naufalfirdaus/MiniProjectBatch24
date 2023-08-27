@@ -74,9 +74,9 @@ export default function Candidate() {
       <Page title='Candidate'>
         <Tab.Group>
           <div className='flex justify-between border-b'>
-            <Tab.List className='text-base text-gray-500 border-gray-200'>
+            <Tab.List className='text-base text-gray-500 border-gray-200 space-x-1'>
               {tabs.map((tab, i) => 
-                <Tab key={i} onClick={() => handleTabClick(tab.status)} className={({selected}) => `inline-block px-4 py-3 rounded-t-lg hover:text-gray-500 hover:bg-gray-50 ${selected && 'text-blue-600 font-medium bg-gray-100'}`}>{tab.name}</Tab>
+                <Tab key={i} onClick={() => handleTabClick(tab.status)} className={({selected}) => `inline-block px-4 py-3 rounded-t-lg hover:text-gray-500 hover:bg-blue-100 ${selected && 'text-blue-600 font-medium bg-blue-100'}`}>{tab.name}</Tab>
               )}
             </Tab.List>
             <div className='flex items-center'>
