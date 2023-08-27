@@ -63,8 +63,12 @@ export class FintechService {
     try {
       const account = await this.usersAccountRepository.findOne({
         where: { usacAccountNumber: accountNumber },
-        relations: { usacUserEntity: { cartItems: true } },
+        relations: {
+          usacUserEntity: { cartItems: true, userEntity: true },
+          usacBankEntity_2: true,
+        },
         select: {
+          usacBankEntity_2: { fintName: true },
           usacUserEntity: {
             userName: true,
             userEntityId: true,
@@ -78,15 +82,25 @@ export class FintechService {
       });
 
       const lastIndex = account.usacUserEntity.cartItems.length - 1;
-      return {
-        data: {
+      return [
+        {
+          name: account.usacBankEntity_2.fintName,
           accountNumber: account.usacAccountNumber,
           credit: account.usacUserEntity.cartItems[lastIndex].caitUnitPrice,
           accountName: account.usacUserEntity,
         },
-      };
+      ];
     } catch (e) {
       throw new NotFoundException('cart not found');
+    }
+  }
+
+  findFintech() {
+    try {
+      const fintech = this.fintechRepository.find();
+      return fintech;
+    } catch (error) {
+      throw new NotFoundException(error);
     }
   }
 }

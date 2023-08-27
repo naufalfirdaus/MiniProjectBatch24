@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -15,10 +15,17 @@ import { AddToCartDto } from './dto/add-cart.dto';
 import { CartItems } from 'output/entities/CartItems';
 import { ProgramEntity } from 'output/entities/ProgramEntity';
 import { Users } from 'output/entities/Users';
+import { SpecialOfferPrograms } from 'output/entities/SpecialOfferPrograms';
+import { SpecialOffer } from 'output/entities/SpecialOffer';
+import { DiscountDto } from './dto/disc-dto';
 
 @Injectable()
 export class CartService {
   constructor(
+    @InjectRepository(SpecialOfferPrograms)
+    private readonly specialOfferProgramsRepository: Repository<SpecialOfferPrograms>,
+    @InjectRepository(SpecialOffer)
+    private readonly specialOfferRepository: Repository<SpecialOffer>,
     @InjectRepository(CartItems)
     private readonly cartRepository: Repository<CartItems>,
     @InjectRepository(ProgramEntity)
@@ -126,12 +133,29 @@ export class CartService {
           throw new NotFoundException(
             `cart does not exist in the user id: ${userentityid}`,
           );
+        } else {
+          const unitPrice = query
+            .map((item) => {
+              return item;
+            })
+            .reduce(
+              (acc, item) =>
+                acc +
+                parseInt(
+                  item.caitUnitPrice
+                    .replace('Rp', '')
+                    .replace('.', '')
+                    .replace('.', ''),
+                ),
+              0,
+            );
+          return [
+            {
+              total: unitPrice.toLocaleString('id-ID'),
+              data: query,
+            },
+          ];
         }
-        return {
-          status: HttpStatus.OK,
-          count: query.length,
-          data: query,
-        };
       }
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -164,5 +188,43 @@ export class CartService {
 
     // Return a message indicating the cart has been deleted
     return { Message: `cart with id: ${id} deleted` };
+  }
+
+  async createDiscount(data: DiscountDto) {
+    const { disc, userId } = data;
+    const getDiscount = await this.specialOfferProgramsRepository.findOne({
+      relations: {
+        socoProgEntity: { cartItems: true },
+        socoSpof: true,
+      },
+      where: {
+        socoSpof: { spofType: disc },
+      },
+    });
+    const cart = await this.cartRepository.findOne({
+      where: {
+        caitUserEntity: { userEntityId: userId },
+      },
+      select: {
+        caitUnitPrice: true,
+      },
+    });
+    const price = parseInt(
+      cart.caitUnitPrice.replace('Rp', '').replace('.', '').replace('.', ''),
+    );
+    const lastIndex = getDiscount.socoProgEntity.cartItems.length - 1;
+    if (getDiscount) {
+      const discountAmount =
+        (getDiscount.socoProgEntity.progPrice *
+          getDiscount.socoSpof.spofDiscount) /
+        100;
+      const newPrice = price - discountAmount;
+      return await this.cartRepository.update(
+        getDiscount.socoProgEntity.cartItems[lastIndex].caitId,
+        {
+          caitUnitPrice: newPrice.toString(),
+        },
+      );
+    }
   }
 }

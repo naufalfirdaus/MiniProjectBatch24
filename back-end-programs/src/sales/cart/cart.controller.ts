@@ -4,13 +4,18 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   Post,
   Query,
+  StreamableFile,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { CartUserDto } from './dto/cart-user.dto';
 import { AddToCartDto } from './dto/add-cart.dto';
+import { DiscountDto } from './dto/disc-dto';
+import { createReadStream } from 'fs';
+import { join } from 'path';
 
 @Controller('api/programs/sales/cart')
 export class CartController {
@@ -29,22 +34,17 @@ export class CartController {
   removeCart(@Param('id') id: number) {
     return this.cartService.removeCart(id);
   }
+
+  @Post('discount')
+  createDisc(@Body() desc: DiscountDto) {
+    return this.cartService.createDiscount(desc);
+  }
+
+  @Get('photo/:nama')
+  @Header('Content-Type', `image/${'png' || 'jpg' || 'jpeg'}`)
+  @Header('Content-Disposition', 'attachment')
+  getStaticFile(@Param('nama') nama: string): StreamableFile {
+    const file = createReadStream(join(`${process.cwd()}/uploads/`, nama));
+    return new StreamableFile(file);
+  }
 }
-// @Controller('api/programs/sales/cart/add')
-// export class AddToCartController {
-//   constructor(private cartService: CartService) {}
-//   @Post()
-//   addToCart(@Body() body: AddToCartDto) {
-//     return this.cartService.addToCart(body);
-//   }
-// }
-
-// @Controller('api/programs/sales/discount')
-// export class DiscountController{
-//   constructor(private cartService: CartService){}
-
-//   @Get()
-//   createDisc(){
-//     return this.cartService.
-//   }
-// }

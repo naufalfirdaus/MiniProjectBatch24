@@ -159,12 +159,8 @@ export class OrderService {
               usacModifiedDate: new Date().toISOString(),
             },
           );
-          console.log(
-            await this.transactionRepository.save(transactionPayment),
-          );
-          // console.log((await adminNumber).usacAccountNumber);
-          // console.log((await adminNumber).usacSaldo);
-          // console.log({ data: transactionPayment });
+
+          await this.transactionRepository.save(transactionPayment);
         }
 
         // Create the order with the necessary details
@@ -187,8 +183,10 @@ export class OrderService {
               usacModifiedDate: new Date().toISOString(),
             },
           );
-          const userEmail = userId.usersEmails[0].pmailAddress;
-          await this.mailer.sendMail(userEmail);
+
+          //code kirim email
+          // const userEmail = userId.usersEmails[0].pmailAddress;
+          // await this.mailer.sendMail(userEmail);
         }
         // return createOrder;
         return await this.orderRepository.save(createOrder);
@@ -261,7 +259,7 @@ export class OrderService {
     const summaryOrder = await this.orderRepository.findOne({
       relations: {
         soheStatus: true,
-        soheUserEntity: { usersAccounts: true },
+        soheUserEntity: { usersAccounts: { usacBankEntity_2: true } },
       },
       where: {
         soheOrderNumber: orderNumber,
@@ -276,20 +274,15 @@ export class OrderService {
         },
       },
     });
-
-    if (summaryOrder.soheStatus.status.toLowerCase() === 'cancelled') {
-      throw new InternalServerErrorException(
-        'sorry, your order has been cancelled',
-      );
-    } else {
-      return {
-        data: {
-          AccountNumber: summaryOrder.soheAccountNumber,
-          AccountName: summaryOrder.soheUserEntity.userName,
-          Credit: summaryOrder.soheSubtotal,
-          TransactionNumber: summaryOrder.soheTrpaCodeNumber,
-        },
-      };
-    }
+    return [
+      {
+        nama: summaryOrder.soheUserEntity.usersAccounts[0].usacBankEntity_2
+          .fintName,
+        accountNumber: summaryOrder.soheAccountNumber,
+        accountName: summaryOrder.soheUserEntity.userName,
+        credit: summaryOrder.soheSubtotal,
+        transactionNumber: summaryOrder.soheTrpaCodeNumber,
+      },
+    ];
   }
 }

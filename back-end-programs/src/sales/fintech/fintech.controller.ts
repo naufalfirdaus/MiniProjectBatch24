@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Get, Post, Query } from '@nestjs/common';
 import { FintechService } from './fintech.service';
 import { FintechDto } from './dto/fintech.dto';
@@ -15,5 +16,10 @@ export class FintechController {
   @Post('verify')
   verifyFintech(@Query() account: FintechDto): Promise<void> {
     return this.fintechService.verifyFintech(account);
+  }
+
+  @Get()
+  findAll(): Promise<Fintech[]> {
+    return this.fintechService.findFintech();
   }
 }

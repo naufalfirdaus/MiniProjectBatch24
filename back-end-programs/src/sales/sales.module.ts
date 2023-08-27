@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CartController } from './cart/cart.controller';
@@ -24,6 +25,8 @@ import { OrderController } from './order/order.controller';
 import { OrderService } from './order/order.service';
 import { MailService } from './mail/mail.service';
 import { FintechService } from './fintech/fintech.service';
+import { SpecialOfferPrograms } from 'output/entities/SpecialOfferPrograms';
+import { SpecialOffer } from 'output/entities/SpecialOffer';
 
 @Module({
   imports: [
@@ -41,6 +44,9 @@ import { FintechService } from './fintech/fintech.service';
       SalesOrderHeader,
       TransactionPayment,
       Status,
+      SpecialOfferPrograms,
+      SpecialOffer,
+      SalesOrderHeader,
     ]),
     MulterModule.register(UploadMulter.MulterOption()),
   ],
