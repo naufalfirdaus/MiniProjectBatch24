@@ -41,11 +41,10 @@ function SearchEmployee(state: any, action: any) {
   };
 };
 
-const AddEmployee = (state:any, action:any) => {
-  const {payload} = action
+const AddEmployee = (state: any, action: any) => {
   return {
       ...state,
-      employees:[...state.employees,payload]
+      employees: action.payload,
   }
 }
 

@@ -247,6 +247,7 @@ export class EmployeeService {
   }
 
   public async Insert(fields: any) {
+    console.log(fields);
     try {
       //insert ke table employee
       const employee = await this.serviceEmp.save({

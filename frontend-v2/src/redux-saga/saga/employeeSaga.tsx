@@ -35,7 +35,7 @@ function* handleSearchEmployee(action: any): any {
     }
 }
 
-function* handleCreateEmployee(action: any): any {
+function* handleAddEmployee(action: any): any {
     const { payload } = action
     try {
         const result = yield call(employee.CreateEmployee, payload)
@@ -78,7 +78,7 @@ function* handleGetDepartment(): any {
 export {
     handleGetEmployee,
     handleSearchEmployee,
-    handleCreateEmployee,
+    handleAddEmployee,
     handleGetOneEmployee,
     handleGetDepartment,
     handleGetJobRole

@@ -8,6 +8,7 @@ import Image from "next/image"
 import { useFormik } from 'formik';
 import config from '@/config/config';
 import { values } from 'core-js/core/array';
+import Layout from '../components/layout/Layout';
 
 export default function Create(props: any) {
     const dispatch = useDispatch();
@@ -26,42 +27,33 @@ export default function Create(props: any) {
 
     const formik = useFormik({
         initialValues: {
-            empEntityId: "",
-            empEmpNumber: "",
-            empNationalId: "",
+            empEntityId: 0,
+            empNationalId: 0,
             empBirthDate: "",
             empMaritalStatus: "",
             empGender: "",
             empHireDate: "",
-            empSalariedFlag: "",
-            empVacationHours: "",
-            empSickleaveHours: "",
-            empCurrentFlag: "",
-            empJoro: "",
-            empType: "",
+            empVacationHours: 0,
+            empSickleaveHours: 0,
+            empJoro: 0,
             ephiRateChangeDate: "",
-            ephiRateSalary: "",
-            ephiPayFrequence: "",
+            ephiRateSalary: 0,
+            ephiPayFrequence: 0,
             edhiStartDate: "",
             edhiEndDate: "",
-            edhiDept: "",
+            edhiDept: 0,
         },
-        onSubmit: async (values) => {
+        onSubmit: async (values: any) => {
             let payload = new FormData();
             payload.append("empEntityId", values.empEntityId);
-            payload.append("empEntityId", values.empEntityId);
-            payload.append("empEmpNumber", values.empEmpNumber);
             payload.append("empNationalId", values.empNationalId);
             payload.append("empBirthDate", values.empBirthDate);
             payload.append("empMaritalStatus", values.empMaritalStatus);
             payload.append("empGender", values.empGender);
             payload.append("empHireDate", values.empHireDate);
-            payload.append("empSalariedFlag", values.empSalariedFlag);
             payload.append("empVacationHours", values.empVacationHours);
             payload.append("empSickleaveHours", values.empSickleaveHours);
-            payload.append("empCurrentFlag", values.empCurrentFlag);
             payload.append("empJoro", values.empJoro);
-            payload.append("empType", values.empType);
             payload.append("ephiRateChangeDate", values.ephiRateChangeDate);
             payload.append("ephiRateSalary", values.ephiRateSalary);
             payload.append("ephiPayFrequence", values.ephiPayFrequence);
@@ -69,13 +61,16 @@ export default function Create(props: any) {
             payload.append("edhiEndDate", values.edhiEndDate);
             payload.append("edhiDept", values.edhiDept);
 
+            console.log("Data to be sent:", values);
+
             dispatch(AddEmployeeReq(payload));
             props.setDisplay(false);
             window.alert("Data Successfully Insert");
             props.setRefresh(true);
         },
     });
-    // Fungsi untuk mengubah tanggal dari "dd/mm/yyyy" ke "yyyy/dd/mm"
+
+// Fungsi untuk mengubah tanggal dari "dd/mm/yyyy" ke "yyyy/dd/mm"
 function convertInputFormat(inputDate: string) {
     const parts = inputDate.split("-");
     if (parts.length === 3) {
@@ -104,7 +99,7 @@ function convertInputFormat(inputDate: string) {
                         <div className="grid xl:grid-cols-4 gap-4">
                             <div className=" xl:order-last">
                                 <div className="items-center justify-center">
-                                    <Image src="" alt="Preview" className="mt-2 w-full h-auto" />
+                                    <Image src="" alt="Preview" className="mt-2 h-auto" />
                                     <input
                                     type="file"
                                     id="image"
@@ -118,7 +113,7 @@ function convertInputFormat(inputDate: string) {
                             <div className="mb-3">
                                 <label htmlFor="empEntityId"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">empEntityId</label>
-                                <input type="" id="empEntityId" name="empEntityId"
+                                <input type="text" id="empEntityId" name="empEntityId"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="" defaultValue={formik.values.empEntityId} onChange={formik.handleChange}></input>
                             </div>
@@ -126,7 +121,7 @@ function convertInputFormat(inputDate: string) {
                                 <label htmlFor="empNationalId"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">National
                                     Id</label>
-                                <input type="" id="empNationalId" name="empNationalId"
+                                <input type="text" id="empNationalId" name="empNationalId"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="National Id" defaultValue={formik.values.empNationalId} onChange={formik.handleChange}></input>
                             </div>
@@ -195,8 +190,8 @@ function convertInputFormat(inputDate: string) {
                                 <select id="empMaritalStatus" name="empMaritalStatus" defaultValue={'empMaritalStatus'} onChange={formik.handleChange}
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                     <option selected>Choose a status</option>
-                                    <option defaultValue="M"> M = Married</option>
-                                    <option defaultValue="S"> S = Single</option>
+                                    <option defaultValue="M"> M </option>
+                                    <option defaultValue="S"> S </option>
                                 </select>
                             </div>
                             <div className="mb-6">
@@ -205,8 +200,8 @@ function convertInputFormat(inputDate: string) {
                                 <select id="empGender" name="empGender" defaultValue={'empGender'} onChange={formik.handleChange}
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                     <option selected>Choose a Gender</option>
-                                    <option defaultValue="M"> M = Male</option>
-                                    <option defaultValue="F"> F = Female</option>
+                                    <option defaultValue="M"> M </option>
+                                    <option defaultValue="F"> F </option>
                                 </select>
                             </div>
                         </div>
@@ -236,7 +231,7 @@ function convertInputFormat(inputDate: string) {
                                     <option selected>Choose a Job Role</option>
                                     {jobroles.map((item: any) => {
                                         return (
-                                        <option key={item.joroId} value={item.joroId}>{item.joroName}</option>
+                                        <option key={item.joroId} defaultValue={item.joroId}>{item.joroName}</option>
                                         );
                                     })}
                                 </select>
@@ -283,8 +278,8 @@ function convertInputFormat(inputDate: string) {
                                 <select id="ephiPayFrequence" name="ephiPayFrequence" defaultValue={'ephiPayFrequence'} onChange={formik.handleChange}
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                     <option selected>Choose a frequency</option>
-                                    <option defaultValue="0"> 0 = Hourly</option>
-                                    <option defaultValue="1"> 1 = Monthly</option>
+                                    <option defaultValue="0"> 0 </option>
+                                    <option defaultValue="1"> 1 </option>
                                 </select>
                             </div>
                         </div>
@@ -303,7 +298,7 @@ function convertInputFormat(inputDate: string) {
                                     <option selected>Choose a Department</option>
                                     {departments.map((item: any) => {
                                         return (
-                                        <option key={item.deptId} value={item.deptId}>{item.deptName}</option>
+                                        <option key={item.deptId} defaultValue={item.deptId}>{item.deptName}</option>
                                         );
                                     })}
                                 </select>

@@ -5,8 +5,7 @@ import { GetEmployeeReq, SearchEmployeeReq } from "@/redux-saga/action/employeeA
 import Link from 'next/link';
 import { Menu, Dialog, Transition } from '@headlessui/react';
 import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/outline";
-import { IconButton, Typography } from "@material-tailwind/react";
-import employee from '../api/employee';
+import { IconButton, Typography, button } from "@material-tailwind/react";
 import CreatePage from './createPage';
 
 export default function Employee(props: any) {
@@ -179,9 +178,10 @@ export default function Employee(props: any) {
                                     </th>
                                     <th scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200" onClick={() => setCreateDisplay(true)}>
-                                            Add
-                                        </button>
+                                        <button
+                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+                                            onClick={() => setCreateDisplay(true)}
+                                        >Add</button>
                                     </th>
                                 </tr>
                             </thead>
@@ -205,7 +205,7 @@ export default function Employee(props: any) {
                                             {employee.empHireDate}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            {employees.employeeClientContracts?.eccoStatus?.status}
+                                            {employee.employeeClientContracts?.eccoStatus?.status}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <Menu as="div">
@@ -228,7 +228,7 @@ export default function Employee(props: any) {
                                                         <div className="px-1 py-1">
                                                             <Menu.Item>
                                                                 {({ active }) => (
-                                                                    <Link href={`/employee/editPage/`}>
+                                                                    <Link href={`/employee/edit/${employee.empEntityId}`}>
                                                                         <button
                                                                             className={`${
                                                                             active ? 'bg-gray-600 text-white' : 'text-gray-900'
