@@ -12,7 +12,11 @@ import {
   UploadedFile,
   NotFoundException,
   DefaultValuePipe,
+  Header,
+  StreamableFile,
 } from '@nestjs/common';
+import * as path from 'path';
+import * as fs from 'fs';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
