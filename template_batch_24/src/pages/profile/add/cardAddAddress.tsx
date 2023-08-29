@@ -53,7 +53,7 @@ const CardAddAddress = (props: ModalAddress) => {
         props.setRefresh(true);
         window.alert("Data Insert ");
         dispatch(addAddressReq(payload, id));
-        // window.location.reload();
+        window.location.reload();
       } catch (error) {
         console.error("Error:", error);
       }

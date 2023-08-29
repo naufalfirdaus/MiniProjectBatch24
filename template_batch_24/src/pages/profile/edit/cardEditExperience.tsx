@@ -6,14 +6,31 @@ import { Button, Checkbox, Label, Modal, TextInput } from "flowbite-react";
 
 import { addPhoneReq } from "@/redux-saga/action/phoneAction";
 import { addEducationReq } from "@/redux-saga/action/educationAction";
-import { addExperienceReq } from "@/redux-saga/action/experienceAction";
+import {
+  UpdateExperienceRequest,
+  addExperienceReq,
+} from "@/redux-saga/action/experienceAction";
 
-type Modalexperience = {
+type Modaleditexperience = {
   setRefresh: (value: boolean) => void;
-  setOpenModal: (value: string | undefined) => void;
-  setDataProfile: any;
+  setOpenModalEdit: (value: boolean) => void;
+
+  setId: any;
+  setTittle: any;
+  setHeadline: any;
+  setCompany: any;
+  setCity: any;
+  setStart: any;
+  setStartYear: any;
+  setEnd: any;
+  setEndYear: any;
+  setIndustry: any;
+  setEmptype: any;
+  setDesc: any;
+  setExtype: any;
+  setCurrent: any;
 };
-const CardAddExperience = (props: Modalexperience) => {
+const CardEditExperiences = (props: Modaleditexperience) => {
   const dispatch = useDispatch();
 
   const [selectedEmployeeTypeCode, setSelectedEmployeeTypeCode] = useState("");
@@ -43,20 +60,20 @@ const CardAddExperience = (props: Modalexperience) => {
 
   const formik = useFormik({
     initialValues: {
-      user_id: props.setDataProfile.userid,
-      tittle: "",
-      headline: "",
-      company: "",
-      search_city: "",
-      start: "",
-      startYear: "",
-      end: "",
-      endYear: "",
-      industry: "",
-      emtype: "",
-      desc: "",
-      extype: "",
-      current: "",
+      id: props.setId,
+      tittle: props.setTittle,
+      headline: props.setHeadline,
+      company: props.setCompany,
+      search_city: props.setCity,
+      start: props.setStart,
+      startYear: props.setStartYear,
+      end: props.setEnd,
+      endYear: props.setEndYear,
+      industry: props.setIndustry,
+      emtype: props.setEmptype,
+      desc: props.setDesc,
+      extype: props.setExtype,
+      current: props.setCurrent,
     },
     onSubmit: async (values) => {
       try {
@@ -76,10 +93,10 @@ const CardAddExperience = (props: Modalexperience) => {
           current: values.current,
         };
 
-        const id = values.user_id;
+        const id = values.id;
         props.setRefresh(true);
         window.alert("Data Successfully ");
-        dispatch(addExperienceReq(payload, id));
+        dispatch(UpdateExperienceRequest(payload, id));
         // window.location.reload();
       } catch (error) {
         console.error("Error:", error);
@@ -89,7 +106,7 @@ const CardAddExperience = (props: Modalexperience) => {
   return (
     <>
       <h2 className="text-base font-semibold leading-7 text-gray-900">
-        Add Experience
+        Edit Experience
       </h2>
       <div className="w-full bg-white p-3 rounded-md mt-3 mb-3">
         <form>
@@ -321,7 +338,11 @@ const CardAddExperience = (props: Modalexperience) => {
                     name="current"
                     type="checkbox"
                     required
-                    onChange={formik.handleChange}
+                    onChange={(e) => {
+                      formik.handleChange(e);
+                      formik.setFieldValue("current", e.target.checked ? 1 : 0); // Set 1 jika checked, 0 jika tidak
+                    }}
+                    checked={formik.values.current == 1} // Set checked jika usex_is_current adalah 1
                     value={formik.values.current}
                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                   />
@@ -448,7 +469,7 @@ const CardAddExperience = (props: Modalexperience) => {
               type="button"
               className="text-sm font-semibold leading-6 text-gray-900"
               onClick={() => {
-                props.setOpenModal(undefined);
+                props.setOpenModalEdit(false);
               }}
             >
               Cancel
@@ -458,7 +479,7 @@ const CardAddExperience = (props: Modalexperience) => {
               className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               onClick={() => {
                 formik.handleSubmit();
-                props.setOpenModal(undefined);
+                props.setOpenModalEdit(false);
               }}
             >
               Save
@@ -470,4 +491,4 @@ const CardAddExperience = (props: Modalexperience) => {
   );
 };
 
-export default CardAddExperience;
+export default CardEditExperiences;

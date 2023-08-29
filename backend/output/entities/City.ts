@@ -6,27 +6,28 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-} from "typeorm";
-import { Address } from "./Address";
-import { Province } from "./Province";
+} from 'typeorm';
+import { Address } from './Address';
+import { UsersExperiences } from './UsersExperiences';
+import { Province } from './Province';
 
-@Index("city_pkey", ["cityId"], { unique: true })
-@Index("city_city_name_key", ["cityName"], { unique: true })
-@Entity("city", { schema: "master" })
+@Index('city_pkey', ['cityId'], { unique: true })
+@Index('city_city_name_key', ['cityName'], { unique: true })
+@Entity('city', { schema: 'master' })
 export class City {
-  @PrimaryGeneratedColumn({ type: "integer", name: "city_id" })
+  @PrimaryGeneratedColumn({ type: 'integer', name: 'city_id' })
   cityId: number;
 
-  @Column("character varying", {
-    name: "city_name",
+  @Column('character varying', {
+    name: 'city_name',
     nullable: true,
     unique: true,
     length: 155,
   })
   cityName: string | null;
 
-  @Column("timestamp without time zone", {
-    name: "city_modified_date",
+  @Column('timestamp without time zone', {
+    name: 'city_modified_date',
     nullable: true,
   })
   cityModifiedDate: Date | null;
@@ -34,7 +35,11 @@ export class City {
   @OneToMany(() => Address, (address) => address.addrCity)
   addresses: Address[];
 
+  @OneToMany(() => UsersExperiences, (experience) => experience.usexCityId)
+  experience: UsersExperiences[];
+
   @ManyToOne(() => Province, (province) => province.cities)
-  @JoinColumn([{ name: "city_prov_id", referencedColumnName: "provId" }])
+  @JoinColumn([{ name: 'city_prov_id', referencedColumnName: 'provId' }])
   cityProv: Province;
+  usersAddresses: any;
 }

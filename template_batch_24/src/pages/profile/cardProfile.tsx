@@ -40,8 +40,8 @@ export const CardProfile = ({ dataProfile }: any) => {
     <div className="flex w-1/3 flex-col mr-4">
       <Card className="ml-3">
         {dataUser &&
-          dataUser.map((item: any) => (
-            <div key={item.userId} className="flex flex-col pb-10">
+          dataUser.map((item: any, index: number) => (
+            <div key={index} className="flex flex-col pb-10">
               <span className="flex justify-end">
                 <Flowbite theme={{ theme: customTheme }}>
                   <Button

@@ -77,6 +77,17 @@ export class UsersController {
     return req.user;
   }
 
+  // handle request gambar
+  @Get('photo/:name')
+  @Header('Content-Type', `image/${'png' || 'jpg' || 'jpeg'}`)
+  @Header('Content-Disposition', 'attachment')
+  getStaticFile(@Param('name') name: string): StreamableFile {
+    const file = fs.createReadStream(
+      path.join(`${process.cwd()}/uploads/`, name),
+    );
+    return new StreamableFile(file);
+  }
+
   // @Get(':id')
   // public async getOne(@Param('id') id: number) {
   //   return this.authService.findOne(id);
@@ -100,7 +111,12 @@ export class UsersController {
     }));
 
     const userAddress = user.usersAddresses.map((address) => ({
-      AddressId: address.etadAddrId,
+      addrId: address.address.addrId,
+      addressLine1: address.address.addrLine1,
+      addressLine2: address.address.addrLine2,
+      postalCode: address.address.addrPostalCode,
+      city: address.address.addrCity?.cityName, // Mengambil nama kota
+      // ... tambahkan informasi lain yang ingin Anda tampilkan
     }));
 
     const userEducation = user.usersEducations.map((education) => ({
@@ -115,6 +131,26 @@ export class UsersController {
       Description: education.usduDescription,
     }));
 
+    const userSkill = user.usersSkills.map((skill) => ({
+      SkillId: skill.uskiId,
+      SkillName: skill.uskiSktyName,
+    }));
+
+    const userExperience = user.usersExperiences.map((experience) => ({
+      UsexId: experience.usexId,
+      Tittle: experience.usexTitle,
+      Headline: experience.usexProfileHeadline,
+      EmployementType: experience.usexEmploymentType,
+      Company: experience.usexCompanyName,
+      Current: experience.usexIsCurrent,
+      StartDate: experience.usexStartDate,
+      EndDate: experience.usexEndDate,
+      Industry: experience.usexIndustry,
+      Description: experience.usexDescription,
+      ExperienceType: experience.usexExperienceType,
+      City: experience.usexCity,
+    }));
+
     return {
       userEntityId: user.userEntityId,
       userName: user.userName,
@@ -124,6 +160,8 @@ export class UsersController {
       userPhoneNumber: userPhoneNumbers,
       userAddress: userAddress, //untuk menampilkan users address ketika getone
       userEducation: userEducation,
+      userSkill: userSkill,
+      userExperience: userExperience,
     };
   }
 
@@ -260,5 +298,10 @@ export class UsersController {
     @Body('search_skill', new DefaultValuePipe(null)) search_skill: string,
   ) {
     return this.authService.addskill(id, search_skill);
+  }
+
+  @Delete('users/profile/skill/:uskiId')
+  public async Deleteskill(@Param('uskiId') uskiId: number) {
+    return this.authService.deleteskill(uskiId);
   }
 }

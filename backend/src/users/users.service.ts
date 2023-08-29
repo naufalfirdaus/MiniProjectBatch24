@@ -105,8 +105,7 @@ export class UsersService {
   //       },
   //     },
   //   });
-  // }
-
+  //
   public async findOne(id: number) {
     return await this.userRepo
       .createQueryBuilder('user')
@@ -114,8 +113,14 @@ export class UsersService {
       .leftJoinAndSelect('user.usersEmails', 'usersEmail')
       .leftJoinAndSelect('user.usersPhones', 'usersPhone')
       .leftJoinAndSelect('user.usersEducations', 'usersEducation')
+      .leftJoinAndSelect('user.usersSkills', 'usersSkill')
+      .leftJoinAndSelect('user.usersExperiences', 'usersExperiences')
+      .leftJoinAndSelect('usersExperiences.usexCity', 'cityexperience')
+
       .leftJoinAndSelect('usersPhone.uspoPontyCode', 'uspoPontyCode') //penambahan join uspocode untuk mengambilcode nya
       .leftJoinAndSelect('user.usersAddresses', 'usersAddress') //penambaha join address untuk ambil id addres tapi ini belum bisa ke get address yang di table master nya
+      .leftJoinAndSelect('usersAddress.address', 'address') // Tambahkan relasi dari usersAddress
+      .leftJoinAndSelect('address.addrCity', 'city')
       .getOne();
   }
 
@@ -409,15 +414,21 @@ export class UsersService {
   //fungsi editprofile users
   public async editprofile(file, id: number, fields: any) {
     try {
-      const user = await this.userRepo.update(id, {
-        userName: fields.name,
-        userFirstName: fields.firstname,
-        userLastName: fields.lastname,
-        userPhoto: file.filename,
-        userBirthDate: fields.birthdate,
-        userModifiedDate: new Date(),
-      });
-      return { user };
+      if (file && file.filename) {
+        // Pengecekan apakah file dan filename ada
+        const user = await this.userRepo.update(id, {
+          userName: fields.username,
+          userFirstName: fields.firstName,
+          userLastName: fields.lastName,
+          userPhoto: file.filename,
+          userBirthDate: fields.birthdate,
+          userModifiedDate: new Date(),
+        });
+        return { user };
+      } else {
+        // Handle jika file atau filename tidak ada
+        throw new Error('Invalid file or filename');
+      }
     } catch (error) {
       throw new Error(error.message);
     }
@@ -1047,9 +1058,9 @@ export class UsersService {
       const usexEndDate = endDate.toISOString().slice(0, 7);
 
       let usexcurrent;
-      if (fields.current === 'yes') {
+      if (fields.current == true) {
         usexcurrent = 1;
-      } else if (fields.current === 'no') {
+      } else if (fields.current == false) {
         usexcurrent = 0;
       } else {
         throw new Error('Invalid user experience.');
@@ -1206,9 +1217,9 @@ export class UsersService {
       const usexEndDate = endDate.toISOString().slice(0, 7);
 
       let usexcurrent;
-      if (fields.current === 'yes') {
+      if (fields.current == true) {
         usexcurrent = 1;
-      } else if (fields.current === 'no') {
+      } else if (fields.current == false) {
         usexcurrent = 0;
       } else {
         throw new Error('Invalid user experience.');

@@ -210,6 +210,96 @@ const deleteEducation = async (id: any) => {
   }
 };
 
+const addSkill = async (payload: any, id: any) => {
+  try {
+    const result = await axios.post(
+      `${config.domain}/api/users/profile/skill/${id}`,
+      payload
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
+
+const updateSkill = async (payload: any, id: any) => {
+  try {
+    const result = await axios.put(
+      `${config.domain}/api/users/profile/skill/${id}`,
+      payload
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
+
+const deleteSkill = async (id: any) => {
+  try {
+    const result = await axios.delete(
+      `${config.domain}/api/users/profile/skill/${id}`
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
+
+const addExperience = async (payload: any, id: any) => {
+  try {
+    const result = await axios.post(
+      `${config.domain}/api/users/profile/experience/${id}`,
+      payload
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
+
+const updateExperience = async (payload: any, id: any) => {
+  try {
+    const result = await axios.put(
+      `${config.domain}/api/users/profile/experience/${id}`,
+      payload
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
+
+const deleteExperience = async (id: any) => {
+  try {
+    const result = await axios.delete(
+      `${config.domain}/api/users/profile/experience/${id}`
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
+
+const editProfile = async (payload: any) => {
+  const formData = new FormData();
+  formData.append("id", payload.id);
+  formData.append("username", payload.username);
+  formData.append("firstName", payload.firstName);
+  formData.append("lastName", payload.lastName);
+  formData.append("birthdate", payload.birthdate);
+  formData.append("file", payload.file); // Menambahkan file ke FormData
+
+  console.log(formData);
+  try {
+    const result = await axios.put(
+      `${config.domain}/api/users/profile/edit/${payload.id}`,
+      formData
+    );
+    return result;
+  } catch (error: any) {
+    return error.response;
+  }
+};
 export default {
   userSignUp,
   getAllUser,
@@ -230,4 +320,11 @@ export default {
   addEducation,
   updateEducation,
   deleteEducation,
+  addSkill,
+  updateSkill,
+  deleteSkill,
+  addExperience,
+  updateExperience,
+  deleteExperience,
+  editProfile,
 };

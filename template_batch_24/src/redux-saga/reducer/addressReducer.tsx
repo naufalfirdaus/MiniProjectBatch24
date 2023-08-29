@@ -12,8 +12,8 @@ const AddressReducer = (state = INIT_STATE, action: any) => {
       return addaddress(state, action);
     case userAction.UPDATE_ADDRESS_SUCCESS:
       return updateaddress(state, action);
-    // case userAction.DELETE_EMAIL_SUCCESS:
-    //   return deleteemail(state, action);
+    case userAction.DELETE_ADDRESS_SUCCESS:
+      return deleteaddress(state, action);
     default:
       return state;
   }
@@ -22,22 +22,22 @@ const AddressReducer = (state = INIT_STATE, action: any) => {
 const addaddress = (state: any, action: any) => {
   return {
     ...state,
-    email: action.payload,
+    address: action.payload,
   };
 };
 
 const updateaddress = (state: any, action: any) => {
   return {
     ...state,
-    email: action.payload,
+    address: action.payload,
   };
 };
 
-// const deleteemail = (state: any, action: any) => {
-//   return {
-//     ...state,
-//     email: action.payload,
-//   };
-// };
+const deleteaddress = (state: any, action: any) => {
+  return {
+    ...state,
+    address: action.payload,
+  };
+};
 
 export default AddressReducer;

@@ -3,20 +3,24 @@ import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 
 import { Button, Checkbox, Label, Modal, TextInput } from "flowbite-react";
-import { addSkillReq } from "@/redux-saga/action/skillAction";
+import {
+  UpdateSkillRequest,
+  addSkillReq,
+} from "@/redux-saga/action/skillAction";
 
 type ModalSkill = {
   setRefresh: (value: boolean) => void;
-  setOpenModal: (value: string | undefined) => void;
-  setDataProfile: any;
+  setOpenModalEdit: (value: boolean) => void;
+  setIdSkill: any;
+  setSKill: any;
 };
-const CardAddSkill = (props: ModalSkill) => {
+const CardEditSkill = (props: ModalSkill) => {
   const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
-      user_id: props.setDataProfile.userid,
-      search_skill: "",
+      Skillid: props.setIdSkill,
+      search_skill: props.setSKill,
     },
     onSubmit: async (values) => {
       try {
@@ -24,10 +28,10 @@ const CardAddSkill = (props: ModalSkill) => {
           search_skill: values.search_skill,
         };
 
-        const id = values.user_id;
+        const id = values.Skillid;
 
         // window.alert("Data Successfully ");
-        dispatch(addSkillReq(payload, id));
+        dispatch(UpdateSkillRequest(payload, id));
         // props.setRefresh(true);
         // window.location.reload();
       } catch (error) {
@@ -38,7 +42,7 @@ const CardAddSkill = (props: ModalSkill) => {
   return (
     <>
       <h2 className="text-base font-semibold leading-7 text-gray-900">
-        Add Skills
+        Edit Skill
       </h2>
       <div className="w-full  bg-white p-3 rounded-md mt-3 mb-3">
         <form>
@@ -94,7 +98,7 @@ const CardAddSkill = (props: ModalSkill) => {
               type="button"
               className="text-sm font-semibold leading-6 text-gray-900"
               onClick={() => {
-                props.setOpenModal(undefined);
+                props.setOpenModalEdit(false);
               }}
             >
               Cancel
@@ -103,7 +107,7 @@ const CardAddSkill = (props: ModalSkill) => {
               type="submit"
               onClick={() => {
                 formik.handleSubmit();
-                props.setOpenModal(undefined);
+                props.setOpenModalEdit(false);
               }}
               className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
@@ -116,4 +120,4 @@ const CardAddSkill = (props: ModalSkill) => {
   );
 };
 
-export default CardAddSkill;
+export default CardEditSkill;

@@ -14,12 +14,27 @@ import {
   handlePhoneUsers,
   handleUpdatePhoneUsers,
 } from "./phoneSaga";
-import { handleAddressUsers, handleUpdateAddressUsers } from "./addressSaga";
+import {
+  handleAddressUsers,
+  handleDeleteAddressUsers,
+  handleUpdateAddressUsers,
+} from "./addressSaga";
 import {
   handleAddEducationUsers,
   handleDeleteEducationUsers,
   handleUpdateEducationUsers,
 } from "./EducationSaga";
+import {
+  handleDeleteskillUsers,
+  handleSKillUsers,
+  handleUpdateSkillUsers,
+} from "./skillSaga";
+import {
+  handleAddExperienceUsers,
+  handleDeleteExperienceUsers,
+  handleUpdateExperienceUsers,
+} from "./experiencesaga";
+import { editProfile } from "./editProfileSaga";
 
 function* watchAll() {
   yield all([
@@ -38,9 +53,17 @@ function* watchAll() {
     takeEvery(userAction.DELETE_PHONE_REQ, handleDeletePhoneUsers),
     takeEvery(userAction.ADD_ADDRESS_REQ, handleAddressUsers),
     takeEvery(userAction.UPDATE_ADDRESS_REQ, handleUpdateAddressUsers),
+    takeEvery(userAction.DELETE_ADDRESS_REQ, handleDeleteAddressUsers),
     takeEvery(userAction.ADD_EDUCATION_REQ, handleAddEducationUsers),
     takeEvery(userAction.UPDATE_EDUCATION_REQ, handleUpdateEducationUsers),
     takeEvery(userAction.DELETE_EDUCATION_REQ, handleDeleteEducationUsers),
+    takeEvery(userAction.ADD_SKILL_REQ, handleSKillUsers),
+    takeEvery(userAction.UPDATE_SKILL_REQ, handleUpdateSkillUsers),
+    takeEvery(userAction.DELETE_SKILL_REQ, handleDeleteskillUsers),
+    takeEvery(userAction.ADD_EXPERIENCE_REQ, handleAddExperienceUsers),
+    takeEvery(userAction.UPDATE_EXPERIENCE_REQ, handleUpdateExperienceUsers),
+    takeEvery(userAction.DELETE_EXPERIENCE_REQ, handleDeleteExperienceUsers),
+    takeEvery(userAction.USER_EDIT_PROFILE_REQ, editProfile),
   ]);
 }
 

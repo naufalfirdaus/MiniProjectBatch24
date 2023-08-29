@@ -6,6 +6,8 @@ import {
   UpdateAddressSuccess,
   addAddressFail,
   addAddressSuccess,
+  deleteAddressFailed,
+  deleteAddressSuccess,
 } from "../action/addressAction";
 
 function* handleAddressUsers(action: any): any {
@@ -28,14 +30,18 @@ function* handleUpdateAddressUsers(action: any): any {
   }
 }
 
-// function* handleDeleteEmailUsers(action: any): any {
-//   const { id } = action;
-//   try {
-//     const result = yield call(userApi.deleteEmail, id);
-//     yield put(deleteEmailSuccess(result));
-//   } catch (error) {
-//     yield put(deleteEmailFailed(error));
-//   }
-// }
+function* handleDeleteAddressUsers(action: any): any {
+  const { id } = action;
+  try {
+    const result = yield call(userApi.deleteAddress, id);
+    yield put(deleteAddressSuccess(result));
+  } catch (error) {
+    yield put(deleteAddressFailed(error));
+  }
+}
 
-export { handleAddressUsers, handleUpdateAddressUsers };
+export {
+  handleAddressUsers,
+  handleUpdateAddressUsers,
+  handleDeleteAddressUsers,
+};

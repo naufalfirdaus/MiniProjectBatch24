@@ -7,6 +7,9 @@ import EmailReducer from "./EmailReducer";
 import PhoneReducer from "./phoneReducer";
 import AddressReducer from "./addressReducer";
 import EducationReducer from "./educationReducer";
+import SkillReducer from "./skillReducer";
+import ExperienceReducer from "./experienceReducer";
+import editProfileReducer from "./editProfileReducer";
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -17,6 +20,9 @@ const rootReducer = combineReducers({
   phone: PhoneReducer,
   address: AddressReducer,
   education: EducationReducer,
+  skill: SkillReducer,
+  experience: ExperienceReducer,
+  editProfile: editProfileReducer,
 });
 
 export default rootReducer;

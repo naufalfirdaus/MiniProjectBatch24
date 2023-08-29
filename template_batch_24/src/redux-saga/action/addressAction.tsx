@@ -30,17 +30,17 @@ export const UpdateAddressFailed = (payload: any) => ({
   payload,
 });
 
-// export const deleteEmailRequest = (id: any) => ({
-//   type: userAction.DELETE_EMAIL_REQ,
-//   id,
-// });
+export const deleteAddressRequest = (id: any) => ({
+  type: userAction.DELETE_ADDRESS_REQ,
+  id,
+});
 
-// export const deleteEmailSuccess = (id: any) => ({
-//   type: userAction.DELETE_EMAIL_SUCCESS,
-//   id,
-// });
+export const deleteAddressSuccess = (id: any) => ({
+  type: userAction.DELETE_ADDRESS_SUCCESS,
+  id,
+});
 
-// export const deleteEmailFailed = (id: any) => ({
-//   type: userAction.DELETE_EMAIL_FAIL,
-//   id,
-// });
+export const deleteAddressFailed = (id: any) => ({
+  type: userAction.DELETE_ADDRESS_FAIL,
+  id,
+});

@@ -15,7 +15,12 @@ const optionList = [
 type ModalAddress = {
   setRefresh: (value: boolean) => void;
   setOpenModalEdit: (value: boolean) => void;
-  setDataProfile: any;
+  setId: any;
+  setAddress1: any;
+  setAddress2: any;
+  setPostalcode: any;
+  setCity: any;
+  settype: any;
 };
 
 const CardEditAddress = (props: ModalAddress) => {
@@ -32,12 +37,12 @@ const CardEditAddress = (props: ModalAddress) => {
 
   const formik = useFormik({
     initialValues: {
-      user_id: props.setDataProfile.userid,
-      address1: "",
-      address2: "",
-      postalcode: "",
-      city: "",
-      type: "",
+      addrid: props.setId,
+      address1: props.setAddress1,
+      address2: props.setAddress2,
+      postalcode: props.setPostalcode,
+      city: props.setCity,
+      type: props.settype,
     },
     onSubmit: async (values) => {
       try {
@@ -49,11 +54,11 @@ const CardEditAddress = (props: ModalAddress) => {
           type: selectedTypeAddress,
         };
 
-        const id = values.user_id;
+        const id = values.addrid;
         props.setRefresh(true);
-        window.alert("Data Insert ");
+        window.alert("Data Update ");
         dispatch(UpdateAddressRequest(payload, id));
-        // window.location.reload();
+        window.location.reload();
       } catch (error) {
         console.error("Error:", error);
       }

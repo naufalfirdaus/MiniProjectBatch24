@@ -67,8 +67,8 @@ const EducationCard = () => {
   return (
     <div className="education-section">
       {dataUser &&
-        dataUser.map((item: any) => (
-          <div key={item.userId}>
+        dataUser.map((item: any, index: number) => (
+          <div key={index}>
             {item.userEducation.length > 0 ? (
               item.userEducation.map(
                 (

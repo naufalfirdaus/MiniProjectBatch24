@@ -58,8 +58,8 @@ const CardPhone = () => {
   return (
     <Card className="ml-3">
       {dataUser &&
-        dataUser.map((item: any) => (
-          <div key={item.userId}>
+        dataUser.map((item: any, index: number) => (
+          <div key={index}>
             <div className="mb-4 flex items-center justify-between">
               <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
                 Phones
@@ -114,9 +114,9 @@ const CardPhone = () => {
                   phone: string;
                   pontycode: { pontyCode: string };
                 },
-                index: number
+                phoneindex: number
               ) => (
-                <div key={index} className="flow-root">
+                <div key={phoneindex} className="flow-root">
                   <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                     <li className="py-3 sm:py-4">
                       <div className="flex items-center space-x-4">
